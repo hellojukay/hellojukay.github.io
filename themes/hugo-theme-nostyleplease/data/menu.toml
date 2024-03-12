@@ -1,0 +1,22 @@
+[[entries]]
+title = "info"
+
+  [[entries.entries]]
+  title = "一个程序员，水平不高，是一个顽皮孩子的爸爸。本站都是一些碎片化的内容，记录生活和工作点滴。"
+
+  [[entries.entries]]
+  title = "github"
+  url = "https://github.com/hellojukay"
+
+[[entries]]
+title = "all posts"
+
+  [entries.post_list]
+  limit = 0
+  show_more = true
+  show_more_text = "See archive..."
+  show_more_url = "posts"
+
+[[entries]]
+title = "rss"
+url = "index.xml"
