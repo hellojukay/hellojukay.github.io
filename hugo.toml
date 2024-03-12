@@ -1,4 +1,4 @@
 languageCode = 'en-us'
 title = '润物细无声'
 theme = 'hugo-theme-nostyleplease'
-baseUrl = 'https://blog.hellojukay.io/'
+baseUrl = 'https://blog.hellojukay.io/blog'
