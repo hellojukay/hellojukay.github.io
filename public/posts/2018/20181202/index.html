@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="nmap是一个开源的网络扫描工具，在网络方便使用较多。然后nmap的命令行用法对于初学者来说非常不友好，这篇文件将会介绍基本的nmap命令，不会面面俱到，只希望你对nmap有一个基本的了解，不在惧怕nmap命令。
+nmap能做什么？ nmap使用IP包的方式发送数据，他能找到局域网内有那些机器在运行那些服务，他们分别是什么操作系统，端口是否开放，机器启动时间等等。
+一下问题，使用nmap能够轻易的解决。
+局域网内有那些机器在运行 局域网内有那些IP地址 某个IP所指向的机器运行着什么操作系统 你能扫描目标机器上有那些端口开放着 了解目标机器是否感染了病毒 搜索当前网络中有那些未认证的网络服务 查找安全级别较低的机器 如何安装nmap呢？ 如果你是debian操作系统
+sudo apt install nmap 参考文章：
+https://www.cyberciti.biz/faq/install-nmap-debian-ubuntu-server-desktop-system/ https://www.cyberciti.biz/faq/howto-install-nmap-on-centos-rhel-redhat-enterprise-linux/ https://www.cyberciti.biz/faq/installing-nmap-network-port-scanner-under-openbsd-using-pkg_add/ 扫描单个目标 # 扫描单个目标机器 nmap 192.168.1.1 # 扫描单个域名 nmap gitlab.hellojukay.cn 扫描多个目标或者是子网 nmap 192.168.1.1 182.168.1.2 nmap 192.168.1.1,2,3 你也可以扫描某个范围内的IP地址
+nmap 192.168.1.1-20 你也可以使用通配符
+nmap 192.168.1.* 你也可以扫描整个子网
+nmap 192.168.1.0/24 从文件中读取扫描目标 使用-iL选项来读取你需要扫描的目标机器列表，这通常使用来扫描一大批机器，文件编写语法如下：
+gitlab.hellojukay.cn 192.168.1.1 192.168.1.0/24 localhost 命令行语法：
+nmap -iL hosts.txt 过滤目标 当你扫描一大批机器的时候，你想过滤掉某个目标，不进行网络扫描，你可以使用--exlude选项来跳过目标
+nmap 192.168.1.0/24 --exclude 192.168.1.5 nmap 192.168.1.0/24 --exclude 192.168.1.5 192.168.1.6 扫描机器的系统和网络版本信息 nmap -A 192.168.1.254 nmap -v -A 192.">  
+
+  <title>
+    
+      【翻译】nmap命令介绍
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-12-02 00:00:00 &#43;0000 UTC">
+            2018-12-02
+        </time>
+    </p>
+
+    <h1>【翻译】nmap命令介绍</h1>
+
+    
+
+    <p>nmap是一个开源的网络扫描工具，在网络方便使用较多。然后nmap的命令行用法对于初学者来说非常不友好，这篇文件将会介绍基本的nmap命令，不会面面俱到，只希望你对nmap有一个基本的了解，不在惧怕nmap命令。</p>
+<h1 id="nmap能做什么">nmap能做什么？</h1>
+<p>nmap使用IP包的方式发送数据，他能找到局域网内有那些机器在运行那些服务，他们分别是什么操作系统，端口是否开放，机器启动时间等等。</p>
+<p>一下问题，使用nmap能够轻易的解决。</p>
+<ul>
+<li>局域网内有那些机器在运行</li>
+<li>局域网内有那些IP地址</li>
+<li>某个IP所指向的机器运行着什么操作系统</li>
+<li>你能扫描目标机器上有那些端口开放着</li>
+<li>了解目标机器是否感染了病毒</li>
+<li>搜索当前网络中有那些未认证的网络服务</li>
+<li>查找安全级别较低的机器</li>
+</ul>
+<h1 id="如何安装nmap呢">如何安装nmap呢？</h1>
+<p>如果你是debian操作系统</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt install nmap
+</span></span></code></pre></div><p>参考文章：</p>
+<ul>
+<li><a href="https://www.cyberciti.biz/faq/install-nmap-debian-ubuntu-server-desktop-system/">https://www.cyberciti.biz/faq/install-nmap-debian-ubuntu-server-desktop-system/</a></li>
+<li><a href="https://www.cyberciti.biz/faq/howto-install-nmap-on-centos-rhel-redhat-enterprise-linux/">https://www.cyberciti.biz/faq/howto-install-nmap-on-centos-rhel-redhat-enterprise-linux/</a></li>
+<li><a href="https://www.cyberciti.biz/faq/installing-nmap-network-port-scanner-under-openbsd-using-pkg_add/">https://www.cyberciti.biz/faq/installing-nmap-network-port-scanner-under-openbsd-using-pkg_add/</a></li>
+</ul>
+<h1 id="扫描单个目标">扫描单个目标</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 扫描单个目标机器</span>
+</span></span><span style="display:flex;"><span>nmap 192.168.1.1
+</span></span></code></pre></div><p><img src="/20181202/p1.png" alt="p1"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 扫描单个域名</span>
+</span></span><span style="display:flex;"><span>nmap gitlab.hellojukay.cn
+</span></span></code></pre></div><p><img src="/20181202/p2.png" alt="p2"></p>
+<h2 id="扫描多个目标或者是子网">扫描多个目标或者是子网</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap 192.168.1.1 182.168.1.2
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap 192.168.1.1,2,3
+</span></span></code></pre></div><p>你也可以扫描某个范围内的IP地址</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap 192.168.1.1-20
+</span></span></code></pre></div><p>你也可以使用通配符</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap 192.168.1.*
+</span></span></code></pre></div><p>你也可以扫描整个子网</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap 192.168.1.0/24
+</span></span></code></pre></div><h1 id="从文件中读取扫描目标">从文件中读取扫描目标</h1>
+<p>使用<code>-iL</code>选项来读取你需要扫描的目标机器列表，这通常使用来扫描一大批机器，文件编写语法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gitlab.hellojukay.cn
+</span></span><span style="display:flex;"><span>192.168.1.1
+</span></span><span style="display:flex;"><span>192.168.1.0/24
+</span></span><span style="display:flex;"><span>localhost
+</span></span></code></pre></div><p>命令行语法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -iL hosts.txt
+</span></span></code></pre></div><h1 id="过滤目标">过滤目标</h1>
+<p>当你扫描一大批机器的时候，你想过滤掉某个目标，不进行网络扫描，你可以使用<code>--exlude</code>选项来跳过目标</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap 192.168.1.0/24 --exclude 192.168.1.5
+</span></span><span style="display:flex;"><span>nmap 192.168.1.0/24 --exclude 192.168.1.5 192.168.1.6
+</span></span></code></pre></div><h1 id="扫描机器的系统和网络版本信息">扫描机器的系统和网络版本信息</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -A 192.168.1.254
+</span></span><span style="display:flex;"><span>nmap -v -A 192.168.1.1
+</span></span><span style="display:flex;"><span>nmap -A -iL /tmp/scanlist.txt 
+</span></span></code></pre></div><p><img src="/20181202/p3.png" alt="p3"></p>
+<h1 id="找出防火墙后面的机器">找出防火墙后面的机器</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -sA 192.168.1.254
+</span></span><span style="display:flex;"><span>nmap -sA server1.cyberciti.biz
+</span></span></code></pre></div><h1 id="启动ipv6网络扫描">启动ipv6网络扫描</h1>
+<p>使用<code>-6</code>选项即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -6 IPv6-Address-Here
+</span></span><span style="display:flex;"><span>nmap -6 server1.cyberciti.biz
+</span></span><span style="display:flex;"><span>nmap -6 2607:f0d0:1002:51::4
+</span></span><span style="display:flex;"><span>nmap -v A -6 2607:f0d0:1002:51::4
+</span></span></code></pre></div><h1 id="扫描网段查看有那些设备在运行">扫描网段，查看有那些设备在运行</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -sP 192.168.1.0/24
+</span></span></code></pre></div><p>输出如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Host 192.168.1.1 is up <span style="color:#f92672">(</span>0.00035s latency<span style="color:#f92672">)</span>.
+</span></span><span style="display:flex;"><span>MAC Address: BC:AE:C5:C3:16:93 <span style="color:#f92672">(</span>Unknown<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Host 192.168.1.2 is up <span style="color:#f92672">(</span>0.0038s latency<span style="color:#f92672">)</span>.
+</span></span><span style="display:flex;"><span>MAC Address: 74:44:01:40:57:FB <span style="color:#f92672">(</span>Unknown<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Host 192.168.1.5 is up.
+</span></span><span style="display:flex;"><span>Host nas03 <span style="color:#f92672">(</span>192.168.1.12<span style="color:#f92672">)</span> is up <span style="color:#f92672">(</span>0.0091s latency<span style="color:#f92672">)</span>.
+</span></span><span style="display:flex;"><span>MAC Address: 00:11:32:11:15:FC <span style="color:#f92672">(</span>Synology Incorporated<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Nmap <span style="color:#66d9ef">done</span>: <span style="color:#ae81ff">256</span> IP addresses <span style="color:#f92672">(</span><span style="color:#ae81ff">4</span> hosts up<span style="color:#f92672">)</span> scanned in 2.80 second
+</span></span></code></pre></div><h1 id="快速扫描">快速扫描</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -F 192.168.1.1
+</span></span></code></pre></div><h1 id="仅展示开放的端口">仅展示开放的端口</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap --open 192.168.1.1
+</span></span><span style="display:flex;"><span>nmap --open server1.cyberciti.biz
+</span></span></code></pre></div><h1 id="扫描指定端口">扫描指定端口</h1>
+<p>nmap -p [port] hostName</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">## Scan port 80</span>
+</span></span><span style="display:flex;"><span>nmap -p <span style="color:#ae81ff">80</span> 192.168.1.1
+</span></span></code></pre></div><p>扫描TCP的80端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -p T:80 192.168.1.1
+</span></span></code></pre></div><p>扫描UDP的53端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -p U:53 192.168.1.1
+</span></span></code></pre></div><p>扫描两个端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -p 80,443 192.168.1.1
+</span></span></code></pre></div><p>扫描特定范围的端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -p 80-200 192.168.1.1
+</span></span></code></pre></div><p>使用通配符扫描所搜端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap -p <span style="color:#e6db74">&#34;*&#34;</span> 192.168.1.1
+</span></span></code></pre></div><p>扫描常用的端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nmap --top-ports <span style="color:#ae81ff">5</span> 192.168.1.1
+</span></span><span style="display:flex;"><span>nmap --top-ports <span style="color:#ae81ff">10</span> 192.168.1.1
+</span></span></code></pre></div><p>输出如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Starting Nmap 5.00 <span style="color:#f92672">(</span> http://nmap.org <span style="color:#f92672">)</span> at 2012-11-27 01:23 IST
+</span></span><span style="display:flex;"><span>Interesting ports on 192.168.1.1:
+</span></span><span style="display:flex;"><span>PORT     STATE  SERVICE
+</span></span><span style="display:flex;"><span>21/tcp   closed ftp
+</span></span><span style="display:flex;"><span>22/tcp   open   ssh
+</span></span><span style="display:flex;"><span>23/tcp   closed telnet
+</span></span><span style="display:flex;"><span>25/tcp   closed smtp
+</span></span><span style="display:flex;"><span>80/tcp   open   http
+</span></span><span style="display:flex;"><span>110/tcp  closed pop3
+</span></span><span style="display:flex;"><span>139/tcp  closed netbios-ssn
+</span></span><span style="display:flex;"><span>443/tcp  closed https
+</span></span><span style="display:flex;"><span>445/tcp  closed microsoft-ds
+</span></span><span style="display:flex;"><span>3389/tcp closed ms-term-serv
+</span></span><span style="display:flex;"><span>MAC Address: BC:AE:C5:C3:16:93 <span style="color:#f92672">(</span>Unknown<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Nmap <span style="color:#66d9ef">done</span>: <span style="color:#ae81ff">1</span> IP address <span style="color:#f92672">(</span><span style="color:#ae81ff">1</span> host up<span style="color:#f92672">)</span> scanned in 0.51 seconds
+</span></span></code></pre></div><p>原文地址: <a href="https://www.cyberciti.biz/security/nmap-command-examples-tutorials/amp/?__twitter_impression=true">https://www.cyberciti.biz/security/nmap-command-examples-tutorials/amp/?__twitter_impression=true</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

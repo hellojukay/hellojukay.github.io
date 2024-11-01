@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="此文包含官方推荐的docker镜像编译方式。dockerfile是一个包含一些列有序指令的文件，docker编译镜像的时候会自动读取dockerfile文件中的指令。docker镜像中包含一些只读的层，每一层都是对上一层的覆盖。请看如下的dockerfile
+FROM ubuntu:15.04 COPY . /app RUN make /app CMD python /app/app.py 每个指令都会在原来的镜像的基础上添加一层：
+FROM 在ubuntu:15.04的基础上创建一层 COPY 拷贝当前目录的文件到镜像中 RUN 使用make命令执行命令 CMD 在容器中执行的特殊程序 当启动镜像时候，会在原来的镜像上添加一个新的可以读写的层，并且生成一个容器，在容器中能对该层镜像读写，删除等。 常规指导建议 创建临时容器 dockerfile能够产生临时的容器，并且Dokerfile能够被反复编译成镜像.
+理解编译的上下文 当你在执行docker build命令的时候，当我目录就是编译的上下文件，默认情况下dockerfile应该就在当前目录下，当然也可以在别的目录，通过docker build -f指定Dockefile的文件地址即可。 当执行docker build的时候，上下文(当前目录)所有文件都会被递归的发送给docker daemon进程，在dockerfile中能够使用上下文件中的文件,所以上文的大小也会影响编译时间.
+创建一个空目录当前编译的上下文目录，在上下文中创建名字为hello的文件，创建dockerfile，并且在dockerfile中cat这个hello文件，然后指定编译的上下文目录为当前文件 .。
+mkdir myproject &amp;&amp; cd myproject echo &#34;hello&#34; &gt; hello echo -e &#34;FROM busybox\nCOPY /hello /\nRUN cat /hello&#34; &gt; dockerfile docker build -t helloapp:v1 . 将hello文件和dockerfile分离，我们编译第二个版本的镜像，我们使用 -f来指定dockerfile文件，使用特殊的文件作为编译的上下文目录，而不是使用当前目录。
+mkdir -p dockerfiles context mv dockerfile dockerfiles &amp;&amp; mv hello context docker build --no-cache -t helloapp:v2 -f dockerfiles/dockerfile context 不要讲不必要的文件加入到镜像，他会是增加镜像的体积，进行会增加push镜像和pull镜像的时间，同事也会增加容器运行的大小。当我们在编译dockerfile的时候，我们能够看到当前上下文件的大小:">  
+
+  <title>
+    
+      【翻译】dockerfile最佳实践
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-10-16 00:00:00 &#43;0000 UTC">
+            2018-10-16
+        </time>
+    </p>
+
+    <h1>【翻译】dockerfile最佳实践</h1>
+
+    
+
+    <p>此文包含官方推荐的docker镜像编译方式。dockerfile是一个包含一些列有序指令的文件，docker编译镜像的时候会自动读取dockerfile文件中的指令。docker镜像中包含一些只读的层，每一层都是对上一层的覆盖。请看如下的dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> ubuntu:15.04</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . /app<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> make /app<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> python /app/app.py<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>每个指令都会在原来的镜像的基础上添加一层：</p>
+<ul>
+<li>FROM 在ubuntu:15.04的基础上创建一层</li>
+<li>COPY 拷贝当前目录的文件到镜像中</li>
+<li>RUN 使用make命令执行命令</li>
+<li>CMD 在容器中执行的特殊程序
+当启动镜像时候，会在原来的镜像上添加一个新的可以读写的层，并且生成一个容器，在容器中能对该层镜像读写，删除等。</li>
+</ul>
+<h1 id="常规指导建议">常规指导建议</h1>
+<h2 id="创建临时容器">创建临时容器</h2>
+<p>dockerfile能够产生临时的容器，并且Dokerfile能够被反复编译成镜像.</p>
+<h2 id="理解编译的上下文">理解编译的上下文</h2>
+<p>当你在执行<code>docker build</code>命令的时候，当我目录就是编译的上下文件，默认情况下dockerfile应该就在当前目录下，当然也可以在别的目录，通过<code>docker build -f</code>指定Dockefile的文件地址即可。
+当执行<code>docker build</code>的时候，上下文(当前目录)所有文件都会被递归的发送给docker daemon进程，在dockerfile中能够使用上下文件中的文件,所以上文的大小也会影响编译时间.</p>
+<p>创建一个空目录当前编译的上下文目录，在上下文中创建名字为hello的文件，创建dockerfile，并且在dockerfile中cat这个hello文件，然后指定编译的上下文目录为当前文件 <code>.</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span>mkdir myproject <span style="color:#f92672">&amp;&amp;</span> cd myproject<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>echo <span style="color:#e6db74">&#34;hello&#34;</span> &gt; hello<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>echo -e <span style="color:#e6db74">&#34;FROM busybox\nCOPY /hello /\nRUN cat /hello&#34;</span> &gt; dockerfile<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>docker build -t helloapp:v1 .<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>将hello文件和dockerfile分离，我们编译第二个版本的镜像，我们使用 <code>-f</code>来指定dockerfile文件，使用特殊的文件作为编译的上下文目录，而不是使用当前目录。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-docker" data-lang="docker"><span style="display:flex;"><span>mkdir -p dockerfiles context<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>mv dockerfile dockerfiles <span style="color:#f92672">&amp;&amp;</span> mv hello context<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>docker build --no-cache -t helloapp:v2 -f dockerfiles/dockerfile context<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>不要讲不必要的文件加入到镜像，他会是增加镜像的体积，进行会增加push镜像和pull镜像的时间，同事也会增加容器运行的大小。当我们在编译dockerfile的时候，我们能够看到当前上下文件的大小:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Sending build context to docker daemon  187.8MB
+</span></span></code></pre></div><h2 id="从管道读入dockerfile">从管道读入dockerfile</h2>
+<p>docker 17.05添加从管道读取dockerfile的能力，在早期的dockerfile版本，可以直接从标准输入dockerfile,而不需编译的上下文目录。</p>
+<p>docker 17.04以及更老的版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span>docker build -t foo -&lt;&lt;EOF<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> busybox</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> echo <span style="color:#e6db74">&#34;hello world&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>EOF<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>docker 17.05 以及更新的版本(使用本地目录作为编译上下文)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span>docker build -t foo . -f-&lt;&lt;EOF<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> busybox</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> echo <span style="color:#e6db74">&#34;hello world&#34;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . /my-copied-files<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>EOF<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>docker 17.05 以及更新的版本(使用远程目录作为编译上下文)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span>docker build -t foo https://github.com/thajeztah/pgadmin4-docker.git -f-&lt;&lt;EOF<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> busybox</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> LICENSE config_local.py /usr/local/lib/python2.7/site-packages/pgadmin4/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span>EOF<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="使用dockerignore忽略文件">使用.dockerignore忽略文件</h2>
+<p>在编译的时候，希望提高编译速度，减小编译的上下文目录的大小，可以使用.dockerignore文件来指定需要忽略的文件，他的语法类似于.gitignore文件的语法。</p>
+<h2 id="使用多步骤构建">使用多步骤构建</h2>
+<p>docker 17.05版本以后，不需要竭力去控制编译层数就能大幅度减少镜像的体积大小。docker会利用镜像缓存的方式来减少镜像的大小。当你编译一个多层的镜像的时候，能够通过编排指令的顺序来体用镜像的缓存机制：</p>
+<ol>
+<li>安装依赖工具</li>
+<li>安装和更新程序依赖</li>
+<li>安装应用程序</li>
+</ol>
+<p>一个golang程序的dockerfile如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> golang:1.9.2-alpine3.6 AS build</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Install tools required for project</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Run `docker build --no-cache .` to update dependencies</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apk add --no-cache git<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> go get github.com/golang/dep/cmd/dep<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># List project dependencies with Gopkg.toml and Gopkg.lock</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># These layers are only re-built when Gopkg files are updated</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> Gopkg.lock Gopkg.toml /go/src/project/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /go/src/project/</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Install library dependencies</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> dep ensure -vendor-only<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># Copy the entire project and build it</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># This layer is rebuilt when a file changes in the project directory</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . /go/src/project/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> go build -o /bin/project<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#75715e"># This results in a single layer image</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> scratch</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> --from<span style="color:#f92672">=</span>build /bin/project /bin/project<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENTRYPOINT</span> [<span style="color:#e6db74">&#34;/bin/project&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;--help&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="减少非必要软件包">减少非必要软件包</h2>
+<p>如非必要，不要安装你不会用到的软件包，这能帮你降低镜像的体积大小。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

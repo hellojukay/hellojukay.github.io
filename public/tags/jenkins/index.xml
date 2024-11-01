@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jenkins on 润物细无声</title>
+    <link>http://localhost:1313/tags/jenkins/</link>
+    <description>Recent content in Jenkins on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 22 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/jenkins/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>解决 jenkins 根据 git tag 自动触发构建的问题</title>
+      <link>http://localhost:1313/posts/2020/20200622/</link>
+      <pubDate>Mon, 22 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200622/</guid>
+      <description>官方提供了两个 tag 触发构建的方法&#xA;stage(&amp;#34;xx&amp;#34;) { when tag &amp;#34;v* steps { } } 和 ```jenkinsfille stage(&amp;#34;xx&amp;#34;){ when { buildingTag() } steps { } } 以上两种写法都无法在 git push &amp;ndash;tags 以后自动触发，需要人工点击触发。 解决方案：安装 Basic Branch Build Strategies 插件,配置好 discover tags ,配置好轮训时间或者 webhook</description>
+    </item>
+    <item>
+      <title>jenkins 在 k8s 中构建的几种写法</title>
+      <link>http://localhost:1313/posts/2019/20191113-1/</link>
+      <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191113-1/</guid>
+      <description>jenkins 结合 k8s 插件能够在 k8s 集群中构建代码，这个非常方便。这里总结一下集中结合 k8s 的用法。&#xA;界面配置 template 在 jenkins 设置界面配置好 template 设置好标签以后，就能在 jenkinsfile 中使用这个节点了。如下：&#xA;pipeline { agent { label &amp;#34;k8s&amp;#34; } stages { stage(&amp;#34;test&amp;#34;){ steps { container(&amp;#34;node&amp;#34;){ echo &amp;#34;Hello World&amp;#34; } } } } } 这里使用 k8s 这个 template 来启动构建环境，并且使用容器名字为 node 的容器。&#xA;jenkinsfile 引入template 文件 在项目的其他文件中定义好 k8s 的 pod 文件，然后在 agent 中通过 yamlFile 指令导入进来&#xA;agent { kubernetes { yamlFile &amp;#34;k8s_pod.yml&amp;#34; } } jenkinsfile 直接定义 template podTemplate(containers: [ containerTemplate(name: &amp;#39;maven&amp;#39;, image: &amp;#39;maven:3.</description>
+    </item>
+    <item>
+      <title>jenkins 在不同的 stage 之间共享文件</title>
+      <link>http://localhost:1313/posts/2019/20191113/</link>
+      <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191113/</guid>
+      <description>在使用 k8s 或者 docker 作为 jenkins 的 slave 的时候，会出现一个问题：两个 stage 可能不再同一个机器，或者不再同一个目录上，stage A 中编译的 dist 文件， stage B 中部署需要用到的时候当前目录无法找到 dist 文件。解决方式是使用 stash 和 unstash&#xA;stage(&amp;#34;npm build&amp;#34;) { when { branch &amp;#34;dev&amp;#34; } steps { sh &amp;#34;&amp;#34;&amp;#34; npm run deploy &amp;#34;&amp;#34;&amp;#34; stash includes: &amp;#39;dist/**/*&amp;#39;, name:&amp;#39;npm_dist&amp;#39; } } stage(&amp;#34;ansible deploy&amp;#34;) { when { branch &amp;#34;dev&amp;#34; } agent { docker { image &amp;#34;ansible:1.2.11&amp;#34; } } steps { unstash &amp;#39;npm_dist&amp;#39; script { if (fileExists(&amp;#39;dist.zip&amp;#39;)) { sh(&amp;#39;rm -f dist.</description>
+    </item>
+    <item>
+      <title>从交付角度审视 jenkins</title>
+      <link>http://localhost:1313/posts/2019/20191105/</link>
+      <pubDate>Tue, 05 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191105/</guid>
+      <description>之前做过一段时间的2B产品的交付，感觉并没有像2C产品交付那样容易。同时最近使用 jenkins 比较多，发现 jenkins 在软件部署，升级上都比较方便，有一些值得学习的地方。&#xA;支持系统 因为是使用 java + groovy 开发，所以 jenkins 支持所有能够运行 JVM 虚拟机的系统，包括 windows 和 unix like.&#xA;安装方式 使用包管理用具安装&#xA;yum apt pacman 用户自定义 jar , war 运行 升级方式 和安装方式一样，升级也使用包管理工具进行升级，版本之间的差异使用升级脚本解决,可以参考 deb,或者 rpm 包的制作方式.插件之间如果存在版本兼容问题，jenkins 会在插件管理界面提示出来。&#xA;进程管理 使用系统自带的进程管理工具&#xA;service systemd 这样做的好处避免了手动执行 java 命令启动进程，或者 kill 关闭进程，与操作系统上其他系统保持一致的运行规则，也支持开机自动启动。&#xA;系统依赖 jenkins 的安装包内置 java 虚拟机，所以基本只要下载了 deb 以后就能安装,安装非常简单。运行期间，配置信息使用 xml 格式保存在本地磁盘，所以不需要安装数据库。jenkins 的配置都保存在 JENKINS_HOME 中，所以对于运维来说，备份文件非常简单。&#xA;扩展方式 jenkins 使用插件的方式来扩展本身的功能, 提供开放 api , 用户可以开发自定义插件.插件安装可以从网络安装(可指定网站源), 也可以手动上传插件包。&#xA;服务扩容 jenkins 使用 master + slave 的架构，master 管理配置，调度任务， slave 负责执行任务。</description>
+    </item>
+    <item>
+      <title>jenkins 最佳实践</title>
+      <link>http://localhost:1313/posts/2019/20190918/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190918/</guid>
+      <description>安全使用 jenkins&#xA;在一个大型组织中，不要使用 master 构建&#xA;日常备份 jenkins 的 home 目录&#xA;限制项目的名字位大小写字母加下划线和数字(复杂的名字导致一些插件无法工作)&#xA;使用文件指纹管理依赖&#xA;最好的构建在清楚构建换粗以后从源代码能重新构建成功&#xA;使用信息追踪信息来管理 jenkins changelog&#xA;使用版本管理工具 git 或者 svn&#xA;java 项目在构建应该生成自动测试的报告&#xA;让 jenkins 运行在较大的磁盘上&#xA;不要直接删除无用的构建，将他们移动到特定目录&#xA;不同的分支处理不同的构建情况&#xA;保证信息安全&#xA;不要在同时开启所有构建&#xA;将构建信息邮件通知给所有团队成员&#xA;尽快的反馈失败信息&#xA;构建之后清理工作空间，避免写满磁盘&#xA;每次构建成功以后应该做个标记</description>
+    </item>
+    <item>
+      <title>jenkins pipeline 跳过特殊 commit 的方法</title>
+      <link>http://localhost:1313/posts/2019/20190911/</link>
+      <pubDate>Wed, 11 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190911/</guid>
+      <description>有时候一些 git commit 是由机器人提交的，或者类似于 maven release 插件提交的代码，我们不希望他触发 jenkins 构建。&#xA;方法1：使用 expression 判断 commit 信息&#xA;pipeline { agent { label &amp;#34;jks-web&amp;#34; } stages { stage(&amp;#34;git fetch&amp;#34;) { steps { echo &amp;#34;git fetch&amp;#34; } } stage(&amp;#34;build&amp;#34;) { when { expression { !sh(script: &amp;#34;git log -1&amp;#34;,returnStdout: true).contains(&amp;#34;skip&amp;#34;) } } steps { echo &amp;#34;build&amp;#34; } } } } 方法2: 使用 changelog 的正则表达式来配置 commit&#xA;pipeline { agent { label &amp;#34;jks-web&amp;#34; } stages { stage(&amp;#34;git fetch&amp;#34;) { steps { echo &amp;#34;git fetch&amp;#34; } } stage(&amp;#34;build&amp;#34;) { when { not { changelog &amp;#39;.</description>
+    </item>
+    <item>
+      <title>jenkins k8s 编译 golang 遇到 vendor 的坑</title>
+      <link>http://localhost:1313/posts/2019/20190829/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190829/</guid>
+      <description>将当前项目 link 到 /go/src/github.com/project,将 vendor 复制到 /go/src/&#xA;stage(&amp;#34;go build&amp;#34;) { steps { container(&amp;#34;golang&amp;#34;) { sh &amp;#34;&amp;#34;&amp;#34; cp vendor/* /go/src/ -rf mkdir -p /go/src/github.com/project ln -s `pwd` /go/sr/github.com/project cd /go/src/github.com/project &amp;amp;&amp;amp; go build &amp;#34;&amp;#34;&amp;#34; } } } 参考链接：&#xA;https://github.com/jenkinsci/kubernetes-plugin </description>
+    </item>
+    <item>
+      <title>Jenkins 的 ssh agent 插件不支持 OPENSSH 格式密钥</title>
+      <link>http://localhost:1313/posts/2019/20190815/</link>
+      <pubDate>Thu, 15 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190815/</guid>
+      <description>错误现象 在使用 jenkins 的 sshagent 插件克隆 git 项目的时候总是报错，错误信息如下：&#xA;[ssh-agent] Looking for ssh-agent implementation&amp;hellip; [ssh-agent] Exec ssh-agent (binary ssh-agent on a remote machine) $ ssh-agent SSH_AUTH_SOCK=/tmp/ssh-Z8Y4g9m9lpwe/agent.22129 SSH_AGENT_PID=22131 Running ssh-add (command line suppressed) ssh_askpass: exec(/home/chengwei01/jenkins_home/workspace/in-fe_lanxin-pm_test_devops-MR4H5L6MQSZH3QCWWF74KA7SSTTG3JCFV4U2YDOLKBT3MDGFXW2Q/lanxin-mis@tmp/askpass_5624886618215863559.sh): No such file or directory 解决过程&#xA;根据 google 搜索得到的信息是: ssh 密钥配置错误。但是重新生成了好多次密钥都不对。我怀疑是不是不支持某种格式的加密方式，于是去看私密钥的格式，反复对比密钥文件发现，私钥头部申明信息不一样。&#xA;有效的私钥&#xA;-----BEGIN RSA PRIVATE KEY----- ............................... -----END RSA PRIVATE KEY----- 无效的私钥&#xA;-----BEGIN OPENSSH PRIVATE KEY----- ......................... -----END OPENSSH PRIVATE KEY----- 开头和结尾的申明不同，也就说明这两种的密钥格式不一样，于是我上网查了一下，看到 http://www.panwenbin.com/ 里面介绍，这其实是密钥的两种不同格式，可以相互转换，我尝试转换了一下当前的私钥(一下私钥为假数据)&#xA;[hellojukay@local ~]$ ssh-keygen -p -m PEM -f test [hellojukay@local ~]$ cat test -----BEGIN RSA PRIVATE KEY----- MIIEpAIBAAKCAQEA4cDRUJjKc2zjw07SgUulKbK966ki/hqL8L2s2PJ6tDjKH8X7 x5UoT3GMu9CQjFIJ+rw34Yk4zwJt192zxCbI7Zlltd9Er8dLiczubkf4wJxjgXYC okhBhhOZ0pNdm43DrpChyk5SogXP61Erjej6qxMyyMQjNcy7xAhC9X7b1yKH+8Hh gajRZUSdf0+3CgBpxZS2CHjBgS3mtLMWoE8tk3uK6S6N/3d2tSzgRTDvWkl0ooKN UeUk7kPyc/UnfUZZVyAotk4TtjSxlKrtvFoflL9WbFl09xH3uAkqolz872RN78XS 6VopBGWL2hNAvnIczFK2F3C/syGQOA91c9VeXwIDAQABAoIBAEopBlncp3z9g2DQ jvRsfihRkHRPDrC81cXS+WoXVdnIYhXH+ysYQ7K9UYcNP77o4GBe3liXtHLEkIL+ UKSaPR1YbAIwAydfZ+Av0w+lUwErHsETnE/lPqkl3T1ArdqA2oyI9K05x4l0MVZT RuSKaXYzi1ZKoGp3BCOktyJgdyWXkykAkVexfyGofCZu+tJoLAvsU8ZLYj7EgIr2 QyEa9r7Pgmixq0HQuYRSGMBxDS5LEDqe/RpnaThM6KNYT9ob+Cj7xMq916QMsGqo GF4raTV5fY3dOzu18Tg91e83ipt4GWvpyUo0O9RE2x8DYDLtAnDQ3AZO0r4QbeYw 3j0HO2ECgYEA/30euI6gf+OyGs8AUFwL/AzP2xjO3HJ+sKoJ8QCfcQVeVE2Fkbj4 Kh7tdOIyJ0xrY+sw3O28rr6H9+5PxK8Zz3jUSG6uuXHBxYzDAoJr6HQhoJduRr0t DRphMWPBXkIpdW9sMO7upGCfF1VTjD7Xyih+2N3FRwcsp8NAuxDeclECgYEA4jR3 BEZLdOpfJ+P2fVC0xWsdfsdsdfertDrghjkStbJd1oPUaWeXB485i2QFK9/e0fKU uLXRo3Vs8LWB9eQplh3XqB/sSE0sRbtkv+eKdTAEtZDekCkdL2ok2aNIZbH3SF8E cZH/23AHk8HyEpNyQgS8M/3QCRCQWMhYGVZCaa8CgYEAv3kp+O8LYk1nQag5eABE CxYfAPjKr3Qvdn85DCGHXNDFLTEcFWYmtoqPM7YCGGmxYiT1bd3ONrgcdrdnmOQR 1+eaUN6CnAChVEh2Lf9Il+HRAeX7g5BrnxJSHQ3B8b5sC9MBpnqq5w5yrK4J+2Vt m9hVmHo8S0sZMHGopYmy7MECgYBIzqY4JAAJg55ZEpC1yRJGLZSEe9fQgTbDlNgi Gq96IA0ADLKDsqnz7u+QpALeGlJ3tOKViUAOoq8L0wAfiu6vuK8/F/dPVjeXwjct ZXM1QN1jK1vXfsQ8DKgLvPiCcwOqsZqWi22UzbxCnLwzqm2uPiPtgBZDtKchTGq+ zPrXVQKBgQCx59ITBMRrAGQTl5Rcb6eM8HLRdIGsi5PM1KqA6Lxoq4bZ6yKSRGKY Z/DIlZ5pLgSxkW8UJ5BO7TUhIMC94v9PgHMTOAdlYzfHwcWPHD625A5c6tfzBt4g OlzxKS+AuvH0szDQ28oprkSEAbWogGcOi1mW9VuOOB4QbwAgMrVtHA== -----END RSA PRIVATE KEY----- 密钥格式修改成功，更新到 jenkins 重试成功,当前 Jenkins 使用的 SSH Agent Plugin 插件版本位 1.</description>
+    </item>
+    <item>
+      <title>jenkins 结合 k8s 动态构建</title>
+      <link>http://localhost:1313/posts/2019/20190722/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190722/</guid>
+      <description>第一步：在 jenkins 上安装 k8s 插件 第二步: 在 jenkins 上配置 k8s 插件，在系统设置中添加&amp;quot;云&amp;quot; 第三步: 第二部中需要添加凭证信息，制作方式如下：&#xA;[licong@k8s01v pki]$ pwd /etc/kubernetes/pki [licong@k8s01v pki]$ ls -al 总用量 60 drwxr-xr-x 3 root root 4096 7月 17 13:55 . drwxr-xr-x 4 root root 125 7月 17 13:56 .. -rw-r--r-- 1 root root 1249 7月 17 13:55 apiserver.crt -rw-r--r-- 1 root root 1090 7月 17 13:55 apiserver-etcd-client.crt -rw------- 1 root root 1675 7月 17 13:55 apiserver-etcd-client.key -rw------- 1 root root 1679 7月 17 13:55 apiserver.</description>
+    </item>
+    <item>
+      <title>jenkins DSL 操作 artifactory</title>
+      <link>http://localhost:1313/posts/2019/20190702/</link>
+      <pubDate>Tue, 02 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190702/</guid>
+      <description>之前一直是使用 artifactory 的 rest api 来远程自动化操作 artiactory ，传个文件都需要使用 curl 命令，我觉得很不友好，于是搜了一下，发现 artifactory 提供了 jenkins 的插件，只是 DSL 的语法来操作 artifactory,在 jenkins 的全局配置中配置好了 artifactory 后就可以使用了， 例如上传一个文件:&#xA;rtUpload ( serverId: &amp;#34;Artifactory-1&amp;#34;, spec: &amp;#34;&amp;#34;&amp;#34;{ &amp;#34;files&amp;#34;: [ { &amp;#34;pattern&amp;#34;: &amp;#34;./*froggy*.zip&amp;#34;, &amp;#34;target&amp;#34;: &amp;#34;{repo}/{dir}/&amp;#34; } ] }&amp;#34;&amp;#34;&amp;#34; ) 更多的语法可以看 artifactory 的官网: https://www.jfrog.com/confluence/display/RTF/Working+With+Pipeline+Jobs+in+Jenkins</description>
+    </item>
+    <item>
+      <title>jenkins pipeline 中 clone 一个 git 库</title>
+      <link>http://localhost:1313/posts/2019/20190701/</link>
+      <pubDate>Mon, 01 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190701/</guid>
+      <description>目前找到了 4 种方式&#xA;方式1:&#xA;stage(&amp;#39;git clone&amp;#39;) { steps { sh &amp;#39;mkdir -p Module1&amp;#39; dir(&amp;#34;Module1&amp;#34;){ git branch: &amp;#34;1.0/develop&amp;#34;, credentialsId: &amp;#39;{credentialsId}&amp;#39;, url: &amp;#39;{gitrepo}&amp;#39; } sh &amp;#39;ls -al Module1&amp;#39; } } 方式2：&#xA;在 jenkins 的构建节点上配置好 git 仓库的 ssh 你要，然后使用 ssh 认证的方式来 clone&#xA;git clone {repo} Module1 方式3: 使用 https 方式认证，在 url 中擦入账号和密码&#xA;stage(&amp;#39;拉取devops-deploy&amp;#39;) { sh &amp;#34;if [ -d ${devops_deploy} ]; then rm -rf ${devops_deploy}; fi&amp;#34; withCredentials([usernamePassword(credentialsId: &amp;#39;{credentialsId}&amp;#39;, passwordVariable: &amp;#39;GIT_PASSWORD&amp;#39;, usernameVariable: &amp;#39;GIT_USERNAME&amp;#39;)]) { def u = URLEncoder.</description>
+    </item>
+    <item>
+      <title>jenkins slave 清理过期镜像的方法</title>
+      <link>http://localhost:1313/posts/2019/20190522/</link>
+      <pubDate>Wed, 22 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190522/</guid>
+      <description>jenkins 上一直在不停的构建新的镜像，导致镜像越来越多，写满了 /var/lib/docekr 所在的分区，所以我们需要定期的清理多余的镜像。&#xA;一般的，我们在开发周期构建镜像的时候，没有修改过镜像的版本号码，一个进行不停的 retag , 这样老的镜像的 tag 就会被覆盖，tag　变成 none。&#xA;node 8 0bf36d7ccc1e 4 weeks ago 895MB maven 3-jdk-8 f44a5194086a 5 weeks ago 636MB &amp;lt;none&amp;gt; &amp;lt;none&amp;gt; 6752e2093697 5 weeks ago 12.9MB swaggerapi/swagger-ui latest 6f941e6fd913 5 weeks ago 51.7MB 这种 tag 为 none 的镜像就已经可以删除了。 jenkins 上可以创建如下任务来删除这些没有作用的镜像。&#xA;pipeline { agent { label &amp;#34;node1&amp;#34; } stages { stage(&amp;#34;clean images with tag none&amp;#34;){ steps { parallel( node1: { sh(&amp;#34;docker image ls | grep none | awk &amp;#39;{print \$3}&amp;#39; | xargs -I {} docker rmi {} || true&amp;#34;) }, node2:{ sh(&amp;#34;docker image ls | grep months | awk &amp;#39;{print \$3}&amp;#39; | xargs -I {} docker rmi {} || true&amp;#34;) }) } } } } </description>
+    </item>
+    <item>
+      <title>使用 prometheus 监控 jenkins</title>
+      <link>http://localhost:1313/posts/2019/20190517/</link>
+      <pubDate>Fri, 17 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190517/</guid>
+      <description>为了看到大家每日的构建情况， 我们决定把 jenkins 监控起来。将监控指标在 grafana 上展示出来。我们采用 promthues 抓取和存储数据， 使用 jenkins 的 promtheus 插件来暴露数据。&#xA;jenkins 的 prometheus 插件地址: https://wiki.jenkins.io/display/JENKINS/Prometheus+Plugin&#xA;配置 promtheus 抓取任务&#xA;- job_name: &amp;#39;jenkins&amp;#39; metrics_path: &amp;#39;/prometheus/&amp;#39; scheme: https bearer_token: bearer_token static_configs: - targets: [&amp;#39;jenkins-server:443&amp;#39;] 最后我们配置一下 grafana 的展示面板 https://grafana.com/dashboards/9964</description>
+    </item>
+    <item>
+      <title>在 Jenkinsfile 的 sh 中执行 awk</title>
+      <link>http://localhost:1313/posts/2019/20190508/</link>
+      <pubDate>Wed, 08 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190508/</guid>
+      <description>在 Jenkinsfile 中如果要执行 awk :&#xA;sh(&amp;#34;ls -al | awk &amp;#39;{print $3}&amp;#39;&amp;#34;) 这么写可能会报错， 因为 $3 被 groovy 认为是要替换字符传， 当前上下文中并没有 3 这个变量，所以会报错。&#xA;解决这个问题的方式如下:&#xA;sh &amp;#34;&amp;#34;&amp;#34; ls -al | awk &amp;#39;{print \$3}&amp;#39; &amp;#34;&amp;#34;&amp;#34; 2020年01月15日更新 有同学的docker用户名中包含了 $ 符号，也可以用相同的方法来解决&#xA;sh &amp;#34;&amp;#34;&amp;#34; echo ${PASSWD} | docker -u \$xxx --password-stdin &amp;#34;&amp;#34;&amp;#34; 参考文档:&#xA;https://blog.isntall.us/node/34 https://stackoverflow.com/questions/43451380/right-syntax-using-command-sh-in-jenkinsfile </description>
+    </item>
+    <item>
+      <title>CI工具介绍</title>
+      <link>http://localhost:1313/posts/2018/20181105/</link>
+      <pubDate>Mon, 05 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181105/</guid>
+      <description>每天都在使用Jenkins自动编译的功能，你是否了解Jenkins这个开源项目的历史，你是否还了解过其他的集成构建系统呢？这篇文章将会简单的介绍以上内容。&#xA;Jenkins的历史 2007年sun公司开启了集成构建平台Hudson项目，并且将他开源出来，因为它安装友好，配置简单，并且天然的支持java语言，所以这个项目很快的流行开来，并且打败了诸多老牌对手，成为炙手可热的的明星项目。好景不长，此时的sun公司已经不如九十年代那么辉煌，2009年，Oracle收购了sun。Oracle为Hudson申请了商标，并且开始商业化推广，社区对于Oracle的行为深恶痛绝, 因此产生了矛盾。&#xA;2011年，社区有人提议将Hudson改名为Jenkins来规避商标问题，提议很快就被采纳了，开发者在github上创建Jenkins的项目,并将代码迁移了过来，Hudson的开发者开发也慢慢往Jenkins迁移。所以现在你能够在Jenkins上看到不少Hudson的代码。Oracle宣布会继续维护项目，但是，同年失去了开发者的Hudson就被捐赠给Eclipse基金会，以此来讨好java开发者，希望能够继续吸收开源社区的养分。 事情发展到了今天，Hudson与Jenkins已经不可同日而语了，不管是社区的成熟度还是产品本身，Jenkins都遥遥领先。&#xA;其他明星工具 同样是在2011年，在德国柏林的一家公司推出一款名字叫做Travis CI的企业级集成构建服务，并且他也推出了支持github的免费社区版本。跟随github的快速发展，Travis CI也越来越受到开源社区的欢迎。到现在Travis CI与github已经是相互促进，协调发展。&#xA;为了拉拢开发者，github的敌对公司gitlab不甘示弱，迅速推出了gitlab ci。现在gitlab ci已经支持Docker,AutoDevOps等高级功能，在企业级用户中也非常受欢迎。</description>
+    </item>
+    <item>
+      <title>【翻译】在jenkins流水线使用docker</title>
+      <link>http://localhost:1313/posts/2018/20180816/</link>
+      <pubDate>Sat, 16 Jun 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180816/</guid>
+      <description>许多团队和组织使用docker来跨平台的测试，构建，发布他们的项目, docker提供了非常好高效的部署效率。Jenkins 在2.5版本以后加入了pipeline功能,pipeline支持在Jenkinsfile里面执行docker相关的操作。本文将会介绍在Jenkinsfile中执行docker的相关操作。&#xA;自定义执行环境 pipeline能够使用一个docker image指定执行环境，既可以为整个pipeline指定指定环境，也可以为单个stage指定执行环境。&#xA;pipeline { agent { docker {image: &amp;#39;node:7-alpine&amp;#39;} } stages { stage(&amp;#39;test&amp;#39;){ steps{ sh &amp;#39;node --version&amp;#39; } } } } 当这个pipeline执行的时候，Jenkins会自动的启动一个容器来执行指定的steps&#xA;[Pipeline] stage [Pipeline] { (Test) [Pipeline] sh [guided-tour] Running shell script + node --version v7.4.0 [Pipeline] } [Pipeline] // stage [Pipeline] } 为容器缓存数据 许多的构建工具会下载一些外部的依赖并且缓存到本地，将来再次构建的时候会用到这些数据。pipeline支持传递自定义参数给docker命令，允许在docker执行的挂载本地的文件，这个能够缓存容器执行过程产生的数据.例如：maven构建过程中会缓存数据到~/.m2这个文件夹中。&#xA;pipeline { agent { docker { image: &amp;#39;maven:2-alpine&amp;#39; args: &amp;#39;-v $HOME/.m2:/root/.m2&amp;#39; } } stages { stage { steps { sh &amp;#39;mvn -B&amp;#39; } } } } 使用多种容器 一个项目可能使用java写后端，使用javascript写前端，我们要运行他，就需要在不同的stage中使用相应的容器。</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在这篇文章中将会介绍常用的JVM参数配置，以及每个参数的含义。
+配置堆内存 每一JVM应用程序都有一个非常重要的配置，堆内存的配置，它影响这应用程序执行的性能。我们可以给程序配置一个最小的启动内存和最大占用内存的限制。就如下：
+-Xms&lt;heap size&gt;[unit] -Xmx&lt;heap size&gt;[unit] 这里的单位是内存初始化的单位支持g,m,k.g也就是GB，m也就是MB,k也就是KB。例如，我们可以设置最小启动内存为2GB，最大堆内存为5Gb，启动时候添加参数如下：
+-Xms2G -Xmx5G 在Java 8 中MetaSpace的大没有设置，如果它打包了全局配置的最大值，JVM回去自动增涨它。如果要克服这个不稳定的问题，我们需要设置:
+-XX:MaxMetaspaceSize=&lt;metaspace size&gt;[unit] 这里MetaspaceSize表示我们配置给MetaSpace区的内存大小。在JVM设置中，内存第二个重要的地方是这是JVM年轻代gc的限制大小，默认gc的最小大小是1310MB，最大值则没有限制，设置方法如下:
+-XX:NewSize=&lt;young size&gt;[unit] -XX:MaxNewSize=&lt;young size&gt;[unit] 垃圾回收 为了有一个更加稳定的服务，选择一个合适的垃圾回收算法非常重要。JVM有许多种垃圾回收算法:
+Serial Garbage Collector Parallel Garbage Collector CMS Garbage Collector G1 Garbage Collector 选择哪一种实现，可以使用如下方式指定: -XX:&#43;UseSerialGC -XX:&#43;UseParallelGC -XX:&#43;USeParNewGC -XX:&#43;UseG1GC 更多关于垃圾回收的介绍请查看https://www.baeldung.com/jvm-garbage-collectors。
+GC日志 为了监控应用的监控情况，我们必须检查JVM的GC情况，最简单的方式将GC日志输出为便于阅读的形式,如何配置能够打印GC日志：
+-XX:&#43;UseGCLogFileRotation -XX:NumberOfGCLogFiles=&lt; number of log files &gt; -XX:GCLogFileSize=&lt; file size &gt;[ unit ] -Xloggc:/path/to/gc.log UseGCLogFileRotation指定了GC日志文件创建策略，就想log4j,sl4j一样。NumberOfGCLogFiles指定的是单个JVM应用在其生命周期中最多能创建GC日志文件的数量。GCLogFileSize指定GC日志单个文件体积最大值,loggc指定了日子文件的路径。
+要说明的是，这里还有个JVM关于GC日志的参数，他们控制日志打印的时间，分别是：XX:&#43;PrintGCTimeStamps和XX:&#43;PrintGCDateStamps。
+例如：我们要定义,GC日志数量最多100个文件，单个文件的最大体积是50M,日志打印的路径是/home/user/log,我们可以使用如下的配置:
+-XX:&#43;UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=50M -Xloggc:/home/user/log/gc.log 控JVM GC是需要一个单独的线程在后台执行的，他会消耗一部分的性能，这个是你要注意的地方。
+处理内存溢出问题 一个非常大的问题是：JVM应用程序都会面临着内存溢出的问题，导致程序中途crash，这样的问题非常难以复现，以至于很难去找到问题的原因。
+JVM提供了一些参数，保证程序在内存溢出的时候能够将当前的堆信息保存在磁盘上，以至于你事后能更具这个快照信息找到问题根源：
+-XX:&#43;HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=./java_pid&lt;pid&gt;.hprof -XX:OnOutOfMemoryError=&#34;&lt; cmd args &gt;;&lt; cmd args &gt;&#34; -XX:&#43;UseGCOverheadLimit HeapDumpOnOutOfMemoryError表示dump堆信息到磁盘，HeapDumpPath是这只dump文件的文件路径和文件名，可以是任意的文件名，如果文件名中包含&lt;pid&gt;，会被替换成JVM应用的pid。OnOutOfMemoryError是在发送内存溢出的时候执行的命令，例如：我想在内存溢出的时候重启服务器。">  
+
+  <title>
+    
+      【翻译】JVM虚拟机参数介绍
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-26 00:00:00 &#43;0000 UTC">
+            2018-11-26
+        </time>
+    </p>
+
+    <h1>【翻译】JVM虚拟机参数介绍</h1>
+
+    
+
+    <p>在这篇文章中将会介绍常用的JVM参数配置，以及每个参数的含义。</p>
+<h1 id="配置堆内存">配置堆内存</h1>
+<p>每一JVM应用程序都有一个非常重要的配置，堆内存的配置，它影响这应用程序执行的性能。我们可以给程序配置一个最小的启动内存和最大占用内存的限制。就如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-Xms&lt;heap size&gt;<span style="color:#f92672">[</span>unit<span style="color:#f92672">]</span> 
+</span></span><span style="display:flex;"><span>-Xmx&lt;heap size&gt;<span style="color:#f92672">[</span>unit<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>这里的单位是内存初始化的单位支持<code>g</code>,<code>m</code>,<code>k</code>.<code>g</code>也就是GB，<code>m</code>也就是<code>MB</code>,<code>k</code>也就是<code>KB</code>。例如，我们可以设置最小启动内存为2GB，最大堆内存为5Gb，启动时候添加参数如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-Xms2G -Xmx5G
+</span></span></code></pre></div><p>在Java 8 中<code>MetaSpace</code>的大没有设置，如果它打包了全局配置的最大值，JVM回去自动增涨它。如果要克服这个不稳定的问题，我们需要设置:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:MaxMetaspaceSize<span style="color:#f92672">=</span>&lt;metaspace size&gt;<span style="color:#f92672">[</span>unit<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>这里MetaspaceSize表示我们配置给MetaSpace区的内存大小。在JVM设置中，内存第二个重要的地方是这是JVM年轻代gc的限制大小，默认gc的最小大小是1310MB，最大值则没有限制，设置方法如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:NewSize<span style="color:#f92672">=</span>&lt;young size&gt;<span style="color:#f92672">[</span>unit<span style="color:#f92672">]</span> 
+</span></span><span style="display:flex;"><span>-XX:MaxNewSize<span style="color:#f92672">=</span>&lt;young size&gt;<span style="color:#f92672">[</span>unit<span style="color:#f92672">]</span>
+</span></span></code></pre></div><h1 id="垃圾回收">垃圾回收</h1>
+<p>为了有一个更加稳定的服务，选择一个合适的垃圾回收算法非常重要。JVM有许多种垃圾回收算法:</p>
+<ul>
+<li>Serial Garbage Collector</li>
+<li>Parallel Garbage Collector</li>
+<li>CMS Garbage Collector</li>
+<li>G1 Garbage Collector
+选择哪一种实现，可以使用如下方式指定:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:+UseSerialGC
+</span></span><span style="display:flex;"><span>-XX:+UseParallelGC
+</span></span><span style="display:flex;"><span>-XX:+USeParNewGC
+</span></span><span style="display:flex;"><span>-XX:+UseG1GC
+</span></span></code></pre></div><p>更多关于垃圾回收的介绍请查看<a href="https://www.baeldung.com/jvm-garbage-collectors">https://www.baeldung.com/jvm-garbage-collectors</a>。</p>
+<h1 id="gc日志">GC日志</h1>
+<p>为了监控应用的监控情况，我们必须检查JVM的GC情况，最简单的方式将GC日志输出为便于阅读的形式,如何配置能够打印GC日志：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:+UseGCLogFileRotation 
+</span></span><span style="display:flex;"><span>-XX:NumberOfGCLogFiles<span style="color:#f92672">=</span>&lt; number of log files &gt; 
+</span></span><span style="display:flex;"><span>-XX:GCLogFileSize<span style="color:#f92672">=</span>&lt; file size &gt;<span style="color:#f92672">[</span> unit <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>-Xloggc:/path/to/gc.log
+</span></span></code></pre></div><p><code>UseGCLogFileRotation</code>指定了GC日志文件创建策略，就想log4j,sl4j一样。<code>NumberOfGCLogFiles</code>指定的是单个JVM应用在其生命周期中最多能创建GC日志文件的数量。<code>GCLogFileSize</code>指定GC日志单个文件体积最大值,<code>loggc</code>指定了日子文件的路径。</p>
+<p>要说明的是，这里还有个JVM关于GC日志的参数，他们控制日志打印的时间，分别是：<code>XX:+PrintGCTimeStamps</code>和<code>XX:+PrintGCDateStamps</code>。</p>
+<p>例如：我们要定义,GC日志数量最多100个文件，单个文件的最大体积是50M,日志打印的路径是<code>/home/user/log</code>,我们可以使用如下的配置:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:+UseGCLogFileRotation  
+</span></span><span style="display:flex;"><span>-XX:NumberOfGCLogFiles<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>-XX:GCLogFileSize<span style="color:#f92672">=</span>50M 
+</span></span><span style="display:flex;"><span>-Xloggc:/home/user/log/gc.log
+</span></span></code></pre></div><p>控JVM GC是需要一个单独的线程在后台执行的，他会消耗一部分的性能，这个是你要注意的地方。</p>
+<h1 id="处理内存溢出问题">处理内存溢出问题</h1>
+<p>一个非常大的问题是：JVM应用程序都会面临着内存溢出的问题，导致程序中途crash，这样的问题非常难以复现，以至于很难去找到问题的原因。</p>
+<p>JVM提供了一些参数，保证程序在内存溢出的时候能够将当前的堆信息保存在磁盘上，以至于你事后能更具这个快照信息找到问题根源：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:+HeapDumpOnOutOfMemoryError 
+</span></span><span style="display:flex;"><span>-XX:HeapDumpPath<span style="color:#f92672">=</span>./java_pid&lt;pid&gt;.hprof
+</span></span><span style="display:flex;"><span>-XX:OnOutOfMemoryError<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&lt; cmd args &gt;;&lt; cmd args &gt;&#34;</span> 
+</span></span><span style="display:flex;"><span>-XX:+UseGCOverheadLimit
+</span></span></code></pre></div><p><code>HeapDumpOnOutOfMemoryError</code>表示dump堆信息到磁盘，<code>HeapDumpPath</code>是这只dump文件的文件路径和文件名，可以是任意的文件名，如果文件名中包含<code>&lt;pid&gt;</code>，会被替换成JVM应用的pid。<code>OnOutOfMemoryError</code>是在发送内存溢出的时候执行的命令，例如：我想在内存溢出的时候重启服务器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-XX:OnOutOfMemoryError<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;shutdown -r&#34;</span>
+</span></span></code></pre></div><p><code>UseGCOverheadLimit</code>设置GC消失时间的百分比限制，如果GC时间过长，超过了这个限制，那么就会触发内存溢出错误。</p>
+<h1 id="3264设置">32/64设置</h1>
+<p>JVM有一种运行模式：32模式，64模式。JVM默认是使用32模式运行。如果你要设置他，可以这样设置:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-d&lt;OS bit&gt;
+</span></span></code></pre></div><p>原文地址: <a href="https://www.baeldung.com/jvm-parameters">https://www.baeldung.com/jvm-parameters</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

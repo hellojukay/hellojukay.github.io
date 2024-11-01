@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="原文地址: https://www.thegeekdiary.com/how-to-check-centos-version/
+有一些时候我需要了解当前的 Linux 服务的系统版本信息，来帮助我们排查一些问题。这篇文章将会介绍几个技巧来查看当前系统版本信息，总的来说有两种思路：
+通过系统更新版本来了解系统信息 通过内核运行版本来了解系统信息 检查系统更新版本 在 RedHat/Centos 上有4个文件提供了信息的版本信息
+/etc/centos-release /etc/os-release /etc/redhat-release /etc/system-release 他们的内容如下 [licong@analysis01 ~]$ cat /etc/centos-release CentOS Linux release 7.2.1511 (Core) [licong@analysis01 ~]$ cat /etc/os-release NAME=&#34;CentOS Linux&#34; VERSION=&#34;7 (Core)&#34; ID=&#34;centos&#34; ID_LIKE=&#34;rhel fedora&#34; VERSION_ID=&#34;7&#34; PRETTY_NAME=&#34;CentOS Linux 7 (Core)&#34; ANSI_COLOR=&#34;0;31&#34; CPE_NAME=&#34;cpe:/o:centos:centos:7&#34; HOME_URL=&#34;https://www.centos.org/&#34; BUG_REPORT_URL=&#34;https://bugs.centos.org/&#34; CENTOS_MANTISBT_PROJECT=&#34;CentOS-7&#34; CENTOS_MANTISBT_PROJECT_VERSION=&#34;7&#34; REDHAT_SUPPORT_PRODUCT=&#34;centos&#34; REDHAT_SUPPORT_PRODUCT_VERSION=&#34;7&#34; [licong@analysis01 ~]$ cat /etc/redhat-release CentOS Linux release 7.2.1511 (Core) [licong@analysis01 ~]$ cat /etc/system-release CentOS Linux release 7.2.1511 (Core) 还可以通过 rpm 查询某个文件的版本信息">  
+
+  <title>
+    
+      【翻译】如何检查 centos 版本信息
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-31 00:00:00 &#43;0000 UTC">
+            2019-07-31
+        </time>
+    </p>
+
+    <h1>【翻译】如何检查 centos 版本信息</h1>
+
+    
+
+    <p>原文地址: <a href="https://www.thegeekdiary.com/how-to-check-centos-version/">https://www.thegeekdiary.com/how-to-check-centos-version/</a></p>
+<p>有一些时候我需要了解当前的 Linux 服务的系统版本信息，来帮助我们排查一些问题。这篇文章将会介绍几个技巧来查看当前系统版本信息，总的来说有两种思路：</p>
+<ul>
+<li>通过系统更新版本来了解系统信息</li>
+<li>通过内核运行版本来了解系统信息</li>
+</ul>
+<h1 id="检查系统更新版本">检查系统更新版本</h1>
+<p>在 RedHat/Centos 上有4个文件提供了信息的版本信息</p>
+<ul>
+<li>/etc/centos-release</li>
+<li>/etc/os-release</li>
+<li>/etc/redhat-release</li>
+<li>/etc/system-release
+他们的内容如下</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ cat /etc/centos-release
+</span></span><span style="display:flex;"><span>CentOS Linux release 7.2.1511 <span style="color:#f92672">(</span>Core<span style="color:#f92672">)</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ cat /etc/os-release
+</span></span><span style="display:flex;"><span>NAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;CentOS Linux&#34;</span>
+</span></span><span style="display:flex;"><span>VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;7 (Core)&#34;</span>
+</span></span><span style="display:flex;"><span>ID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;centos&#34;</span>
+</span></span><span style="display:flex;"><span>ID_LIKE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;rhel fedora&#34;</span>
+</span></span><span style="display:flex;"><span>VERSION_ID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;7&#34;</span>
+</span></span><span style="display:flex;"><span>PRETTY_NAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;CentOS Linux 7 (Core)&#34;</span>
+</span></span><span style="display:flex;"><span>ANSI_COLOR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0;31&#34;</span>
+</span></span><span style="display:flex;"><span>CPE_NAME<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cpe:/o:centos:centos:7&#34;</span>
+</span></span><span style="display:flex;"><span>HOME_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://www.centos.org/&#34;</span>
+</span></span><span style="display:flex;"><span>BUG_REPORT_URL<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://bugs.centos.org/&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CENTOS_MANTISBT_PROJECT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;CentOS-7&#34;</span>
+</span></span><span style="display:flex;"><span>CENTOS_MANTISBT_PROJECT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;7&#34;</span>
+</span></span><span style="display:flex;"><span>REDHAT_SUPPORT_PRODUCT<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;centos&#34;</span>
+</span></span><span style="display:flex;"><span>REDHAT_SUPPORT_PRODUCT_VERSION<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;7&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ cat /etc/redhat-release
+</span></span><span style="display:flex;"><span>CentOS Linux release 7.2.1511 <span style="color:#f92672">(</span>Core<span style="color:#f92672">)</span> 
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ cat /etc/system-release
+</span></span><span style="display:flex;"><span>CentOS Linux release 7.2.1511 <span style="color:#f92672">(</span>Core<span style="color:#f92672">)</span> 
+</span></span></code></pre></div><p>还可以通过 rpm 查询某个文件的版本信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ rpm -qf /etc/redhat-release
+</span></span><span style="display:flex;"><span>centos-release-7-2.1511.el7.centos.2.10.x86_64
+</span></span></code></pre></div><p>从上我们可以看出当前信息是 centos7.2 版本</p>
+<h1 id="检查系统内核运行版本">检查系统内核运行版本</h1>
+<p>可以使用一些命令行工具查看系统内核版本信息，比如: uname</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ uname -s -r
+</span></span><span style="display:flex;"><span>Linux 3.10.0-514.26.2.el7.v7.4.qihoo.x86_64
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$  uname -a
+</span></span><span style="display:flex;"><span>Linux analysis01.hellojukay.cn 3.10.0-514.26.2.el7.v7.4.qihoo.x86_64 <span style="color:#75715e">#1 SMP Mon Jul 24 15:20:32 CST 2017 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span></span></code></pre></div><p>获取内核的编译时间</p>
+<pre tabindex="0"><code class="language-shel" data-lang="shel">[licong@analysis01 ~]$ uname -v
+#1 SMP Mon Jul 24 15:20:32 CST 2017
+</code></pre><h1 id="检查-centos7-的版本">检查 centos7 的版本</h1>
+<p>在 centos7 中安装有　hostnamectl　命令，他能直接打印出当前信息的各项信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ hostnamectl
+</span></span><span style="display:flex;"><span>   Static hostname: analysis01.hellojukay.cn
+</span></span><span style="display:flex;"><span>         Icon name: computer-vm
+</span></span><span style="display:flex;"><span>           Chassis: vm
+</span></span><span style="display:flex;"><span>        Machine ID: b0f27015898562886512ed8dba42c837
+</span></span><span style="display:flex;"><span>           Boot ID: 161bb64ac32747e0802ab83c5ce82910
+</span></span><span style="display:flex;"><span>    Virtualization: kvm
+</span></span><span style="display:flex;"><span>  Operating System: CentOS Linux <span style="color:#ae81ff">7</span> <span style="color:#f92672">(</span>Core<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>       CPE OS Name: cpe:/o:centos:centos:7
+</span></span><span style="display:flex;"><span>            Kernel: Linux 3.10.0-514.26.2.el7.v7.4.qihoo.x86_64
+</span></span><span style="display:flex;"><span>      Architecture: x86-64
+</span></span></code></pre></div><h1 id="检查-lsb-信息">检查 LSB 信息</h1>
+<p>我们可以通过 lsb_release 命令来检查当前的 LSB 信息，如果没有安装的化，通过如下命令安装:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install redhat-lsb
+</span></span></code></pre></div><p>使用方式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ sudo lsb_release  -a
+</span></span><span style="display:flex;"><span>LSB Version:    :core-4.1-amd64:core-4.1-noarch
+</span></span><span style="display:flex;"><span>Distributor ID: CentOS
+</span></span><span style="display:flex;"><span>Description:    CentOS Linux release 7.2.1511 <span style="color:#f92672">(</span>Core<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>Release:        7.2.1511
+</span></span><span style="display:flex;"><span>Codename:       Core
+</span></span></code></pre></div><h1 id="通过-grub-信息检查版本">通过 GRUB 信息检查版本</h1>
+<h2 id="在-centos7-中">在 centos7 中</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ sudo  cat /boot/grub2/grub.cfg | grep -w menuentry
+</span></span><span style="display:flex;"><span>menuentry <span style="color:#e6db74">&#39;CentOS Linux (3.10.0-514.26.2.el7.v7.4.qihoo.x86_64) 7 (Core)&#39;</span> --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option <span style="color:#e6db74">&#39;gnulinux-3.10.0-327.22.2.el7.ttm.x86_64-advanced-0e608764-54ca-485e-a69d-14401577e07b&#39;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>menuentry <span style="color:#e6db74">&#39;CentOS Linux (3.10.0-327.22.2.el7.ttm.x86_64) 7 (Core)&#39;</span> --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option <span style="color:#e6db74">&#39;gnulinux-3.10.0-327.22.2.el7.ttm.x86_64-advanced-0e608764-54ca-485e-a69d-14401577e07b&#39;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>menuentry <span style="color:#e6db74">&#39;CentOS Linux (0-rescue-b0f27015898562886512ed8dba42c837) 7 (Core)&#39;</span> --class centos --class gnu-linux --class gnu --class os --unrestricted $menuentry_id_option <span style="color:#e6db74">&#39;gnulinux-0-rescue-b0f27015898562886512ed8dba42c837-advanced-0e608764-54ca-485e-a69d-14401577e07b&#39;</span> <span style="color:#f92672">{</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@analysis01 ~<span style="color:#f92672">]</span>$ sudo grep saved_entry /boot/grub2/grubenv
+</span></span><span style="display:flex;"><span>saved_entry<span style="color:#f92672">=</span>CentOS Linux <span style="color:#f92672">(</span>3.10.0-514.26.2.el7.v7.4.qihoo.x86_64<span style="color:#f92672">)</span> <span style="color:#ae81ff">7</span> <span style="color:#f92672">(</span>Core<span style="color:#f92672">)</span>
+</span></span></code></pre></div><h2 id="在-centos6-中">在 centos6 中</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># cat /boot/grub/grub.conf | grep title</span>
+</span></span><span style="display:flex;"><span>title CentOS <span style="color:#f92672">(</span>2.6.32-696.20.1.el6.x86_64<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>title CentOS <span style="color:#f92672">(</span>2.6.32-696.18.7.el6.x86_64<span style="color:#f92672">)</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

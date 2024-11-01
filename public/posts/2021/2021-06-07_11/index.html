@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="代码来源: https://metacpan.org/source/PEVANS/String-Expand-0.04/lib/String/Expand.pm
+#!/usr/bin/env perl my $VARNAME_MATCH = qr/\$([A-Z_][A-Z0-9_]*|\{.*?\})/; sub expand_one_var($$) { my ( $var, $vars ) = @_; # Chop off delimiting {braces} if present $var =~ s/^\{(.*)\}$/$1/; unless( defined $vars-&gt;{$var} ) { die &#34;Unknown variable &#39;$var&#39;&#34;; } return $vars-&gt;{$var}; } sub expand_string($$) { my ( $str, $vars ) = @_; $str =~ s{\\([\\\$])|$VARNAME_MATCH} { $1 or expand_one_var( $2, $vars )}eg; return $str; } sub expand_strings_inner($$$$); sub expand_strings_one_var($$$$) { my ( $var, $strs, $overlay, $done ) = @_; # Chop off delimiting {braces} if present $var =~ s/^\{(.">  
+
+  <title>
+    
+      envsubst 在 perl 的实现
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-06-07 00:00:00 &#43;0000 UTC">
+            2021-06-07
+        </time>
+    </p>
+
+    <h1>envsubst 在 perl 的实现</h1>
+
+    
+
+    <p>代码来源: <a href="https://metacpan.org/source/PEVANS/String-Expand-0.04/lib/String/Expand.pm">https://metacpan.org/source/PEVANS/String-Expand-0.04/lib/String/Expand.pm</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env perl</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> $VARNAME_MATCH <span style="color:#f92672">=</span> <span style="color:#e6db74">qr/\$([A-Z_][A-Z0-9_]*|\{.*?\})/</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">expand_one_var</span>($$)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">my</span> ( $var, $vars ) <span style="color:#f92672">=</span> @_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e"># Chop off delimiting {braces} if present</span>
+</span></span><span style="display:flex;"><span>   $var <span style="color:#f92672">=~</span> <span style="color:#e6db74">s/^\{(.*)\}$/$1/</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">unless</span>( defined $vars<span style="color:#f92672">-&gt;</span>{$var} ) {
+</span></span><span style="display:flex;"><span>      die <span style="color:#e6db74">&#34;Unknown variable &#39;$var&#39;&#34;</span>;
+</span></span><span style="display:flex;"><span>   }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">return</span> $vars<span style="color:#f92672">-&gt;</span>{$var};
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">expand_string</span>($$)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">my</span> ( $str, $vars ) <span style="color:#f92672">=</span> @_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   $str <span style="color:#f92672">=~</span> <span style="color:#e6db74">s{\\([\\\$])|$VARNAME_MATCH}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            {     $1  or expand_one_var( $2, $vars )}eg</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">return</span> $str;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">expand_strings_inner</span>($$$$);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">expand_strings_one_var</span>($$$$)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">my</span> ( $var, $strs, $overlay, $done ) <span style="color:#f92672">=</span> @_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e"># Chop off delimiting {braces} if present</span>
+</span></span><span style="display:flex;"><span>   $var <span style="color:#f92672">=~</span> <span style="color:#e6db74">s/^\{(.*)\}$/$1/</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span>( exists $strs<span style="color:#f92672">-&gt;</span>{$var} ) {
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> $strs<span style="color:#f92672">-&gt;</span>{$var} <span style="color:#66d9ef">if</span>( $done<span style="color:#f92672">-&gt;</span>{$var} );
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># Detect loops</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span>( exists $done<span style="color:#f92672">-&gt;</span>{$var} ) {
+</span></span><span style="display:flex;"><span>         die <span style="color:#e6db74">&#34;Variable loop trying to expand &#39;$var&#39;&#34;</span>;
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>      $done<span style="color:#f92672">-&gt;</span>{$var} <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>      expand_strings_inner( $strs, $overlay, $var, $done );
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">return</span> $strs<span style="color:#f92672">-&gt;</span>{$var};
+</span></span><span style="display:flex;"><span>   }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">return</span> $overlay<span style="color:#f92672">-&gt;</span>{$var} <span style="color:#66d9ef">if</span>( exists $overlay<span style="color:#f92672">-&gt;</span>{$var} );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   die <span style="color:#e6db74">&#34;Unknown variable &#39;$var&#39;&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">expand_strings_inner</span>($$$$)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">my</span> ( $strs, $overlay, $v, $done ) <span style="color:#f92672">=</span> @_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span>( $strs<span style="color:#f92672">-&gt;</span>{$v} <span style="color:#f92672">=~</span> <span style="color:#e6db74">m/[\\\$]/</span> ) {
+</span></span><span style="display:flex;"><span>      $strs<span style="color:#f92672">-&gt;</span>{$v} <span style="color:#f92672">=~</span> <span style="color:#e6db74">s{\\([\\\$])|$VARNAME_MATCH}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                      {     $1  or expand_strings_one_var( $2, $strs, $overlay, $done )}eg</span>;
+</span></span><span style="display:flex;"><span>   }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   $done<span style="color:#f92672">-&gt;</span>{$v} <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">expand_strings</span>($$)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">my</span> ( $strs, $overlay ) <span style="color:#f92672">=</span> @_;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e"># 0: a variable expansion is in progress</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e"># 1: value has been correctly expanded</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">my</span> %done;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">foreach</span> <span style="color:#66d9ef">my</span> $v ( keys %$strs ) {
+</span></span><span style="display:flex;"><span>      expand_strings_inner( $strs, $overlay, $v, <span style="color:#f92672">\</span>%done );
+</span></span><span style="display:flex;"><span>   }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> $str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hello $USER&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">print</span> expand_string($str,%ENV) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;\n&#34;</span>;
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

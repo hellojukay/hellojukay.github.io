@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="这里有一个错误用法是获取受控机器的网卡的信息，但是有多个网卡的情况下就会获取到其它的网卡地址，正确的做法如下：
+vagrant@archlinux k8s-install $ ansible -i inventory -m debug -a &#34;var=ansible_ssh_host&#34; all -u vagrant -k SSH password: [WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details 127.0.0.1 | SUCCESS =&gt; { &#34;ansible_ssh_host&#34;: &#34;127.0.0.1&#34; } 192.168.0.10 | SUCCESS =&gt; { &#34;ansible_ssh_host&#34;: &#34;192.168.0.10&#34; } 192.168.0.11 | SUCCESS =&gt; { &#34;ansible_ssh_host&#34;: &#34;192.168.0.11&#34; } 192.168.0.12 | SUCCESS =&gt; { &#34;ansible_ssh_host&#34;: &#34;192.168.0.12&#34; } 使用 ansible_ssh_host 这个内置变量.">  
+
+  <title>
+    
+      Ansible 主机多网卡情况下获取IP地址
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-12-26 00:00:00 &#43;0000 UTC">
+            2020-12-26
+        </time>
+    </p>
+
+    <h1>Ansible 主机多网卡情况下获取IP地址</h1>
+
+    
+
+    <p>这里有一个错误用法是获取受控机器的网卡的信息，但是有多个网卡的情况下就会获取到其它的网卡地址，正确的做法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vagrant@archlinux k8s-install $ ansible -i inventory -m debug -a <span style="color:#e6db74">&#34;var=ansible_ssh_host&#34;</span> all -u vagrant -k
+</span></span><span style="display:flex;"><span>SSH password:
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>WARNING<span style="color:#f92672">]</span>: Invalid characters were found in group names but not replaced, use -vvvv to see details
+</span></span><span style="display:flex;"><span>127.0.0.1 | SUCCESS <span style="color:#f92672">=</span>&gt; <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ansible_ssh_host&#34;</span>: <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>192.168.0.10 | SUCCESS <span style="color:#f92672">=</span>&gt; <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ansible_ssh_host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.10&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>192.168.0.11 | SUCCESS <span style="color:#f92672">=</span>&gt; <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ansible_ssh_host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.11&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>192.168.0.12 | SUCCESS <span style="color:#f92672">=</span>&gt; <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;ansible_ssh_host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.12&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>使用 ansible_ssh_host 这个内置变量.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

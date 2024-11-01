@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="如果你还没有听说flyway,请移步flyway。大部分情况下，我们是在java中使用mvn插件的方式来使用flyway，虽然flyway是 使用java语言编写的，但是也提供了命令行的方式来使用它，我们也可以将他打包在docker容器中。官方有专门的项目来给flyway打镜像https://github.com/flyway/flyway-docker。
+所以我只需要官方的目录结构来配置即可https://hub.docker.com/r/boxfuse/flyway。
+这里要说明的是flyway的配置文件配置项:
+flyway.url=jdbc:mysql://xxxxx:3306/xxx flyway.username=xxx flyway.password=xxx flyway.baselineDescription=V1.0 flywaydb.placeholderReplacment=false ">  
+
+  <title>
+    
+      在docker中运行flyway
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-02-26 00:00:00 &#43;0000 UTC">
+            2019-02-26
+        </time>
+    </p>
+
+    <h1>在docker中运行flyway</h1>
+
+    
+
+    <p>如果你还没有听说<code>flyway</code>,请移步<a href="ttps://flywaydb.org/">flyway</a>。大部分情况下，我们是在java中使用mvn插件的方式来使用<code>flyway</code>，虽然<code>flyway</code>是
+使用java语言编写的，但是也提供了命令行的方式来使用它，我们也可以将他打包在docker容器中。官方有专门的项目来给<code>flyway</code>打镜像<a href="https://github.com/flyway/flyway-docker">https://github.com/flyway/flyway-docker</a>。</p>
+<p>所以我只需要官方的目录结构来配置即可<a href="https://hub.docker.com/r/boxfuse/flyway">https://hub.docker.com/r/boxfuse/flyway</a>。</p>
+<p>这里要说明的是flyway的配置文件配置项:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>flyway.url=jdbc:mysql://xxxxx:3306/xxx
+</span></span><span style="display:flex;"><span>flyway.username=xxx
+</span></span><span style="display:flex;"><span>flyway.password=xxx
+</span></span><span style="display:flex;"><span>flyway.baselineDescription=V1.0
+</span></span><span style="display:flex;"><span>flywaydb.placeholderReplacment=false
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

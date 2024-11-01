@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="git分支相关操作 良好的git使用习惯是，如果我的代码已经合并到Master分之，并且测试通过，上线了，确认无误，我就可以删除之前的开发和测试分支了，git上如果有太多的无用分支，有时候会让你摸不着头脑，哪个是有用的，哪个是无用的。
+clone仓库 git clone ${repo} clone指定分支或者tag的仓库 git clone ${repo} --branch=${tag}|${branch} 提交暂存区的变更 git commit -m {mesage} 删除本地分支 git branch -d {branch} 强制删除本地分支，可能是未合并的分支 git branch -D {branch} 删除远程分支 git push origin --delete {branch} 合并目标分支到当前分支 git merge ${target} 取消merge代码 git merge --abort tag操作 查看当前tag列表 git tag -l 或者 git tag --list 创建tag git tag -a {tag} -m {comment} 推送tag到remote git push {remote} {tag} 删除本地tag git tag -d {tag} 删除远程tag git push {reomte} --delete {tag} 文件操作 跟踪文件或者将文件加入到暂存区 // 文件名字支持通配符 git add {file} 从暂存区移除某文件 git reset head file 取消工作区域文件的修改,也可以用来恢复误删除的文件 git checkout {filename} 从git仓删除某个文件 git rm {file} ssh配置 每次输入账户名和密码实在太麻烦了，给github账户配置一个全局的ssh秘钥就不用那么麻烦了，操作也很简单:">  
+
+  <title>
+    
+      git相关操作
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2017-12-05 15:07:00 &#43;0000 UTC">
+            2017-12-05
+        </time>
+    </p>
+
+    <h1>git相关操作</h1>
+
+    
+
+    <h3 id="git分支相关操作">git分支相关操作</h3>
+<p>良好的git使用习惯是，如果我的代码已经合并到Master分之，并且测试通过，上线了，确认无误，我就可以删除之前的开发和测试分支了，git上如果有太多的无用分支，有时候会让你摸不着头脑，哪个是有用的，哪个是无用的。</p>
+<ul>
+<li>clone仓库</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git clone <span style="color:#e6db74">${</span>repo<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><ul>
+<li>clone指定分支或者tag的仓库</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git clone <span style="color:#e6db74">${</span>repo<span style="color:#e6db74">}</span> --branch<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>tag<span style="color:#e6db74">}</span>|<span style="color:#e6db74">${</span>branch<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><ul>
+<li>提交暂存区的变更</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git commit -m <span style="color:#f92672">{</span>mesage<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>删除本地分支</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -d <span style="color:#f92672">{</span>branch<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>强制删除本地分支，可能是未合并的分支</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -D <span style="color:#f92672">{</span>branch<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>删除远程分支</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push origin --delete <span style="color:#f92672">{</span>branch<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>合并目标分支到当前分支</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git merge <span style="color:#e6db74">${</span>target<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><ul>
+<li>取消merge代码</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git merge --abort
+</span></span></code></pre></div><h3 id="tag操作">tag操作</h3>
+<ul>
+<li>查看当前tag列表</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git tag -l 或者 git tag --list
+</span></span></code></pre></div><ul>
+<li>创建tag</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git tag -a <span style="color:#f92672">{</span>tag<span style="color:#f92672">}</span> -m <span style="color:#f92672">{</span>comment<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>推送tag到remote</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push <span style="color:#f92672">{</span>remote<span style="color:#f92672">}</span> <span style="color:#f92672">{</span>tag<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>删除本地tag</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git tag -d <span style="color:#f92672">{</span>tag<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>删除远程tag</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push <span style="color:#f92672">{</span>reomte<span style="color:#f92672">}</span> --delete <span style="color:#f92672">{</span>tag<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="文件操作">文件操作</h3>
+<ul>
+<li>跟踪文件或者将文件加入到暂存区</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>// 文件名字支持通配符
+</span></span><span style="display:flex;"><span>git add <span style="color:#f92672">{</span>file<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>从暂存区移除某文件</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git reset head file
+</span></span></code></pre></div><ul>
+<li>取消工作区域文件的修改,也可以用来恢复误删除的文件</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git checkout <span style="color:#f92672">{</span>filename<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li>从git仓删除某个文件</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git rm <span style="color:#f92672">{</span>file<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="ssh配置">ssh配置</h3>
+<p>每次输入账户名和密码实在太麻烦了，给github账户配置一个全局的ssh秘钥就不用那么麻烦了，操作也很简单:</p>
+<ul>
+<li>生成秘钥,ssh-keygen -t rsa,这里有个注意事项，一般格式秘钥都是会在当前目录下生成，所以最好到~/.ssh/这个目录来执行命令</li>
+<li>秘钥生成了以后，把你的公钥复制到github，settings -&gt; ssh and gpg keys -&gt; new sshkey (title可以安装你喜欢的填写)</li>
+</ul>
+<p>一般情况下，这样就够了，但是如果你在生成秘钥的时候给定了秘钥文件的名字，也不是默认的名字，那么你可能还需要配置一下，因为git并不知道你使用哪个秘钥来进行认证，也许还有很多其他的秘钥文件，这里配置也比较简单,比如说我的秘钥文件是github开头的吧,那么就就需要在~/.ssh/config文件中加入一下内容:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>host github.com
+</span></span><span style="display:flex;"><span> HostName github.com
+</span></span><span style="display:flex;"><span> IdentityFile ~/.ssh/github
+</span></span><span style="display:flex;"><span> User git
+</span></span></code></pre></div><p>然后就大功告成了。</p>
+<h3 id="2018年09月16添加">2018年09月16添加</h3>
+<ul>
+<li>重新提交,再次编写message或者添加文件到暂存区</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git commit --amend
+</span></span></code></pre></div><h3 id="2018年10月12添加">2018年10月12添加</h3>
+<ul>
+<li>强制删除未合并的分支</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -d -f <span style="color:#f92672">{</span>branch<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ul>
+<li><code>-D</code>也能强制删除未合并的分之</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -D <span style="color:#f92672">{</span>branch<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="2018年11月20添加">2018年11月20添加</h3>
+<p>需要将当前分支回滚到某次提交的状态,工作空间也会被回滚，如果只会回滚git的指针，那么不要加<code>--hard</code>选项。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git reset <span style="color:#f92672">{</span>hash<span style="color:#f92672">}</span> --hard
+</span></span></code></pre></div><p>可以取消提交，将变更加入到暂存区</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git reset <span style="color:#f92672">{</span>hash<span style="color:#f92672">}</span> --soft
+</span></span></code></pre></div><p>以上几个命令的区别：</p>
+<ul>
+<li>git reset &ndash;hard 回滚当前HEAD到某次提交，并且工作空间中的内容与git本地分支中保持一致</li>
+<li>git reset &ndash;soft 回滚当前分支到某次提交，被悬挂的会被加入到暂存空间中</li>
+<li>git reset &ndash;mixed 回滚当分支的HEAD到某次提交，被悬挂的提交会被保存在当前的工作空间中，如果冲突，会以工作空间中的内容为主</li>
+</ul>
+<h3 id="2018年01月29添加">2018年01月29添加</h3>
+<p>将A分支的某个文件合并到当前分支</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git checkout --patch A filename
+</span></span></code></pre></div><h3 id="2019年03月13添加">2019年03月13添加</h3>
+<p>查看某段日期之后的提交记录</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git log --after<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-01-01&#34;</span>
+</span></span></code></pre></div><p>查看某个日期之前的提交记录</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git log --before<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2019-03013&#34;</span>
+</span></span></code></pre></div><p>从某一次提交checkout出一个新的分支</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git checkout 9ab0edd01af61c8e00c7e2bb0baf9dba452cfbcc
+</span></span></code></pre></div><h3 id="2019年07月02添加">2019年07月02添加</h3>
+<p>更新 patch 补丁到当前库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git apply patch.txt
+</span></span></code></pre></div><p>undo 刚才更新的补丁</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git apply -R patch.txt
+</span></span></code></pre></div><h3 id="2020年08月12日添加">2020年08月12日添加</h3>
+<p>进入 vim 交互模式填写 tag 的信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git tag -a v1.0.1
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

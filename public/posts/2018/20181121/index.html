@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天早上回顾了昨天写的一篇文章,无意中发现我在环境变量中写入脚本，一下子有了疑问：环境变量中也能写脚本吗？那么不是说通过环境变量也能删库跑路。
+使用golang写个简单的例子试试:
+package main import &#34;fmt&#34; import &#34;os&#34; func main() { var foo = os.Getenv(&#34;foo&#34;) fmt.Println(foo) } go build main.go jukay@~/Code/Golang/env$ env foo=&#34;$(echo Hello World)&#34; ./main Hello World 输出foo环境变量的值是Hello World。
+jukay@~/Code/Golang/env$ env foo=&#34;$(echo $GOPATH)&#34; ./main /Users/jukay/Code/Go 环境变量中写脚本使用另一个环境变量
+jukay@~/Code/Golang/env$ touch bar.txt jukay@~/Code/Golang/env$ ls bar.txt main main.go jukay@~/Code/Golang/env$ env foo=&#34;$(rm bar.txt)&#34; ./main jukay@~/Code/Golang/env$ ls main main.go 可以删除文件
+jukay@~/Code/Golang/env$ cat bar.sh #!/usr/bin/env bash echo Hello World jukay@~/Code/Golang/env$ env foo=&#34;$(sh bar.sh)&#34; ./main Hello World 在环境变量中能够启动另一个脚本">  
+
+  <title>
+    
+      环境变量中能写脚本吗
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-21 00:00:00 &#43;0000 UTC">
+            2018-11-21
+        </time>
+    </p>
+
+    <h1>环境变量中能写脚本吗</h1>
+
+    
+
+    <p>今天早上回顾了昨天写的一篇<a href="https://zhuanlan.zhihu.com/p/50330053">文章</a>,无意中发现我在环境变量中写入脚本，一下子有了疑问：环境变量中也能写脚本吗？那么不是说通过环境变量也能删库跑路。</p>
+<p>使用golang写个简单的例子试试:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>package main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>import <span style="color:#e6db74">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>import <span style="color:#e6db74">&#34;os&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>func main<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        var foo <span style="color:#f92672">=</span> os.Getenv<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;foo&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                fmt.Println<span style="color:#f92672">(</span>foo<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>go build main.go
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@~/Code/Golang/env$ env foo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>echo Hello World<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> ./main
+</span></span><span style="display:flex;"><span>Hello World
+</span></span></code></pre></div><p>输出<code>foo</code>环境变量的值是<code>Hello World</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@~/Code/Golang/env$ env foo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>echo $GOPATH<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> ./main
+</span></span><span style="display:flex;"><span>/Users/jukay/Code/Go
+</span></span></code></pre></div><p>环境变量中写脚本使用另一个环境变量</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@~/Code/Golang/env$ touch bar.txt
+</span></span><span style="display:flex;"><span>jukay@~/Code/Golang/env$ ls
+</span></span><span style="display:flex;"><span>bar.txt main    main.go
+</span></span><span style="display:flex;"><span>jukay@~/Code/Golang/env$ env foo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>rm bar.txt<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> ./main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>jukay@~/Code/Golang/env$ ls
+</span></span><span style="display:flex;"><span>main    main.go
+</span></span></code></pre></div><p>可以删除文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@~/Code/Golang/env$ cat bar.sh
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env bash</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo Hello World
+</span></span><span style="display:flex;"><span>jukay@~/Code/Golang/env$ env foo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>sh bar.sh<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> ./main
+</span></span><span style="display:flex;"><span>Hello World
+</span></span></code></pre></div><p>在环境变量中能够启动另一个脚本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>foo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span> foo<span style="color:#f92672">(</span><span style="color:#66d9ef">)</span><span style="color:#e6db74">{ echo Hello World ;} ; foo )&#34;</span> ./main
+</span></span></code></pre></div><p>这个复杂了一点，在环境变量中定义一个函数，也就是说环境变量中可能还有<a href="https://zh.wikipedia.org/zh-hans/Fork%E7%82%B8%E5%BC%B9">bash炸弹</a></p>
+<p>我能够在环境变量中将当成进程切换成<code>sudo</code>用户吗？
+答案是：不可以，因为当前进程已经启动了，环境变量中的shell是另外的一个bash进程。</p>
+<p>给一个思考题：这里获取环境变量会阻塞10秒钟，为什么能够阻塞，是怎么做到的.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>env foo<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>sleep 100<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span> ./main
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

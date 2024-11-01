@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>工具 on 润物细无声</title>
+    <link>http://localhost:1313/tags/%E5%B7%A5%E5%85%B7/</link>
+    <description>Recent content in 工具 on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>xip.io 解析服务</title>
+      <link>http://localhost:1313/posts/2020/20200901/</link>
+      <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200901/</guid>
+      <description>xip.io 是一免费的 DNS 解析服务，能够在不设置 DNS 服务的情况下提供 DNS 解析服务．比如：ip 地址 192.169.1.1，当我们访问 192.169.1.1.xip.io 的时候，会被自动解析到 192.169.1.1 这个 ip．也就是说会自动从域名获取 ip 地址来作为解析值,同样的支持以下几种访问方式:&#xA;{ip}.xip.io x.y&amp;hellip;.z.{ip}.xip.ip 以上都会自动解析到同样的 ip 地址．</description>
+    </item>
+    <item>
+      <title>google-chrome 替代 PDF 阅读器</title>
+      <link>http://localhost:1313/posts/2020/20200814/</link>
+      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200814/</guid>
+      <description>我很喜欢用 zathura 阅读器来察看 PDF 文件，但是有在受限条件下无法安装这款阅读器，这个时候可以用 chrome 来察看 PDF 文件，具体操作有以下两种：&#xA;第一种 拖拽 PDF 文件到 chrome 页面， chrome 会自动打开 PDF 文件&#xA;第二种 通过命令行来打开 PDF 文件&#xA;google-chrome-stable xxx.pdf </description>
+    </item>
+    <item>
+      <title>我的编程工具</title>
+      <link>http://localhost:1313/posts/2020/20200721/</link>
+      <pubDate>Tue, 21 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200721/</guid>
+      <description>以下是我的工作中可能会用到的工具，我尽量保持不要依赖太多的工具或者系统配置,以确保我在大部分环境下都能进入工作状态.&#xA;操作系统 : Linux,最好是 archlinux 发行版 浏览器 : chrome 编辑器 : vim 版本管理工具 : git pdf阅读器 : zathura(配合zathura-pdf-mupdf 插件,sudo pacman -S zathura-pdf-mupdf) 搜索引擎 : google 脚本语言 : perl , python 截图，录屏 : deepin-screen-recoder 文档工具 : tldr（使用crates上的 tealdeer),zeal 也不错，是一个跨平台的 dash,网址是 : https : //zealdocs.org/ 科学上网 : go get -u -v github.com/Dreamacro/clash , 配合忍者云 renzhe.cloud clash 配置文件&#xA;vim /usr/lib/systemd/system/clash.service # edit and save this file to /usr/lib/systemd/system/clash.service [Unit] Description=clash After=network.target [Service] WorkingDirectory=/home/hellojukay/.config/clash ExecStart=/home/hellojukay/go/bin/clash -f /home/hellojukay/.</description>
+    </item>
+    <item>
+      <title>google 搜索屏蔽内容插件</title>
+      <link>http://localhost:1313/posts/2020/20200615/</link>
+      <pubDate>Mon, 15 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200615/</guid>
+      <description>google 搜索有大量 CSDN 的内容，我不想看到这些搜索结果。通过在搜索指令中加入过滤网址的条件可以屏蔽这些内容，但是每次都写那些过滤条件有些麻烦，我找到了一个过滤的插件 uBlacklist,完美解决了为的问题。&#xA;相关链接 https://chrome.google.com/webstore/detail/ublacklist/pncfbmialoiaghdehhbnbhkkgmjanfhe https://chrome.google.com/webstore/detail/personal-blocklistnot-by/cbbbhelcpfjhdcncigdlkabmjbgokmpg </description>
+    </item>
+    <item>
+      <title>postman 使用技巧</title>
+      <link>http://localhost:1313/posts/2019/20191204/</link>
+      <pubDate>Wed, 04 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191204/</guid>
+      <description>介绍如下使用技巧：&#xA;复制浏览器请求到 postman postman 请求生成代码 第一步：复制浏览器请求为文本 第二步：在 postman 导入请求 粘贴请求文本到输入框，可以看到请求参数和请求到被导入成功了 第三步： 导出代码 选择编程语言类型，导出 golang 代码如下：&#xA;package main import ( &amp;#34;fmt&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;io/ioutil&amp;#34; ) func main() { url := &amp;#34;https://devurls.com/&amp;#34; req, _ := http.NewRequest(&amp;#34;GET&amp;#34;, url, nil) req.Header.Add(&amp;#34;Connection&amp;#34;, &amp;#34;keep-alive&amp;#34;) req.Header.Add(&amp;#34;Pragma&amp;#34;, &amp;#34;no-cache&amp;#34;) req.Header.Add(&amp;#34;Cache-Control&amp;#34;, &amp;#34;no-cache&amp;#34;) req.Header.Add(&amp;#34;Upgrade-Insecure-Requests&amp;#34;, &amp;#34;1&amp;#34;) req.Header.Add(&amp;#34;User-Agent&amp;#34;, &amp;#34;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36&amp;#34;) req.Header.Add(&amp;#34;Sec-Fetch-User&amp;#34;, &amp;#34;?1&amp;#34;) req.Header.Add(&amp;#34;Accept&amp;#34;, &amp;#34;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3&amp;#34;) req.Header.Add(&amp;#34;Sec-Fetch-Site&amp;#34;, &amp;#34;none&amp;#34;) req.Header.Add(&amp;#34;Sec-Fetch-Mode&amp;#34;, &amp;#34;navigate&amp;#34;) req.Header.Add(&amp;#34;Accept-Encoding&amp;#34;, &amp;#34;gzip, deflate, br&amp;#34;) req.Header.Add(&amp;#34;Accept-Language&amp;#34;, &amp;#34;zh-CN,zh;q=0.9&amp;#34;) req.Header.Add(&amp;#34;Cookie&amp;#34;, &amp;#34;show=medium%2Clobsters%2Chackernoon%2Cjuliaevans%2Cjohndcook%2Celibendersky%2Ccloudflare%2Cbackblaze%2Cnetflix%2Ccatonmat%2Cjoelonsoftware%2Ccodinghorror%2Calistapart%2Ccsstricks%2Csmashingmagazine%2Clambdatheultimate%2Cstackoverflow%2Cgithub%2Cgitconnected%2Cplanetmysql%2Clwn%2Chackernews%2Creddit%2Cslashdot%2Canandtech%2Cphoronix%2Cgoogledevsblog%2Cfbcode%2Crecode%2Cdzone; hide=none; _ga=GA1.</description>
+    </item>
+    <item>
+      <title>google搜索的正确使用方式</title>
+      <link>http://localhost:1313/posts/2018/20180528/</link>
+      <pubDate>Mon, 28 May 2018 20:27:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180528/</guid>
+      <description>虽然标题写的是google搜索，但是大部分的技巧在baidu下也是适用的，本文中的搜索技巧配置chrome的tab补全搜索体验更佳。备注：以下搜索技巧可以混合使用。&#xA;搜索相关的内容 关联多个内容的时候搜索方式 过滤搜索网站结果 你可能注意到了，搜索的第一条结果就是java.com这样网站，如果我想搜索结果里面去掉某个特定网站的内容，比如我在搜索的时候就经常会去掉csnd和cnblog这两个网站。 这样oracle.com和java.com就不会出现在我的搜索结果中了。&#xA;特定网址网址搜索 有些时候，某些网站的站内搜索功能并不好用，我们可以使用google的站内搜索功能，比如我要在zhihu上搜索java相关的内容。 这样的搜索结果就都是知乎的内容了。&#xA;关键字搜索 使用英文的双引号把关键字包含起来,这样搜索结果中是必须包含所有关键字的，关键字可以是多个比如: &amp;ldquo;a&amp;rdquo; &amp;ldquo;b&amp;rdquo; 既包含字符串a又包含字符串b &amp;ldquo;a&amp;rdquo; -&amp;ldquo;b&amp;rdquo; 之包含a字符串，绝对不包含b字符串 &amp;ldquo;a&amp;rdquo; or &amp;ldquo;b&amp;rdquo; 包含字符串a或者包含字符串b 按照文件类型搜索 使用filtype指令加上文件类型，这个搜索功能有你想要的效果，至于怎么使用，哈哈哈哈哈 搜索类似网站 这里搜索出类hacknews相关的网址。 以上就是最常用的google搜索技巧，如果你想知道更多关于google搜索技巧的只是，你可以使用google搜索。&#xA;参考文章 十大高明的Google搜索技巧 </description>
+    </item>
+    <item>
+      <title>asciinema记录你的终端操作</title>
+      <link>http://localhost:1313/posts/2018/20180511/</link>
+      <pubDate>Fri, 11 May 2018 15:19:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180511/</guid>
+      <description>在github上浏览项目的时候，看到 How to use it 是个录屏播放的动画，我觉得很炫酷，调研了下，其实他就是用asciinema这个工具生成的。它的项目地址是asciinema&#xA;mac直接可以通过brew 来安装。&#xA;brew install asciinema centos使用yum安装&#xA;yum install -y asciinema 这样就安装好了客户端了。一下是这个软件的使用方法:&#xA;jukay@mac-pro ~/C/W/blog&amp;gt; asciinema -h 367ms  五 5/11 15:23:45 2018 usage: asciinema [-h] [--version] {rec,play,cat,upload,auth} ... Record and share your terminal sessions, the right way. positional arguments: {rec,play,cat,upload,auth} rec Record terminal session play Replay terminal session cat Print full output of terminal session upload Upload locally saved terminal session to asciinema.org auth Manage recordings on asciinema.</description>
+    </item>
+  </channel>
+</rss>

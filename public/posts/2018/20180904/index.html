@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="把自己的终端上传到官方服务器，始终是一件不安全的事情，所以推荐大家自建asciinema服务器。直接使用官方的docker-compose文件，稍加修改就能成功clone官方的项目
+version: &#39;2&#39; services: postgres: image: postgres container_name: asciinema_postgres restart: unless-stopped volumes: - ./volumes/postgres:/var/lib/postgresql/data ### See https://hub.docker.com/_/postgres/ for more ### configuration options for this image. redis: image: redis container_name: asciinema_redis restart: unless-stopped volumes: - ./volumes/redis:/data ### See https://hub.docker.com/_/redis/ for more ### configuration options for this image. smtp: image: namshi/smtp container_name: asciinema_smtp restart: unless-stopped env_file: .env.production ### See https://github.com/namshi/docker-smtp for more SMTP configuration ### options for this image. nginx: image: nginx:alpine container_name: asciinema_nginx restart: unless-stopped links: - phoenix - rails ports: - &#34;3000:80&#34; ### Uncomment for HTTPS: # - &#34;443:443&#34; volumes: - .">  
+
+  <title>
+    
+      自建asciinema服务器
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-09-04 00:00:00 &#43;0000 UTC">
+            2018-09-04
+        </time>
+    </p>
+
+    <h1>自建asciinema服务器</h1>
+
+    
+
+    <p>把自己的终端上传到官方服务器，始终是一件不安全的事情，所以推荐大家自建asciinema服务器。直接使用官方的docker-compose文件，稍加修改就能成功clone官方的项目</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>version: <span style="color:#e6db74">&#39;2&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>services:
+</span></span><span style="display:flex;"><span>  postgres:
+</span></span><span style="display:flex;"><span>    image: postgres
+</span></span><span style="display:flex;"><span>    container_name: asciinema_postgres
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - ./volumes/postgres:/var/lib/postgresql/data
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### See https://hub.docker.com/_/postgres/ for more</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### configuration options for this image.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  redis:
+</span></span><span style="display:flex;"><span>    image: redis
+</span></span><span style="display:flex;"><span>    container_name: asciinema_redis
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - ./volumes/redis:/data
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### See https://hub.docker.com/_/redis/ for more</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### configuration options for this image.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  smtp:
+</span></span><span style="display:flex;"><span>    image: namshi/smtp
+</span></span><span style="display:flex;"><span>    container_name: asciinema_smtp
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    env_file: .env.production
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### See https://github.com/namshi/docker-smtp for more SMTP configuration</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### options for this image.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  nginx:
+</span></span><span style="display:flex;"><span>    image: nginx:alpine
+</span></span><span style="display:flex;"><span>    container_name: asciinema_nginx
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    links:
+</span></span><span style="display:flex;"><span>      - phoenix
+</span></span><span style="display:flex;"><span>      - rails
+</span></span><span style="display:flex;"><span>    ports:
+</span></span><span style="display:flex;"><span>      - <span style="color:#e6db74">&#34;3000:80&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">### Uncomment for HTTPS:</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e"># - &#34;443:443&#34;</span>
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - ./docker/nginx/asciinema.conf:/etc/nginx/conf.d/default.conf:ro
+</span></span><span style="display:flex;"><span>      - ./volumes/cache:/cache
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">### Uncomment for HTTPS (make sure to add your cert and private key to ./certs):</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">#  - ./certs:/app/priv/certs</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### See https://hub.docker.com/_/nginx/ for more configuration options for</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### this image.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  phoenix:
+</span></span><span style="display:flex;"><span>    build: .
+</span></span><span style="display:flex;"><span>    image: asciinema/asciinema-server:latest
+</span></span><span style="display:flex;"><span>    command: mix phx.server
+</span></span><span style="display:flex;"><span>    container_name: asciinema_phoenix
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    links:
+</span></span><span style="display:flex;"><span>      - redis
+</span></span><span style="display:flex;"><span>      - postgres
+</span></span><span style="display:flex;"><span>      - smtp
+</span></span><span style="display:flex;"><span>    env_file: .env.production
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">### Uncomment for access to ExqUI (for debugging):</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># ports:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#   - &#34;4040:4040&#34;</span>
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - ./uploads:/app/uploads
+</span></span><span style="display:flex;"><span>      - /tmp/asciinema-web:/tmp
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  rails:
+</span></span><span style="display:flex;"><span>    build: .
+</span></span><span style="display:flex;"><span>    image: asciinema/asciinema-server:latest
+</span></span><span style="display:flex;"><span>    command: bundle exec unicorn -c config/unicorn.rb
+</span></span><span style="display:flex;"><span>    container_name: asciinema_rails
+</span></span><span style="display:flex;"><span>    restart: unless-stopped
+</span></span><span style="display:flex;"><span>    links:
+</span></span><span style="display:flex;"><span>      - redis
+</span></span><span style="display:flex;"><span>      - postgres
+</span></span><span style="display:flex;"><span>    env_file: .env.production
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>      - ./uploads:/app/uploads
+</span></span><span style="display:flex;"><span>      - ./log:/app/log
+</span></span><span style="display:flex;"><span>      - /tmp/asciinema-web:/tmp
+</span></span><span style="display:flex;"><span>      - ./volumes/tmp:/app/tmp
+</span></span></code></pre></div><p>这里需要一个外部文件<code>.env.production</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cp .env.production.sample .env.production
+</span></span></code></pre></div><p>如果已经有了<code>postgresql</code>数据库可以跳过西面这条命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker-compose up -d postgres
+</span></span></code></pre></div><p>创建数据库表结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker-compose run --rm phoenix setup
+</span></span></code></pre></div><p>启动容器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker-compose up -d
+</span></span></code></pre></div><p>检查容器状态</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker ps -f <span style="color:#e6db74">&#39;name=asciinema_&#39;</span>
+</span></span></code></pre></div><p>最后修改asciinema的客户端配置文件<code>$HOME/.config/asciinema/config</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>api<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>url <span style="color:#f92672">=</span> https://your.asciinema.host
+</span></span></code></pre></div><p>注意：第一使用asciinema不要直接修改配置文件，需要先使用一次asciinema上传一次到官方服务器，然后再修改配置文件。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

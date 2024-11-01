@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="jenkins 上一直在不停的构建新的镜像，导致镜像越来越多，写满了 /var/lib/docekr 所在的分区，所以我们需要定期的清理多余的镜像。
+一般的，我们在开发周期构建镜像的时候，没有修改过镜像的版本号码，一个进行不停的 retag , 这样老的镜像的 tag 就会被覆盖，tag　变成 none。
+node 8 0bf36d7ccc1e 4 weeks ago 895MB maven 3-jdk-8 f44a5194086a 5 weeks ago 636MB &lt;none&gt; &lt;none&gt; 6752e2093697 5 weeks ago 12.9MB swaggerapi/swagger-ui latest 6f941e6fd913 5 weeks ago 51.7MB 这种 tag 为 none 的镜像就已经可以删除了。 jenkins 上可以创建如下任务来删除这些没有作用的镜像。
+pipeline { agent { label &#34;node1&#34; } stages { stage(&#34;clean images with tag none&#34;){ steps { parallel( node1: { sh(&#34;docker image ls | grep none | awk &#39;{print \$3}&#39; | xargs -I {} docker rmi {} || true&#34;) }, node2:{ sh(&#34;docker image ls | grep months | awk &#39;{print \$3}&#39; | xargs -I {} docker rmi {} || true&#34;) }) } } } } ">  
+
+  <title>
+    
+      jenkins slave 清理过期镜像的方法
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-05-22 00:00:00 &#43;0000 UTC">
+            2019-05-22
+        </time>
+    </p>
+
+    <h1>jenkins slave 清理过期镜像的方法</h1>
+
+    
+
+    <p>jenkins 上一直在不停的构建新的镜像，导致镜像越来越多，写满了 /var/lib/docekr 所在的分区，所以我们需要定期的清理多余的镜像。</p>
+<p>一般的，我们在开发周期构建镜像的时候，没有修改过镜像的版本号码，一个进行不停的 retag , 这样老的镜像的 tag 就会被覆盖，tag　变成 none。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>node                                                        8                        0bf36d7ccc1e        4 weeks ago         895MB                                                             
+</span></span><span style="display:flex;"><span>maven                                                       3-jdk-8                  f44a5194086a        5 weeks ago         636MB                                                             
+</span></span><span style="display:flex;"><span>&lt;none&gt;                                                      &lt;none&gt;                   6752e2093697        5 weeks ago         12.9MB                                                            
+</span></span><span style="display:flex;"><span>swaggerapi/swagger-ui                                       latest                   6f941e6fd913        5 weeks ago         51.7MB   
+</span></span></code></pre></div><p>这种 tag 为 none 的镜像就已经可以删除了。 jenkins 上可以创建如下任务来删除这些没有作用的镜像。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>pipeline {
+</span></span><span style="display:flex;"><span>    agent {
+</span></span><span style="display:flex;"><span>        label &#34;node1&#34;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    stages {
+</span></span><span style="display:flex;"><span>        stage(&#34;clean images with tag none&#34;){
+</span></span><span style="display:flex;"><span>            steps {
+</span></span><span style="display:flex;"><span>                parallel(
+</span></span><span style="display:flex;"><span>                    node1: {
+</span></span><span style="display:flex;"><span>                            sh(&#34;docker image ls | grep none | awk &#39;{print \$3}&#39; | xargs -I {} docker rmi {}  || true&#34;)
+</span></span><span style="display:flex;"><span>                        },
+</span></span><span style="display:flex;"><span>                    node2:{
+</span></span><span style="display:flex;"><span>                              sh(&#34;docker image ls | grep months | awk &#39;{print \$3}&#39; | xargs -I {} docker rmi {} || true&#34;)
+</span></span><span style="display:flex;"><span>                        })
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

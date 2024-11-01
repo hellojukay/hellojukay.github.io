@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在拿到一台初始化的的linux服务的第一时候，你就应该为他台服务器配置相关的安全设置。养成好的习惯，因为这可能帮你减少因为黑客攻击带来的巨额度损失。精密的配置的服务器难以攻破，会让黑可放弃攻击你的服务器。
+用户管理 linux系统会默认创建第一个用户&ndash;root。这个用户应该被禁止使用ssh远程登录服务器。禁止root会让黑客更难攻破你的服务器。如果黑客知道root能够登录，就相当于得到攻破服务器的一半的信息，这就为暴力破解减少一半的计算量。我们一般创建一个单独的用户来配置系统，如果需要权限，那么就使用sudo来获取root权限，而不是直接使用root账户。
+密码强度设置 在你创建用户的时候，你必须确保你的密码有足够的长度和字符，这样会比较难攻破一点。
+密码长度尽量在12位以上 密码尽量包含，大写字母，小写字母，数字，特殊字符 尽量使用随机密码工具来生成密码 密码不要使用连续或者重复的数字，字母 密码中不要包含个人信息 不要使用简单的单词来组合密码 添加用户(Debian 和 Ubuntu) 创建用户，设置密码 adduser {username} 如果这个用户是的主要运维用户，那么可以给他添加root权限 visudo 添加如下配置
+{usernamd} ALL=(ALL:ALL) ALL 测试一些以上配置是否正确 su {username} sudo iptables -L 当你执行以上两条命令之一的时候，系统会要求你输入当前用户的密码。
+创建ssh秘钥对 比密码登录更加安全的方式是使用秘钥登录，执行如下命令创建秘钥： ssh-genkey -b 4096 -t rsa 会要求你输入保存秘钥的文件，直接使用默认文件名即可，如果要更加安全，你可以给你的秘钥添加一个访问密码。创建文件了秘钥以后,```$HOME/.ssh文件夹下会生成两个文件，id_rsa和id_rsa.pub`文件。
+在你生成好了秘钥以后，你需要将之前生成的公钥上传到你的远程服务器上 务必要注意，是上传公钥到服务器上，而不是上传私钥到服务器上.
+ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@{remotePublicIPAddress} 这行命令会提示你输入密码，在输入密码结束以后，你可以尝试ssh {username}@{remotePublicIPAddress}来登录服务器，如果一切正常，系统将不会要求你输入密码。
+ssh服务端配置 现在你已经禁止了root登录，并且创建了运维专用的账号，你可以配置ssh daemon来提高服务器的安全系数了。
+在你更改ssh daemon的配置的时候，你务必要确认更改配置之后你还能访问服务器，最好的是提前通知系统管理员。
+ssh 配置项 这里将会介绍一些常用的ssh相关安全配置，如果你想要更加详细的说明，推荐你查阅openssh的官方文档
+这一小节将包含如下信息:
+Port xxx ssh默认端口配置（默认22端口） PubkeyAuthentication 允许或者禁止秘钥登录服务器 PasswordAuthentication 允许或者禁止密码登录服务器 众所周知，ssh 默认监听22端口，所以黑客都会尝试使用用户和密码爆破22端口，因为这个原因，所以你应该修改ssh服务的端口号。修改端口号不会保证服务器绝对安全，但是能够抵御所有对22端口的攻击。
+登录服务器有两种方法，一种是密码的登录，另一种是秘钥登录，秘钥是成对生成，他们只能结合使用，私钥被存储在你本地的计算机上，为了保证安全，你的私钥永远都不因该改分享给他人，公钥存储你的远程服务器上。
+修改sshd_config 上面说过，你应该禁止root登录，创建运维账户，为运维账户添加sudo权限，修改ssh的端口号，禁止密码登录服务器。下面我将演示如何配置：
+打开openssh的配置文件 sudo vi /etc/ssh/sshd_config 更改以下几行的默认值 Port 22 &gt; Port 9001 PermitRootLogin yes &gt; PermitRootLogin no PasswordAuthentication yes &gt; PasswordAuthentication no 把9001改成你想设置的端口号。 3.">  
+
+  <title>
+    
+      linux服务器安全最佳实践
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-09 00:00:00 &#43;0000 UTC">
+            2018-11-09
+        </time>
+    </p>
+
+    <h1>linux服务器安全最佳实践</h1>
+
+    
+
+    <p>在拿到一台初始化的的linux服务的第一时候，你就应该为他台服务器配置相关的安全设置。养成好的习惯，因为这可能帮你减少因为黑客攻击带来的巨额度损失。精密的配置的服务器难以攻破，会让黑可放弃攻击你的服务器。</p>
+<h1 id="用户管理">用户管理</h1>
+<p>linux系统会默认创建第一个用户&ndash;root。这个用户应该被禁止使用ssh远程登录服务器。禁止root会让黑客更难攻破你的服务器。如果黑客知道root能够登录，就相当于得到攻破服务器的一半的信息，这就为暴力破解减少一半的计算量。我们一般创建一个单独的用户来配置系统，如果需要权限，那么就使用<code>sudo</code>来获取root权限，而不是直接使用root账户。</p>
+<h1 id="密码强度设置">密码强度设置</h1>
+<p>在你创建用户的时候，你必须确保你的密码有足够的长度和字符，这样会比较难攻破一点。</p>
+<ul>
+<li>密码长度尽量在12位以上</li>
+<li>密码尽量包含，大写字母，小写字母，数字，特殊字符</li>
+<li>尽量使用随机密码工具来生成密码</li>
+<li>密码不要使用连续或者重复的数字，字母</li>
+<li>密码中不要包含个人信息</li>
+<li>不要使用简单的单词来组合密码</li>
+</ul>
+<h1 id="添加用户debian-和-ubuntu">添加用户(Debian 和 Ubuntu)</h1>
+<ol>
+<li>创建用户，设置密码</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>adduser <span style="color:#f92672">{</span>username<span style="color:#f92672">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>如果这个用户是的主要运维用户，那么可以给他添加root权限</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>visudo
+</span></span></code></pre></div><p>添加如下配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">{</span>usernamd<span style="color:#f92672">}</span> ALL<span style="color:#f92672">=(</span>ALL:ALL<span style="color:#f92672">)</span> ALL
+</span></span></code></pre></div><ol start="3">
+<li>测试一些以上配置是否正确</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>su <span style="color:#f92672">{</span>username<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>sudo iptables -L
+</span></span></code></pre></div><p>当你执行以上两条命令之一的时候，系统会要求你输入当前用户的密码。</p>
+<h1 id="创建ssh秘钥对">创建ssh秘钥对</h1>
+<ol>
+<li>比密码登录更加安全的方式是使用秘钥登录，执行如下命令创建秘钥：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh-genkey -b <span style="color:#ae81ff">4096</span> -t rsa
+</span></span></code></pre></div><p>会要求你输入保存秘钥的文件，直接使用默认文件名即可，如果要更加安全，你可以给你的秘钥添加一个访问密码。创建文件了秘钥以后,```$HOME/.ssh<code>文件夹下会生成两个文件，</code>id_rsa<code>和</code>id_rsa.pub`文件。</p>
+<ol start="2">
+<li>在你生成好了秘钥以后，你需要将之前生成的公钥上传到你的远程服务器上</li>
+</ol>
+<blockquote>
+<p>务必要注意，是上传公钥到服务器上，而不是上传私钥到服务器上.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh-copy-id -i ~/.ssh/id_rsa.pub <span style="color:#f92672">{</span>username<span style="color:#f92672">}</span>@<span style="color:#f92672">{</span>remotePublicIPAddress<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这行命令会提示你输入密码，在输入密码结束以后，你可以尝试<code>ssh {username}@{remotePublicIPAddress}</code>来登录服务器，如果一切正常，系统将不会要求你输入密码。</p>
+<h1 id="ssh服务端配置">ssh服务端配置</h1>
+<p>现在你已经禁止了root登录，并且创建了运维专用的账号，你可以配置ssh daemon来提高服务器的安全系数了。</p>
+<blockquote>
+<p>在你更改ssh daemon的配置的时候，你务必要确认更改配置之后你还能访问服务器，最好的是提前通知系统管理员。</p>
+</blockquote>
+<h2 id="ssh-配置项">ssh 配置项</h2>
+<p>这里将会介绍一些常用的ssh相关安全配置，如果你想要更加详细的说明，推荐你查阅<a href="http://www.openssh.com/cgi-bin/man.cgi/OpenBSD-current/man5/sshd_config.5">openssh的官方文档</a></p>
+<p>这一小节将包含如下信息:</p>
+<ul>
+<li><code>Port xxx</code> ssh默认端口配置（默认22端口）</li>
+<li><code>PubkeyAuthentication</code> 允许或者禁止秘钥登录服务器</li>
+<li><code>PasswordAuthentication</code> 允许或者禁止密码登录服务器</li>
+</ul>
+<p>众所周知，ssh 默认监听22端口，所以黑客都会尝试使用用户和密码爆破22端口，因为这个原因，所以你应该修改ssh服务的端口号。修改端口号不会保证服务器绝对安全，但是能够抵御所有对22端口的攻击。</p>
+<p>登录服务器有两种方法，一种是密码的登录，另一种是秘钥登录，秘钥是成对生成，他们只能结合使用，私钥被存储在你本地的计算机上，为了保证安全，你的私钥永远都不因该改分享给他人，公钥存储你的远程服务器上。</p>
+<h2 id="修改sshd_config">修改sshd_config</h2>
+<p>上面说过，你应该禁止root登录，创建运维账户，为运维账户添加sudo权限，修改ssh的端口号，禁止密码登录服务器。下面我将演示如何配置：</p>
+<ol>
+<li>打开openssh的配置文件</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo vi /etc/ssh/sshd_config
+</span></span></code></pre></div><ol start="2">
+<li>更改以下几行的默认值</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Port <span style="color:#ae81ff">22</span> &gt; Port <span style="color:#ae81ff">9001</span>
+</span></span><span style="display:flex;"><span>PermitRootLogin yes &gt; PermitRootLogin no
+</span></span><span style="display:flex;"><span>PasswordAuthentication yes &gt; PasswordAuthentication no
+</span></span></code></pre></div><p>把9001改成你想设置的端口号。
+3. 修改完sshd的配置以后，测试一下是否配置正确</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sshd -t
+</span></span></code></pre></div><p>修改完了配置以后，修改防火墙支配，放开9001端口，重启sshd服务。</p>
+<ol>
+<li>检查防火墙时候开启，ubuntu默认是没有限制的,centos和Red Hat则有。如下表示所有端口都开放:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ sudo iptables -L
+</span></span><span style="display:flex;"><span>Chain INPUT <span style="color:#f92672">(</span>policy ACCEPT<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>target     prot opt source               destination
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chain FORWARD <span style="color:#f92672">(</span>policy ACCEPT<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>target     prot opt source               destination
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Chain OUTPUT <span style="color:#f92672">(</span>policy ACCEPT<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>target     prot opt source               destination
+</span></span></code></pre></div><ol start="2">
+<li>通过如下命令能够再开放一个新的端口</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo iptables -I INPUT -p tcp --dport <span style="color:#ae81ff">9001</span> -m state --state NEW,ESTABLISHED -j ACCEPT
+</span></span></code></pre></div><p>将9001端口换成你想要的端口。如果你在Red Hat 5或者CentOS 5s上，则使用如下命令:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo iptables -I INPUT -p tcp --dport <span style="color:#ae81ff">9001</span> -m state --state NEW,ESTABLISHED -j ACCEPT
+</span></span></code></pre></div><ol start="3">
+<li>重启sshd服务</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo service ssh restart
+</span></span></code></pre></div><ol start="4">
+<li>如何你在此需要访问远程主机，你需要使用<code>ssh -p 9001</code>来指定端口号，使用<code>-i</code>选项来指定私钥文件</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh -p <span style="color:#ae81ff">9001</span> -i ~/.ssh/id_rsa <span style="color:#f92672">{</span>username<span style="color:#f92672">}</span>@<span style="color:#f92672">{</span>remotePublicIPAddress<span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

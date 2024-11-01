@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="第一步：在 jenkins 上安装 k8s 插件 第二步: 在 jenkins 上配置 k8s 插件，在系统设置中添加&quot;云&quot; 第三步: 第二部中需要添加凭证信息，制作方式如下：
+[licong@k8s01v pki]$ pwd /etc/kubernetes/pki [licong@k8s01v pki]$ ls -al 总用量 60 drwxr-xr-x 3 root root 4096 7月 17 13:55 . drwxr-xr-x 4 root root 125 7月 17 13:56 .. -rw-r--r-- 1 root root 1249 7月 17 13:55 apiserver.crt -rw-r--r-- 1 root root 1090 7月 17 13:55 apiserver-etcd-client.crt -rw------- 1 root root 1675 7月 17 13:55 apiserver-etcd-client.key -rw------- 1 root root 1679 7月 17 13:55 apiserver.">  
+
+  <title>
+    
+      jenkins 结合 k8s 动态构建
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-22 00:00:00 &#43;0000 UTC">
+            2019-07-22
+        </time>
+    </p>
+
+    <h1>jenkins 结合 k8s 动态构建</h1>
+
+    
+
+    <p>第一步：在 jenkins 上安装 k8s 插件
+<img src="/20190722/install.png" alt="install.png">
+第二步: 在 jenkins 上配置 k8s 插件，在系统设置中添加&quot;云&quot;
+<img src="/20190722/config_1.png" alt="config_1.png">
+第三步: 第二部中需要添加凭证信息，制作方式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@k8s01v pki<span style="color:#f92672">]</span>$ pwd
+</span></span><span style="display:flex;"><span>/etc/kubernetes/pki
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@k8s01v pki<span style="color:#f92672">]</span>$ ls -al
+</span></span><span style="display:flex;"><span>总用量 <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>drwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">4096</span> 7月  <span style="color:#ae81ff">17</span> 13:55 .
+</span></span><span style="display:flex;"><span>drwxr-xr-x <span style="color:#ae81ff">4</span> root root  <span style="color:#ae81ff">125</span> 7月  <span style="color:#ae81ff">17</span> 13:56 ..
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1249</span> 7月  <span style="color:#ae81ff">17</span> 13:55 apiserver.crt
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1090</span> 7月  <span style="color:#ae81ff">17</span> 13:55 apiserver-etcd-client.crt
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1675</span> 7月  <span style="color:#ae81ff">17</span> 13:55 apiserver-etcd-client.key
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1679</span> 7月  <span style="color:#ae81ff">17</span> 13:55 apiserver.key
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1099</span> 7月  <span style="color:#ae81ff">17</span> 13:55 apiserver-kubelet-client.crt
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1679</span> 7月  <span style="color:#ae81ff">17</span> 13:55 apiserver-kubelet-client.key
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1025</span> 7月  <span style="color:#ae81ff">17</span> 13:55 ca.crt
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1675</span> 7月  <span style="color:#ae81ff">17</span> 13:55 ca.key
+</span></span><span style="display:flex;"><span>drwxr-xr-x <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">162</span> 7月  <span style="color:#ae81ff">17</span> 13:55 etcd
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1038</span> 7月  <span style="color:#ae81ff">17</span> 13:55 front-proxy-ca.crt
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1679</span> 7月  <span style="color:#ae81ff">17</span> 13:55 front-proxy-ca.key
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1058</span> 7月  <span style="color:#ae81ff">17</span> 13:55 front-proxy-client.crt
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1679</span> 7月  <span style="color:#ae81ff">17</span> 13:55 front-proxy-client.key
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">1675</span> 7月  <span style="color:#ae81ff">17</span> 13:55 sa.key
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root  <span style="color:#ae81ff">451</span> 7月  <span style="color:#ae81ff">17</span> 13:55 sa.pub
+</span></span></code></pre></div><p>记住下面命令行输入的命令，会在 jenkins 配置中用到</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@k8s01v pki<span style="color:#f92672">]</span>$ sudo openssl pkcs12 -export -out cert.pfx -inkey apiserver-kubelet-client.key -in apiserver-kubelet-client.crt   -certfile ca.crt
+</span></span><span style="display:flex;"><span>Enter Export Password:
+</span></span></code></pre></div><p><img src="/20190722/config_2.png" alt="config_2.png"></p>
+<p>第四步: 配置一个默认模板，也就是大家执行 k8s 构建的时候不指定 pod 时候使用的默认容器
+<img src="/20190722/config_3.png" alt="config_3.png"></p>
+<p>第五步： jenkinsfile 配置,给以简单额配置如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">pipeline {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">environment {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">git_cred = &#34;licong-biz&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">image = &#34;docker.hellojukay.cn/server&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">agent {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">kubernetes {</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">defaultContainer &#39;jnlp&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#ae81ff">yaml &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">some-label</span>: <span style="color:#ae81ff">some-label-value</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gradle</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">docker.hellojukay.cn/java:8-jdk-alpine</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">command</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#ae81ff">sh</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tty</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">docker</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">docker.hellojukay.cn/docker:18.09</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#39;cat&#39;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">tty</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">dockersock</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/var/run/docker.sock</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">dockersock</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/var/run/docker.sock</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  stages {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    stage(&#39;gradle build&#39;) {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      steps {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        sh &#34;</span><span style="color:#ae81ff">mkdir -p sec-matrix-core&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ae81ff">dir(&#34;sec-matrix-core&#34;) {</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">git branch</span>: <span style="color:#e6db74">&#34;${env.BRANCH_NAME}&#34;</span><span style="color:#f92672">,credentialsId</span>: <span style="color:#e6db74">&#34;${git_cred}&#34;</span><span style="color:#f92672">, url</span>: <span style="color:#e6db74">&#34;${env.GIT_URL}&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#ae81ff">container(&#39;gradle&#39;) {</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ae81ff">sh &#39;cd backend &amp;&amp; ./gradlew build&#39;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#ae81ff">container(&#39;docker&#39;) {</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#ae81ff">sh &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#ae81ff">ls -al </span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#ae81ff">cd  backend &amp;&amp; docker build -t ${image}:${env.BUILD_ID} .</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;&#34;</span><span style="color:#ae81ff">&#34;</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

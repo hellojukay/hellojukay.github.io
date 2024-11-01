@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="报错信息： ERROR: Unable to find cmake executable in any of [&#39;cmake3&#39;, &#39;cmake&#39;]. CMake is required to build ycmd 等待我们安装好了 cmake 以后还是继续报错
+sudo pacman -S cmake 错误如下：
+Searching Python 3.9 libraries... Found Python library: /usr/lib64/libpython3.9.so Found Python headers folder: /usr/include/python3.9 CMake Error: CMake was unable to find a build program corresponding to &#34;Unix Makefiles&#34;. CMAKE_MAKE_PROGRAM is not set. You probably need to select a different build tool. CMake Error: CMAKE_C_COMPILER not set, after EnableLanguage CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage -- Configuring incomplete, errors occurred!">  
+
+  <title>
+    
+      解决 YCM 安装 cmake 报错的问题
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-04-26 00:00:00 &#43;0000 UTC">
+            2021-04-26
+        </time>
+    </p>
+
+    <h1>解决 YCM 安装 cmake 报错的问题</h1>
+
+    
+
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>报错信息：
+</span></span><span style="display:flex;"><span>ERROR: Unable to find cmake executable in any of [&#39;cmake3&#39;, &#39;cmake&#39;]. CMake is required to build ycmd
+</span></span></code></pre></div><p>等待我们安装好了 cmake 以后还是继续报错</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo pacman -S cmake
+</span></span></code></pre></div><p>错误如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Searching Python 3.9 libraries...
+</span></span><span style="display:flex;"><span>Found Python library: /usr/lib64/libpython3.9.so
+</span></span><span style="display:flex;"><span>Found Python headers folder: /usr/include/python3.9
+</span></span><span style="display:flex;"><span>CMake Error: CMake was unable to find a build program corresponding to <span style="color:#e6db74">&#34;Unix Makefiles&#34;</span>.  CMAKE_MAKE_PROGRAM is not set.  You probably need to <span style="color:#66d9ef">select</span> a different build tool.
+</span></span><span style="display:flex;"><span>CMake Error: CMAKE_C_COMPILER not set, after EnableLanguage
+</span></span><span style="display:flex;"><span>CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage
+</span></span><span style="display:flex;"><span>-- Configuring incomplete, errors occurred!
+</span></span><span style="display:flex;"><span>See also <span style="color:#e6db74">&#34;/tmp/ycm_build_483z79fi/CMakeFiles/CMakeOutput.log&#34;</span>.
+</span></span><span style="display:flex;"><span>ERROR: the build failed.
+</span></span></code></pre></div><p>这里一起是没有安装 make 的原因，我们安装一下 make 问题就解决了</p>
+<p>解决方案:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo pacman -S make
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="vim 提供了须多移动光标的方式,熟练掌握移动光标的技能能极大的提高编辑的效率．
+h 光标向左移动一个字符 j 光标向下移动一个字符 k 光标向上移动一个字符 l 光标向右移动一个字符 w 光标移动到下一个单词的开头 b 光标移动到当前或者前一个单词的开头 e 光标移动到当前单词的结尾 W 光标移动下一个单词的开头空格之前 B 光标移动到当前或者前一个单词的开头空格之后 E 光标移动单词的结尾处空格之前
+以上移动方式都能在前面加上量词，比如4j,向下移动４行．
+0 移动到行的开头 _ 移动到行的第一个非空格字符 g_ 移动到行的最后一个非空格字符 gg 移动到第一行 G 移动到最后一行
+ngg 移动第n行，比如12gg移动到第12行 nG 移动第n行，比如12G移动到第12行
+H 移动到屏幕的顶部 M 移动到屏幕的中间 L 移动到屏幕的低部分
+zz 将当前位置设置为屏幕的中央 zt 将光标当前位置设置为屏幕的定端 zb 将光标当前位置设置为屏幕的底端
+Ctrl d 向下移动半个屏 Ctrl u 向上移动半个屏 Ctrl b 向上翻页 Ctrl f 向下翻页 Ctrl o 回到光标上次位置 Ctrl y 屏幕向上滚动，光标所在行号不变 Ctrl e 屏幕向下滚动，光标所在行号不变">  
+
+  <title>
+    
+      【翻译】vim光标移动技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-09-04 00:00:00 &#43;0000 UTC">
+            2020-09-04
+        </time>
+    </p>
+
+    <h1>【翻译】vim光标移动技巧</h1>
+
+    
+
+    <p>vim 提供了须多移动光标的方式,熟练掌握移动光标的技能能极大的提高编辑的效率．</p>
+<p>h 光标向左移动一个字符
+j 光标向下移动一个字符
+k 光标向上移动一个字符
+l 光标向右移动一个字符
+w 光标移动到下一个单词的开头
+b 光标移动到当前或者前一个单词的开头
+e 光标移动到当前单词的结尾
+W 光标移动下一个单词的开头空格之前
+B 光标移动到当前或者前一个单词的开头空格之后
+E 光标移动单词的结尾处空格之前</p>
+<p>以上移动方式都能在前面加上量词，比如<code>4j</code>,向下移动４行．</p>
+<hr>
+<p>0    移动到行的开头
+_    移动到行的第一个非空格字符
+g_   移动到行的最后一个非空格字符
+gg   移动到第一行
+G    移动到最后一行</p>
+<hr>
+<p>ngg   移动第n行，比如12gg移动到第12行
+nG    移动第n行，比如12G移动到第12行</p>
+<hr>
+<p>H 移动到屏幕的顶部
+M 移动到屏幕的中间
+L 移动到屏幕的低部分</p>
+<hr>
+<p>zz 将当前位置设置为屏幕的中央
+zt 将光标当前位置设置为屏幕的定端
+zb 将光标当前位置设置为屏幕的底端</p>
+<hr>
+<p>Ctrl d 向下移动半个屏
+Ctrl u 向上移动半个屏
+Ctrl b 向上翻页
+Ctrl f 向下翻页
+Ctrl o 回到光标上次位置
+Ctrl y 屏幕向上滚动，光标所在行号不变
+Ctrl e 屏幕向下滚动，光标所在行号不变</p>
+<p>n 下一个搜索匹配的结果
+N 上一个搜索匹配的结果
+* 移动到下一个整单词
+# 移动上一个整单词</p>
+<hr>
+<p>%  在括号之间跳转 {} [] ()
+fX 移动当前行的下一个字符 X , X 是任意单词，也可以在前面加上量词
+FX 移动当前行的上一个字符 X , X 是任意单词，也可以在前面加上量词
+tX 移动到当前行的下一个字符 X 的前面，X 是任意字符，也可以在前面加上量词
+TX 移动到当前行的上一个字符 X 的前面，X 是任意字符，也可以在前面加上量词
+;  重复以上动作
+,  反方向重复以上动作</p>
+<hr>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

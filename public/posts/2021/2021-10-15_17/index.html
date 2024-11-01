@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="设置项目构建的描述信息,pipline 的情况下这样设置
+stage(&#39;xxx&#39;){ steps{ script { currentBuild.name =&#34;MY_VERSION_NUMBER&#34; currentBuild.description =&#34;MY_PROJECT MY_VERSION_NUMBER&#34; } } } 在自由风格的情况下，需要安装 &lsquo;description setter plugin&rsquo;, 然后在项目的时候下面添加一个编译后的步骤，选择 &lsquo;Set build description&rsquo;, 然后 填写上正则表达式，捕获日志中的字符串，在 &lsquo;Description&rsquo; 中可以用 \number 的方式引用正则的捕获。">  
+
+  <title>
+    
+      jenkins 小技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-10-15 00:00:00 &#43;0000 UTC">
+            2021-10-15
+        </time>
+    </p>
+
+    <h1>jenkins 小技巧</h1>
+
+    
+
+    <p>设置项目构建的描述信息,pipline 的情况下这样设置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;xxx&#39;</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>    steps<span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        script <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            currentBuild<span style="color:#f92672">.</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;MY_VERSION_NUMBER&#34;</span>
+</span></span><span style="display:flex;"><span>            currentBuild<span style="color:#f92672">.</span><span style="color:#a6e22e">description</span> <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;MY_PROJECT MY_VERSION_NUMBER&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>在自由风格的情况下，需要安装 &lsquo;description setter plugin&rsquo;, 然后在项目的时候下面添加一个编译后的步骤，选择 &lsquo;Set build description&rsquo;, 然后
+填写上正则表达式，捕获日志中的字符串，在 &lsquo;Description&rsquo; 中可以用 \number 的方式引用正则的捕获。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

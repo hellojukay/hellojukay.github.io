@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="有时候在 pull 一个 docker 镜像的时候，会出现:
+code = Unknown desc = filesystem layer verification failed for digest 不管你是重装 docker , 或者重启服务器，或者在别的机器上 pull 这个镜像，还是无法成功。暂时找到一个种解决方案: 曲线救国，手动导入镜像。
+第一步：在别的机器导出这个镜像（前提是这个镜像在别的服务器已经存在)
+docker save {iamge} &gt; xxx.tar 第二步：上传镜像文件到服务器
+scrp xxx.tar user@host:/xxx 第三步：导入这个镜像文件
+docker load -i xxx.tar ">  
+
+  <title>
+    
+      解决 code = Unknown desc = filesystem layer verification failed for digest
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-03-27 00:00:00 &#43;0000 UTC">
+            2020-03-27
+        </time>
+    </p>
+
+    <h1>解决 code = Unknown desc = filesystem layer verification failed for digest</h1>
+
+    
+
+    <p>有时候在 pull 一个 docker 镜像的时候，会出现:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>code = Unknown desc = filesystem layer verification failed for digest
+</span></span></code></pre></div><p>不管你是重装 docker , 或者重启服务器，或者在别的机器上 pull 这个镜像，还是无法成功。暂时找到一个种解决方案: 曲线救国，手动导入镜像。</p>
+<p>第一步：在别的机器导出这个镜像（前提是这个镜像在别的服务器已经存在)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker save <span style="color:#f92672">{</span>iamge<span style="color:#f92672">}</span> &gt; xxx.tar
+</span></span></code></pre></div><p>第二步：上传镜像文件到服务器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>scrp xxx.tar user@host:/xxx
+</span></span></code></pre></div><p>第三步：导入这个镜像文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker load -i xxx.tar
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

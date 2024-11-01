@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="虽然密码登很不安全，运维是应该禁止掉这样的登录方式。但是。。。
+编写自动登录脚本 cat auto_login.sh #!/usr/bin/expect set user xxxx set host localhost set password &#39;xxxx&#39; catch {set user $env(login_user)} catch {set host $env(login_host)} catch {set password $env(login_passwd)} set timeout 60 spawn ssh &#34;$user@$host&#34; expect &#34;*assword:*&#34; send &#34;$password\r&#34; interact 这里expect是读取的环境变量中的登录用户，登录机器，登录密码，如果环境变量没有对应的变量，会使用默认值进行登录。
+编写特定机器登录脚本 #!/usr/bin/env bash env login_user=xxxx login_passwd=xxxx login_host=$(basename $0) auto_login.sh 当前脚本文件的文件名字就是你需要登录的机器，可以是域名，也可以是ip.如果我要登录的机器是blog.hellojukauy.cn。那么脚本的文件名字应该是blog.hellojukauy.cn
+cat blog.hellojukauy.cn #!/usr/bin/env bash env login_user=xxxx login_passwd=xxxx login_host=$(basename $0) auto_login.sh 上面调用了auto_login.sh这个脚本，所以auto_login这个脚本最好是应该放在当前用户的PATH中。
+修改PATH 在.bashrc中添加append函数
+append(){ PATH=$PATH:$1 } 使用apppend将auto_login.sh加入到PATH
+append /Users/jukay/login/ 更新当前环境变量,更新以后登录就能自动补全了，登录blog.hellshell.cn
+source .bashrc # 登录成功 blog.">  
+
+  <title>
+    
+      基于密码的自动登录方案
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-07-31 00:00:00 &#43;0000 UTC">
+            2018-07-31
+        </time>
+    </p>
+
+    <h1>基于密码的自动登录方案</h1>
+
+    
+
+    <p>虽然密码登很不安全，运维是应该禁止掉这样的登录方式。但是。。。</p>
+<h2 id="编写自动登录脚本">编写自动登录脚本</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat auto_login.sh
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/expect</span>
+</span></span><span style="display:flex;"><span>set user xxxx
+</span></span><span style="display:flex;"><span>set host localhost
+</span></span><span style="display:flex;"><span>set password <span style="color:#e6db74">&#39;xxxx&#39;</span>
+</span></span><span style="display:flex;"><span>catch <span style="color:#f92672">{</span>set user $env<span style="color:#f92672">(</span>login_user<span style="color:#f92672">)}</span>
+</span></span><span style="display:flex;"><span>catch <span style="color:#f92672">{</span>set host $env<span style="color:#f92672">(</span>login_host<span style="color:#f92672">)}</span>
+</span></span><span style="display:flex;"><span>catch <span style="color:#f92672">{</span>set password $env<span style="color:#f92672">(</span>login_passwd<span style="color:#f92672">)}</span>
+</span></span><span style="display:flex;"><span>set timeout <span style="color:#ae81ff">60</span>
+</span></span><span style="display:flex;"><span>spawn ssh <span style="color:#e6db74">&#34;</span>$user<span style="color:#e6db74">@</span>$host<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>expect <span style="color:#e6db74">&#34;*assword:*&#34;</span>
+</span></span><span style="display:flex;"><span>send <span style="color:#e6db74">&#34;</span>$password<span style="color:#e6db74">\r&#34;</span>
+</span></span><span style="display:flex;"><span>interact
+</span></span></code></pre></div><p>这里expect是读取的环境变量中的登录用户，登录机器，登录密码，如果环境变量没有对应的变量，会使用默认值进行登录。</p>
+<h2 id="编写特定机器登录脚本">编写特定机器登录脚本</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>env login_user<span style="color:#f92672">=</span>xxxx login_passwd<span style="color:#f92672">=</span>xxxx login_host<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename $0<span style="color:#66d9ef">)</span> auto_login.sh
+</span></span></code></pre></div><p>当前脚本文件的文件名字就是你需要登录的机器，可以是域名，也可以是ip.如果我要登录的机器是<code>blog.hellojukauy.cn</code>。那么脚本的文件名字应该是<code>blog.hellojukauy.cn</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat blog.hellojukauy.cn
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env bash</span>
+</span></span><span style="display:flex;"><span>env login_user<span style="color:#f92672">=</span>xxxx login_passwd<span style="color:#f92672">=</span>xxxx login_host<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>basename $0<span style="color:#66d9ef">)</span> auto_login.sh
+</span></span></code></pre></div><p>上面调用了<code>auto_login.sh</code>这个脚本，所以<code>auto_login</code>这个脚本最好是应该放在当前用户的<code>PATH</code>中。</p>
+<h2 id="修改path">修改PATH</h2>
+<p>在<code>.bashrc</code>中添加<code>append</code>函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>append<span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>    PATH<span style="color:#f92672">=</span>$PATH:$1
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>使用<code>apppend</code>将<code>auto_login.sh</code>加入到<code>PATH</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>append /Users/jukay/login/
+</span></span></code></pre></div><p>更新当前环境变量,更新以后登录就能自动补全了，登录<code>blog.hellshell.cn</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>source .bashrc
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 登录成功</span>
+</span></span><span style="display:flex;"><span>blog.hellshell.cn
+</span></span></code></pre></div><h2 id="技巧">技巧</h2>
+<p>如果机器很多，并且密码都一样，不妨复制多个同样的登录脚本，文件名改成机器ip或者域名，如果密码有不一致的地方，可修改相应脚本内容。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

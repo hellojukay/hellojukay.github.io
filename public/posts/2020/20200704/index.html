@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="我用的是台式机，安装的 manjaro 系统，用的 TP-Link 的一款 USB 无线网卡上网。在使用 wireshark 抓包的时候没有显示我的网卡信息。一顿尝试时候之后发现
+捕获-》开始 提示报错 /usr/bin/dumpcap 没有执行权限，加上执行权限
+sudo chmod a&#43;x /usr/bin/dumpcap 暴力解决了。重启 wirehsark 无线网卡出现在了接口列表之中。">  
+
+  <title>
+    
+      解决wireshark在linux下不显示USB网卡的问题
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-07-04 00:00:00 &#43;0000 UTC">
+            2020-07-04
+        </time>
+    </p>
+
+    <h1>解决wireshark在linux下不显示USB网卡的问题</h1>
+
+    
+
+    <p>我用的是台式机，安装的 manjaro 系统，用的 TP-Link 的一款 USB 无线网卡上网。在使用 wireshark 抓包的时候没有显示我的网卡信息。一顿尝试时候之后发现</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>捕获-》开始
+</span></span></code></pre></div><p>提示报错 /usr/bin/dumpcap 没有执行权限，加上执行权限</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo chmod a+x /usr/bin/dumpcap
+</span></span></code></pre></div><p>暴力解决了。重启 wirehsark 无线网卡出现在了接口列表之中。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

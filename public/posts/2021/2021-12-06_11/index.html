@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="下载地址: https://www.selenic.com/smem/download/
+#!/usr/bin/env python2 # # smem - a tool for meaningful memory reporting # # Copyright 2008-2009 Matt Mackall &lt;mpm@selenic.com&gt; # # This software may be used and distributed according to the terms of # the GNU General Public License version 2 or later, incorporated # herein by reference. import re, os, sys, pwd, optparse, errno, tarfile warned = False class procdata(object): def __init__(self, source): self._ucache = {} self._gcache = {} self.">  
+
+  <title>
+    
+      内存分析工具 smem
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-12-06 00:00:00 &#43;0000 UTC">
+            2021-12-06
+        </time>
+    </p>
+
+    <h1>内存分析工具 smem</h1>
+
+    
+
+    <p>下载地址: <a href="https://www.selenic.com/smem/download/">https://www.selenic.com/smem/download/</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python2</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># smem - a tool for meaningful memory reporting</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Copyright 2008-2009 Matt Mackall &lt;mpm@selenic.com&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This software may be used and distributed according to the terms of</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># the GNU General Public License version 2 or later, incorporated</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># herein by reference.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> re<span style="color:#f92672">,</span> os<span style="color:#f92672">,</span> sys<span style="color:#f92672">,</span> pwd<span style="color:#f92672">,</span> optparse<span style="color:#f92672">,</span> errno<span style="color:#f92672">,</span> tarfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>warned <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">procdata</span>(object):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, source):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_ucache <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_gcache <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>source <span style="color:#f92672">=</span> source <span style="color:#f92672">and</span> source <span style="color:#f92672">or</span> <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>_memdata <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_list</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> os<span style="color:#f92672">.</span>listdir(self<span style="color:#f92672">.</span>source <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/proc&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_read</span>(self, f):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> file(self<span style="color:#f92672">.</span>source <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;/proc/&#39;</span> <span style="color:#f92672">+</span> f)<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_readlines</span>(self, f):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_read(f)<span style="color:#f92672">.</span>splitlines(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_stat</span>(self, f):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> os<span style="color:#f92672">.</span>stat(self<span style="color:#f92672">.</span>source <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;/proc/&#34;</span> <span style="color:#f92672">+</span> f)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pids</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;&#39;&#39;get a list of processes&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> [int(e) <span style="color:#66d9ef">for</span> e <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>_list()
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> e<span style="color:#f92672">.</span>isdigit() <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> iskernel(e)]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">mapdata</span>(self, pid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_readlines(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/smaps&#39;</span> <span style="color:#f92672">%</span> pid)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">memdata</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>_memdata <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>_memdata <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_readlines(<span style="color:#e6db74">&#39;meminfo&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_memdata
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">version</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_readlines(<span style="color:#e6db74">&#39;version&#39;</span>)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidname</span>(self, pid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            l <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_read(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">/stat&#39;</span> <span style="color:#f92672">%</span> pid)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> l[l<span style="color:#f92672">.</span>find(<span style="color:#e6db74">&#39;(&#39;</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>: l<span style="color:#f92672">.</span>find(<span style="color:#e6db74">&#39;)&#39;</span>)]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;?&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidcmd</span>(self, pid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            c <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_read(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">/cmdline&#39;</span> <span style="color:#f92672">%</span> pid)[:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> c<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\0</span><span style="color:#e6db74">&#39;</span>, <span style="color:#e6db74">&#39; &#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;?&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">piduser</span>(self, pid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_stat(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> pid)<span style="color:#f92672">.</span>st_uid
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidgroup</span>(self, pid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_stat(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> pid)<span style="color:#f92672">.</span>st_gid
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">username</span>(self, uid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> uid <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;?&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> uid <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>_ucache:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>_ucache[uid] <span style="color:#f92672">=</span> pwd<span style="color:#f92672">.</span>getpwuid(uid)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyError</span>:
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>_ucache[uid] <span style="color:#f92672">=</span> str(uid)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_ucache[uid]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">groupname</span>(self, gid):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> gid <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;?&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> gid <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>_gcache:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>_gcache[gid] <span style="color:#f92672">=</span> pwd<span style="color:#f92672">.</span>getgrgid(gid)[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyError</span>:
+</span></span><span style="display:flex;"><span>                self<span style="color:#f92672">.</span>_gcache[gid] <span style="color:#f92672">=</span> str(gid)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_gcache[gid]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">tardata</span>(procdata):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self, source):
+</span></span><span style="display:flex;"><span>        procdata<span style="color:#f92672">.</span>__init__(self, source)
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>tar <span style="color:#f92672">=</span> tarfile<span style="color:#f92672">.</span>open(source)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_list</span>(self):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> ti <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>tar:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> ti<span style="color:#f92672">.</span>name<span style="color:#f92672">.</span>endswith(<span style="color:#e6db74">&#39;/smaps&#39;</span>):
+</span></span><span style="display:flex;"><span>                d,f <span style="color:#f92672">=</span> ti<span style="color:#f92672">.</span>name<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;/&#39;</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">yield</span> d
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_read</span>(self, f):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>tar<span style="color:#f92672">.</span>extractfile(f)<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_readlines</span>(self, f):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>tar<span style="color:#f92672">.</span>extractfile(f)<span style="color:#f92672">.</span>readlines()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">piduser</span>(self, p):
+</span></span><span style="display:flex;"><span>        t <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tar<span style="color:#f92672">.</span>getmember(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> p)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> t<span style="color:#f92672">.</span>uname:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>_ucache[t<span style="color:#f92672">.</span>uid] <span style="color:#f92672">=</span> t<span style="color:#f92672">.</span>uname
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> t<span style="color:#f92672">.</span>uid
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidgroup</span>(self, p):
+</span></span><span style="display:flex;"><span>        t <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>tar<span style="color:#f92672">.</span>getmember(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> p)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> t<span style="color:#f92672">.</span>gname:
+</span></span><span style="display:flex;"><span>            self<span style="color:#f92672">.</span>_gcache[t<span style="color:#f92672">.</span>gid] <span style="color:#f92672">=</span> t<span style="color:#f92672">.</span>gname
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> t<span style="color:#f92672">.</span>gid
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">username</span>(self, u):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_ucache<span style="color:#f92672">.</span>get(u, str(u))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">groupname</span>(self, g):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_gcache<span style="color:#f92672">.</span>get(g, str(g))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>_totalmem <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">totalmem</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">global</span> _totalmem
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _totalmem:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>realmem:
+</span></span><span style="display:flex;"><span>            _totalmem <span style="color:#f92672">=</span> fromunits(options<span style="color:#f92672">.</span>realmem) <span style="color:#f92672">/</span> <span style="color:#ae81ff">1024</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            _totalmem <span style="color:#f92672">=</span> memory()[<span style="color:#e6db74">&#39;memtotal&#39;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _totalmem
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>_kernelsize <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">kernelsize</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">global</span> _kernelsize
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> _kernelsize <span style="color:#f92672">and</span> options<span style="color:#f92672">.</span>kernel:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            d <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>popen(<span style="color:#e6db74">&#34;size </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> options<span style="color:#f92672">.</span>kernel)<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>            _kernelsize <span style="color:#f92672">=</span> int(d<span style="color:#f92672">.</span>split()[<span style="color:#ae81ff">3</span>]) <span style="color:#f92672">/</span> <span style="color:#ae81ff">1024</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e"># try some heuristic to find gzipped part in kernel image</span>
+</span></span><span style="display:flex;"><span>                packedkernel <span style="color:#f92672">=</span> open(options<span style="color:#f92672">.</span>kernel)<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>                pos <span style="color:#f92672">=</span> packedkernel<span style="color:#f92672">.</span>find(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\x1F\x8B</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> pos <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">and</span> pos <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">25000</span>:
+</span></span><span style="display:flex;"><span>                    sys<span style="color:#f92672">.</span>stderr<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;Maybe uncompressed kernel can be extracted by the command:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#e6db74">&#34;  dd if=</span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> bs=1 skip=</span><span style="color:#e6db74">%d</span><span style="color:#e6db74"> | gzip -d &gt;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">.unpacked</span><span style="color:#ae81ff">\n\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> (options<span style="color:#f92672">.</span>kernel, pos, options<span style="color:#f92672">.</span>kernel))
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">pass</span>
+</span></span><span style="display:flex;"><span>            sys<span style="color:#f92672">.</span>stderr<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;Parameter &#39;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39; should be an original uncompressed compiled kernel file.</span><span style="color:#ae81ff">\n\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> options<span style="color:#f92672">.</span>kernel)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _kernelsize
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidmaps</span>(pid):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">global</span> warned
+</span></span><span style="display:flex;"><span>    maps <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    start <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    seen <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>    empty <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> l <span style="color:#f92672">in</span> src<span style="color:#f92672">.</span>mapdata(pid):
+</span></span><span style="display:flex;"><span>        empty <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>        f <span style="color:#f92672">=</span> l<span style="color:#f92672">.</span>split()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> f[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;kB&#39;</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> f[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>startswith(<span style="color:#e6db74">&#39;Pss&#39;</span>):
+</span></span><span style="display:flex;"><span>                seen <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>            maps[start][f[<span style="color:#ae81ff">0</span>][:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>lower()] <span style="color:#f92672">=</span> int(f[<span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">elif</span> <span style="color:#e6db74">&#39;-&#39;</span> <span style="color:#f92672">in</span> f[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">and</span> <span style="color:#e6db74">&#39;:&#39;</span> <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> f[<span style="color:#ae81ff">0</span>]: <span style="color:#75715e"># looks like a mapping range</span>
+</span></span><span style="display:flex;"><span>            start, end <span style="color:#f92672">=</span> f[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;-&#39;</span>)
+</span></span><span style="display:flex;"><span>            start <span style="color:#f92672">=</span> int(start, <span style="color:#ae81ff">16</span>)
+</span></span><span style="display:flex;"><span>            name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;anonymous&gt;&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> len(f) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">5</span>:
+</span></span><span style="display:flex;"><span>                name <span style="color:#f92672">=</span> f[<span style="color:#ae81ff">5</span>]
+</span></span><span style="display:flex;"><span>            maps[start] <span style="color:#f92672">=</span> dict(end<span style="color:#f92672">=</span>int(end, <span style="color:#ae81ff">16</span>), mode<span style="color:#f92672">=</span>f[<span style="color:#ae81ff">1</span>],
+</span></span><span style="display:flex;"><span>                               offset<span style="color:#f92672">=</span>int(f[<span style="color:#ae81ff">2</span>], <span style="color:#ae81ff">16</span>),
+</span></span><span style="display:flex;"><span>                               device<span style="color:#f92672">=</span>f[<span style="color:#ae81ff">3</span>], inode<span style="color:#f92672">=</span>f[<span style="color:#ae81ff">4</span>], name<span style="color:#f92672">=</span>name)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> empty <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> seen <span style="color:#f92672">and</span> <span style="color:#f92672">not</span> warned:
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stderr<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#39;warning: kernel does not appear to support PSS measurement</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+</span></span><span style="display:flex;"><span>        warned <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> options<span style="color:#f92672">.</span>sort:
+</span></span><span style="display:flex;"><span>            options<span style="color:#f92672">.</span>sort <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;rss&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>mapfilter:
+</span></span><span style="display:flex;"><span>        f <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> m <span style="color:#f92672">in</span> maps:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> filter(options<span style="color:#f92672">.</span>mapfilter, m, <span style="color:#66d9ef">lambda</span> x: maps[x][<span style="color:#e6db74">&#39;name&#39;</span>]):
+</span></span><span style="display:flex;"><span>                f[m] <span style="color:#f92672">=</span> maps[m]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> f
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> maps
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sortmaps</span>(totals, key):
+</span></span><span style="display:flex;"><span>    l <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> pid <span style="color:#f92672">in</span> totals:
+</span></span><span style="display:flex;"><span>        l<span style="color:#f92672">.</span>append((totals[pid][key], pid))
+</span></span><span style="display:flex;"><span>    l<span style="color:#f92672">.</span>sort()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> [pid <span style="color:#66d9ef">for</span> pid,key <span style="color:#f92672">in</span> l]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">iskernel</span>(pid):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> src<span style="color:#f92672">.</span>pidcmd(pid) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">memory</span>():
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    f <span style="color:#f92672">=</span> re<span style="color:#f92672">.</span>compile(<span style="color:#e6db74">&#39;(</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">S+):</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">s+(</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">d+) kB&#39;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> l <span style="color:#f92672">in</span> src<span style="color:#f92672">.</span>memdata():
+</span></span><span style="display:flex;"><span>        m <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span><span style="color:#66d9ef">match</span>(l)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> m:
+</span></span><span style="display:flex;"><span>            t[m<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>)<span style="color:#f92672">.</span>lower()] <span style="color:#f92672">=</span> int(m<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">units</span>(x):
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> x <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;0&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> s <span style="color:#f92672">in</span> (<span style="color:#e6db74">&#39;&#39;</span>, <span style="color:#e6db74">&#39;K&#39;</span>, <span style="color:#e6db74">&#39;M&#39;</span>, <span style="color:#e6db74">&#39;G&#39;</span>, <span style="color:#e6db74">&#39;T&#39;</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> x <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1024</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">/=</span> <span style="color:#ae81ff">1024.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%.1f%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> (x, s)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fromunits</span>(x):
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">=</span> dict(k<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">10</span>, K<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">10</span>, kB<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">10</span>, KB<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">10</span>,
+</span></span><span style="display:flex;"><span>             M<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">20</span>, MB<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">20</span>, G<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">30</span>, GB<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">30</span>,
+</span></span><span style="display:flex;"><span>             T<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">40</span>, TB<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">**</span><span style="color:#ae81ff">40</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> k,v <span style="color:#f92672">in</span> s<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> x<span style="color:#f92672">.</span>endswith(k):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> int(float(x[:<span style="color:#f92672">-</span>len(k)])<span style="color:#f92672">*</span>v)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>stderr<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;Memory size should be written with units, for example 1024M</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidusername</span>(pid):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> src<span style="color:#f92672">.</span>username(src<span style="color:#f92672">.</span>piduser(pid))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showamount</span>(a, total):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>abbreviate:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> units(a <span style="color:#f92672">*</span> <span style="color:#ae81ff">1024</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> options<span style="color:#f92672">.</span>percent:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> total <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;N/A&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%.2f%%</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> (<span style="color:#ae81ff">100.0</span> <span style="color:#f92672">*</span> a <span style="color:#f92672">/</span> total)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> a
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">filter</span>(opt, arg, <span style="color:#f92672">*</span>sources):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> opt:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> f <span style="color:#f92672">in</span> sources:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> re<span style="color:#f92672">.</span>search(opt, f(arg)):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pidtotals</span>(pid):
+</span></span><span style="display:flex;"><span>    maps <span style="color:#f92672">=</span> pidmaps(pid)
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> dict(size<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, rss<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, pss<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, shared_clean<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, shared_dirty<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>             private_clean<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, private_dirty<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, referenced<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, swap<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> m <span style="color:#f92672">in</span> maps<span style="color:#f92672">.</span>iterkeys():
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> t:
+</span></span><span style="display:flex;"><span>            t[k] <span style="color:#f92672">+=</span> maps[m]<span style="color:#f92672">.</span>get(k, <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    t[<span style="color:#e6db74">&#39;uss&#39;</span>] <span style="color:#f92672">=</span> t[<span style="color:#e6db74">&#39;private_clean&#39;</span>] <span style="color:#f92672">+</span> t[<span style="color:#e6db74">&#39;private_dirty&#39;</span>]
+</span></span><span style="display:flex;"><span>    t[<span style="color:#e6db74">&#39;maps&#39;</span>] <span style="color:#f92672">=</span> len(maps)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> t
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">processtotals</span>(pids):
+</span></span><span style="display:flex;"><span>    totals <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> pid <span style="color:#f92672">in</span> pids:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (filter(options<span style="color:#f92672">.</span>processfilter, pid, src<span style="color:#f92672">.</span>pidname, src<span style="color:#f92672">.</span>pidcmd) <span style="color:#f92672">or</span>
+</span></span><span style="display:flex;"><span>                filter(options<span style="color:#f92672">.</span>userfilter, pid, pidusername)):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            p <span style="color:#f92672">=</span> pidtotals(pid)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> p[<span style="color:#e6db74">&#39;maps&#39;</span>] <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                totals[pid] <span style="color:#f92672">=</span> p
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> totals
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showpids</span>():
+</span></span><span style="display:flex;"><span>    p <span style="color:#f92672">=</span> src<span style="color:#f92672">.</span>pids()
+</span></span><span style="display:flex;"><span>    pt <span style="color:#f92672">=</span> processtotals(p)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showuser</span>(p):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>numeric:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> src<span style="color:#f92672">.</span>piduser(p)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> pidusername(p)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    fields <span style="color:#f92672">=</span> dict(
+</span></span><span style="display:flex;"><span>        pid<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;PID&#39;</span>, <span style="color:#66d9ef">lambda</span> n: n, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 5s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">lambda</span> x: len(pt),
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;process ID&#39;</span>),
+</span></span><span style="display:flex;"><span>        user<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;User&#39;</span>, showuser, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%-8s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">lambda</span> x: len(dict<span style="color:#f92672">.</span>fromkeys(x)),
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;owner of process&#39;</span>),
+</span></span><span style="display:flex;"><span>        name<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Name&#39;</span>, src<span style="color:#f92672">.</span>pidname, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%-24.24s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;name of process&#39;</span>),
+</span></span><span style="display:flex;"><span>        command<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Command&#39;</span>, src<span style="color:#f92672">.</span>pidcmd, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%-27.27s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>                 <span style="color:#e6db74">&#39;process command line&#39;</span>),
+</span></span><span style="display:flex;"><span>        maps<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Maps&#39;</span>,<span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;maps&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 5s</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;total number of mappings&#39;</span>),
+</span></span><span style="display:flex;"><span>        swap<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Swap&#39;</span>,<span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;swap&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;amount of swap space consumed (ignoring sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        uss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;USS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;uss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;unique set size&#39;</span>),
+</span></span><span style="display:flex;"><span>        rss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;RSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;rss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;resident set size (ignoring sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        pss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;PSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;pss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;proportional set size (including sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        vss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;VSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;size&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;virtual set size (total virtual memory mapped)&#39;</span>),
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    columns <span style="color:#f92672">=</span> options<span style="color:#f92672">.</span>columns <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;pid user command swap uss pss rss&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    showtable(pt<span style="color:#f92672">.</span>keys(), fields, columns<span style="color:#f92672">.</span>split(), options<span style="color:#f92672">.</span>sort <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;pss&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">maptotals</span>(pids):
+</span></span><span style="display:flex;"><span>    totals <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> pid <span style="color:#f92672">in</span> pids:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (filter(options<span style="color:#f92672">.</span>processfilter, pid, src<span style="color:#f92672">.</span>pidname, src<span style="color:#f92672">.</span>pidcmd) <span style="color:#f92672">or</span>
+</span></span><span style="display:flex;"><span>                filter(options<span style="color:#f92672">.</span>userfilter, pid, pidusername)):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            maps <span style="color:#f92672">=</span> pidmaps(pid)
+</span></span><span style="display:flex;"><span>            seen <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> m <span style="color:#f92672">in</span> maps<span style="color:#f92672">.</span>iterkeys():
+</span></span><span style="display:flex;"><span>                name <span style="color:#f92672">=</span> maps[m][<span style="color:#e6db74">&#39;name&#39;</span>]
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> name <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> totals:
+</span></span><span style="display:flex;"><span>                    t <span style="color:#f92672">=</span> dict(size<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, rss<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, pss<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, shared_clean<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                             shared_dirty<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, private_clean<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                             private_dirty<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, referenced<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, swap<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, pids<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                    t <span style="color:#f92672">=</span> totals[name]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> t:
+</span></span><span style="display:flex;"><span>                    t[k] <span style="color:#f92672">+=</span> maps[m]<span style="color:#f92672">.</span>get(k, <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                t[<span style="color:#e6db74">&#39;count&#39;</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> name <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> seen:
+</span></span><span style="display:flex;"><span>                    t[<span style="color:#e6db74">&#39;pids&#39;</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                    seen[name] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                totals[name] <span style="color:#f92672">=</span> t
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">EnvironmentError</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> totals
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showmaps</span>():
+</span></span><span style="display:flex;"><span>    p <span style="color:#f92672">=</span> src<span style="color:#f92672">.</span>pids()
+</span></span><span style="display:flex;"><span>    pt <span style="color:#f92672">=</span> maptotals(p)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    fields <span style="color:#f92672">=</span> dict(
+</span></span><span style="display:flex;"><span>        map<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Map&#39;</span>, <span style="color:#66d9ef">lambda</span> n: n, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%-40.40s</span><span style="color:#e6db74">&#39;</span>, len,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;mapping name&#39;</span>),
+</span></span><span style="display:flex;"><span>        count<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Count&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;count&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 5s</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>               <span style="color:#e6db74">&#39;number of mappings found&#39;</span>),
+</span></span><span style="display:flex;"><span>        pids<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;PIDs&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;pids&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 5s</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;number of PIDs using mapping&#39;</span>),
+</span></span><span style="display:flex;"><span>        swap<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Swap&#39;</span>,<span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;swap&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;amount of swap space consumed (ignoring sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        uss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;USS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;private_clean&#39;</span>]
+</span></span><span style="display:flex;"><span>             <span style="color:#f92672">+</span> pt[n][<span style="color:#e6db74">&#39;private_dirty&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;unique set size&#39;</span>),
+</span></span><span style="display:flex;"><span>        rss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;RSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;rss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;resident set size (ignoring sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        pss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;PSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;pss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;proportional set size (including sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        vss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;VSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;size&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;virtual set size (total virtual address space mapped)&#39;</span>),
+</span></span><span style="display:flex;"><span>        avgpss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;AVGPSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: int(<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> pt[n][<span style="color:#e6db74">&#39;pss&#39;</span>]<span style="color:#f92672">/</span>pt[n][<span style="color:#e6db74">&#39;pids&#39;</span>]),
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;average PSS per PID&#39;</span>),
+</span></span><span style="display:flex;"><span>        avguss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;AVGUSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: int(<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> pt[n][<span style="color:#e6db74">&#39;uss&#39;</span>]<span style="color:#f92672">/</span>pt[n][<span style="color:#e6db74">&#39;pids&#39;</span>]),
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;average USS per PID&#39;</span>),
+</span></span><span style="display:flex;"><span>        avgrss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;AVGRSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: int(<span style="color:#ae81ff">1.0</span> <span style="color:#f92672">*</span> pt[n][<span style="color:#e6db74">&#39;rss&#39;</span>]<span style="color:#f92672">/</span>pt[n][<span style="color:#e6db74">&#39;pids&#39;</span>]),
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;average RSS per PID&#39;</span>),
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    columns <span style="color:#f92672">=</span> options<span style="color:#f92672">.</span>columns <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;map pids avgpss pss&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    showtable(pt<span style="color:#f92672">.</span>keys(), fields, columns<span style="color:#f92672">.</span>split(), options<span style="color:#f92672">.</span>sort <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;pss&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">usertotals</span>(pids):
+</span></span><span style="display:flex;"><span>    totals <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> pid <span style="color:#f92672">in</span> pids:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (filter(options<span style="color:#f92672">.</span>processfilter, pid, src<span style="color:#f92672">.</span>pidname, src<span style="color:#f92672">.</span>pidcmd) <span style="color:#f92672">or</span>
+</span></span><span style="display:flex;"><span>                filter(options<span style="color:#f92672">.</span>userfilter, pid, pidusername)):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            maps <span style="color:#f92672">=</span> pidmaps(pid)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> len(maps) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">EnvironmentError</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        user <span style="color:#f92672">=</span> src<span style="color:#f92672">.</span>piduser(pid)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> user <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> totals:
+</span></span><span style="display:flex;"><span>            t <span style="color:#f92672">=</span> dict(size<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, rss<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, pss<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, shared_clean<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                     shared_dirty<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, private_clean<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, count<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>                     private_dirty<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, referenced<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, swap<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            t <span style="color:#f92672">=</span> totals[user]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> m <span style="color:#f92672">in</span> maps<span style="color:#f92672">.</span>iterkeys():
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> t:
+</span></span><span style="display:flex;"><span>                t[k] <span style="color:#f92672">+=</span> maps[m]<span style="color:#f92672">.</span>get(k, <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        t[<span style="color:#e6db74">&#39;count&#39;</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        totals[user] <span style="color:#f92672">=</span> t
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> totals
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showusers</span>():
+</span></span><span style="display:flex;"><span>    p <span style="color:#f92672">=</span> src<span style="color:#f92672">.</span>pids()
+</span></span><span style="display:flex;"><span>    pt <span style="color:#f92672">=</span> usertotals(p)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showuser</span>(u):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>numeric:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> u
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> src<span style="color:#f92672">.</span>username(u)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    fields <span style="color:#f92672">=</span> dict(
+</span></span><span style="display:flex;"><span>        user<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;User&#39;</span>, showuser, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%-8s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;user name or ID&#39;</span>),
+</span></span><span style="display:flex;"><span>        count<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Count&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;count&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 5s</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>               <span style="color:#e6db74">&#39;number of processes&#39;</span>),
+</span></span><span style="display:flex;"><span>        swap<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Swap&#39;</span>,<span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;swap&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;amount of swapspace consumed (ignoring sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        uss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;USS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;private_clean&#39;</span>]
+</span></span><span style="display:flex;"><span>             <span style="color:#f92672">+</span> pt[n][<span style="color:#e6db74">&#39;private_dirty&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;unique set size&#39;</span>),
+</span></span><span style="display:flex;"><span>        rss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;RSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;rss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;resident set size (ignoring sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        pss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;PSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;pss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;proportional set size (including sharing)&#39;</span>),
+</span></span><span style="display:flex;"><span>        vss<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;VSS&#39;</span>, <span style="color:#66d9ef">lambda</span> n: pt[n][<span style="color:#e6db74">&#39;pss&#39;</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 8a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;virtual set size (total virtual memory mapped)&#39;</span>),
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    columns <span style="color:#f92672">=</span> options<span style="color:#f92672">.</span>columns <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;user count swap uss pss rss&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    showtable(pt<span style="color:#f92672">.</span>keys(), fields, columns<span style="color:#f92672">.</span>split(), options<span style="color:#f92672">.</span>sort <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;pss&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showsystem</span>():
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> totalmem()
+</span></span><span style="display:flex;"><span>    ki <span style="color:#f92672">=</span> kernelsize()
+</span></span><span style="display:flex;"><span>    m <span style="color:#f92672">=</span> memory()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    mt <span style="color:#f92672">=</span> m[<span style="color:#e6db74">&#39;memtotal&#39;</span>]
+</span></span><span style="display:flex;"><span>    f <span style="color:#f92672">=</span> m[<span style="color:#e6db74">&#39;memfree&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># total amount used by hardware</span>
+</span></span><span style="display:flex;"><span>    fh <span style="color:#f92672">=</span> max(t <span style="color:#f92672">-</span> mt <span style="color:#f92672">-</span> ki, <span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># total amount mapped into userspace (ie mapped an unmapped pages)</span>
+</span></span><span style="display:flex;"><span>    u <span style="color:#f92672">=</span> m[<span style="color:#e6db74">&#39;anonpages&#39;</span>] <span style="color:#f92672">+</span> m[<span style="color:#e6db74">&#39;mapped&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># total amount allocated by kernel not for userspace</span>
+</span></span><span style="display:flex;"><span>    kd <span style="color:#f92672">=</span> mt <span style="color:#f92672">-</span> f <span style="color:#f92672">-</span> u
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># total amount in kernel caches</span>
+</span></span><span style="display:flex;"><span>    kdc <span style="color:#f92672">=</span> m[<span style="color:#e6db74">&#39;buffers&#39;</span>] <span style="color:#f92672">+</span> m[<span style="color:#e6db74">&#39;sreclaimable&#39;</span>] <span style="color:#f92672">+</span> (m[<span style="color:#e6db74">&#39;cached&#39;</span>] <span style="color:#f92672">-</span> m[<span style="color:#e6db74">&#39;mapped&#39;</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    l <span style="color:#f92672">=</span> [(<span style="color:#e6db74">&#34;firmware/hardware&#34;</span>, fh, <span style="color:#ae81ff">0</span>),
+</span></span><span style="display:flex;"><span>         (<span style="color:#e6db74">&#34;kernel image&#34;</span>, ki, <span style="color:#ae81ff">0</span>),
+</span></span><span style="display:flex;"><span>         (<span style="color:#e6db74">&#34;kernel dynamic memory&#34;</span>, kd, kdc),
+</span></span><span style="display:flex;"><span>         (<span style="color:#e6db74">&#34;userspace memory&#34;</span>, u, m[<span style="color:#e6db74">&#39;mapped&#39;</span>]),
+</span></span><span style="display:flex;"><span>         (<span style="color:#e6db74">&#34;free memory&#34;</span>, f, f)]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    fields <span style="color:#f92672">=</span> dict(
+</span></span><span style="display:flex;"><span>        order<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Order&#39;</span>, <span style="color:#66d9ef">lambda</span> n: n, <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">% 1s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">lambda</span> x: <span style="color:#e6db74">&#39;&#39;</span>,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;hierarchical order&#39;</span>),
+</span></span><span style="display:flex;"><span>        area<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Area&#39;</span>, <span style="color:#66d9ef">lambda</span> n: l[n][<span style="color:#ae81ff">0</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%-24s</span><span style="color:#e6db74">&#39;</span>, <span style="color:#66d9ef">lambda</span> x: <span style="color:#e6db74">&#39;&#39;</span>,
+</span></span><span style="display:flex;"><span>             <span style="color:#e6db74">&#39;memory area&#39;</span>),
+</span></span><span style="display:flex;"><span>        used<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Used&#39;</span>, <span style="color:#66d9ef">lambda</span> n: l[n][<span style="color:#ae81ff">1</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%10a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;area in use&#39;</span>),
+</span></span><span style="display:flex;"><span>        cache<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Cache&#39;</span>, <span style="color:#66d9ef">lambda</span> n: l[n][<span style="color:#ae81ff">2</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%10a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;area used as reclaimable cache&#39;</span>),
+</span></span><span style="display:flex;"><span>        noncache<span style="color:#f92672">=</span>(<span style="color:#e6db74">&#39;Noncache&#39;</span>, <span style="color:#66d9ef">lambda</span> n: l[n][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> l[n][<span style="color:#ae81ff">2</span>], <span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%10a</span><span style="color:#e6db74">&#39;</span>, sum,
+</span></span><span style="display:flex;"><span>              <span style="color:#e6db74">&#39;area not reclaimable&#39;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    columns <span style="color:#f92672">=</span> options<span style="color:#f92672">.</span>columns <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;area used cache noncache&#39;</span>
+</span></span><span style="display:flex;"><span>    showtable(range(len(l)), fields, columns<span style="color:#f92672">.</span>split(), options<span style="color:#f92672">.</span>sort <span style="color:#f92672">or</span> <span style="color:#e6db74">&#39;order&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showfields</span>(fields, f):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> f <span style="color:#f92672">!=</span> list:
+</span></span><span style="display:flex;"><span>        print <span style="color:#e6db74">&#34;unknown field&#34;</span>, f
+</span></span><span style="display:flex;"><span>    print <span style="color:#e6db74">&#34;known fields:&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> l <span style="color:#f92672">in</span> sorted(fields<span style="color:#f92672">.</span>keys()):
+</span></span><span style="display:flex;"><span>        print <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%-8s</span><span style="color:#e6db74"> </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">%</span> (l, fields[l][<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showtable</span>(rows, fields, columns, sort):
+</span></span><span style="display:flex;"><span>    header <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    format <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    formatter <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> sort <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> fields:
+</span></span><span style="display:flex;"><span>            showfields(fields, sort)
+</span></span><span style="display:flex;"><span>            sys<span style="color:#f92672">.</span>exit(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>pie:
+</span></span><span style="display:flex;"><span>        columns<span style="color:#f92672">.</span>append(options<span style="color:#f92672">.</span>pie)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>bar:
+</span></span><span style="display:flex;"><span>        columns<span style="color:#f92672">.</span>append(options<span style="color:#f92672">.</span>bar)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    mt <span style="color:#f92672">=</span> totalmem()
+</span></span><span style="display:flex;"><span>    st <span style="color:#f92672">=</span> memory()[<span style="color:#e6db74">&#39;swaptotal&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> columns:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> n <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> fields:
+</span></span><span style="display:flex;"><span>            showfields(fields, n)
+</span></span><span style="display:flex;"><span>            sys<span style="color:#f92672">.</span>exit(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        f <span style="color:#f92672">=</span> fields[n][<span style="color:#ae81ff">2</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">in</span> f:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> n <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;swap&#39;</span>:
+</span></span><span style="display:flex;"><span>                formatter<span style="color:#f92672">.</span>append(<span style="color:#66d9ef">lambda</span> x: showamount(x, st))
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                formatter<span style="color:#f92672">.</span>append(<span style="color:#66d9ef">lambda</span> x: showamount(x, mt))
+</span></span><span style="display:flex;"><span>            f <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;a&#39;</span>, <span style="color:#e6db74">&#39;s&#39;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            formatter<span style="color:#f92672">.</span>append(<span style="color:#66d9ef">lambda</span> x: x)
+</span></span><span style="display:flex;"><span>        format <span style="color:#f92672">+=</span> f <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>        header <span style="color:#f92672">+=</span> f <span style="color:#f92672">%</span> fields[n][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    l <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> rows:
+</span></span><span style="display:flex;"><span>        r <span style="color:#f92672">=</span> [fields[c][<span style="color:#ae81ff">1</span>](n) <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> columns]
+</span></span><span style="display:flex;"><span>        l<span style="color:#f92672">.</span>append((fields[sort][<span style="color:#ae81ff">1</span>](n), r))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    l<span style="color:#f92672">.</span>sort(reverse<span style="color:#f92672">=</span>bool(options<span style="color:#f92672">.</span>reverse))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>pie:
+</span></span><span style="display:flex;"><span>        showpie(l, sort)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> options<span style="color:#f92672">.</span>bar:
+</span></span><span style="display:flex;"><span>        showbar(l, columns, sort)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> options<span style="color:#f92672">.</span>no_header:
+</span></span><span style="display:flex;"><span>        print header
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> k,r <span style="color:#f92672">in</span> l:
+</span></span><span style="display:flex;"><span>        print format <span style="color:#f92672">%</span> tuple([f(v) <span style="color:#66d9ef">for</span> f,v <span style="color:#f92672">in</span> zip(formatter, r)])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>totals:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># totals</span>
+</span></span><span style="display:flex;"><span>        t <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> columns:
+</span></span><span style="display:flex;"><span>            f <span style="color:#f92672">=</span> fields[c][<span style="color:#ae81ff">3</span>]
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> f:
+</span></span><span style="display:flex;"><span>                t<span style="color:#f92672">.</span>append(f([fields[c][<span style="color:#ae81ff">1</span>](n) <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> rows]))
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                t<span style="color:#f92672">.</span>append(<span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        print <span style="color:#e6db74">&#34;-&#34;</span> <span style="color:#f92672">*</span> len(header)
+</span></span><span style="display:flex;"><span>        print format <span style="color:#f92672">%</span> tuple([f(v) <span style="color:#66d9ef">for</span> f,v <span style="color:#f92672">in</span> zip(formatter, t)])
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showpie</span>(l, sort):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">import</span> pylab
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">ImportError</span>:
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stderr<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;pie chart requires matplotlib</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>exit(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (l[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&lt;</span> l[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>]):
+</span></span><span style="display:flex;"><span>        l<span style="color:#f92672">.</span>reverse()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    labels <span style="color:#f92672">=</span> [r[<span style="color:#ae81ff">1</span>][<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> r <span style="color:#f92672">in</span> l]
+</span></span><span style="display:flex;"><span>    values <span style="color:#f92672">=</span> [r[<span style="color:#ae81ff">0</span>] <span style="color:#66d9ef">for</span> r <span style="color:#f92672">in</span> l] <span style="color:#75715e"># sort field</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    tm <span style="color:#f92672">=</span> totalmem()
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">=</span> sum(values)
+</span></span><span style="display:flex;"><span>    unused <span style="color:#f92672">=</span> tm <span style="color:#f92672">-</span> s
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> values <span style="color:#f92672">and</span> (t <span style="color:#f92672">+</span> values[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">&lt;</span> (tm <span style="color:#f92672">*</span> <span style="color:#ae81ff">.02</span>) <span style="color:#f92672">or</span>
+</span></span><span style="display:flex;"><span>                      values[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">&lt;</span> (tm <span style="color:#f92672">*</span> <span style="color:#ae81ff">.005</span>)):
+</span></span><span style="display:flex;"><span>        t <span style="color:#f92672">+=</span> values<span style="color:#f92672">.</span>pop()
+</span></span><span style="display:flex;"><span>        labels<span style="color:#f92672">.</span>pop()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> t:
+</span></span><span style="display:flex;"><span>        values<span style="color:#f92672">.</span>append(t)
+</span></span><span style="display:flex;"><span>        labels<span style="color:#f92672">.</span>append(<span style="color:#e6db74">&#39;other&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    explode <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> len(values)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> unused <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+</span></span><span style="display:flex;"><span>        values<span style="color:#f92672">.</span>insert(<span style="color:#ae81ff">0</span>, unused)
+</span></span><span style="display:flex;"><span>        labels<span style="color:#f92672">.</span>insert(<span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#39;unused&#39;</span>)
+</span></span><span style="display:flex;"><span>        explode<span style="color:#f92672">.</span>insert(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">.05</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>figure(<span style="color:#ae81ff">1</span>, figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">6</span>))
+</span></span><span style="display:flex;"><span>    ax <span style="color:#f92672">=</span> pylab<span style="color:#f92672">.</span>axes([<span style="color:#ae81ff">0.1</span>, <span style="color:#ae81ff">0.1</span>, <span style="color:#ae81ff">0.8</span>, <span style="color:#ae81ff">0.8</span>])
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>pie(values, explode <span style="color:#f92672">=</span> explode, labels<span style="color:#f92672">=</span>labels,
+</span></span><span style="display:flex;"><span>              autopct<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%.2f%%</span><span style="color:#e6db74">&#34;</span>, shadow<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74"> by </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> (options<span style="color:#f92672">.</span>pie, sort))
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>show()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">showbar</span>(l, columns, sort):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">import</span> pylab<span style="color:#f92672">,</span> numpy
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">ImportError</span>:
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stderr<span style="color:#f92672">.</span>write(<span style="color:#e6db74">&#34;bar chart requires matplotlib</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>exit(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (l[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&lt;</span> l[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>]):
+</span></span><span style="display:flex;"><span>        l<span style="color:#f92672">.</span>reverse()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    rc <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    key <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> range(len(columns) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> columns[n] <span style="color:#f92672">in</span> <span style="color:#e6db74">&#39;pid user group&#39;</span><span style="color:#f92672">.</span>split():
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>            float(l[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">1</span>][n])
+</span></span><span style="display:flex;"><span>            rc<span style="color:#f92672">.</span>append(n)
+</span></span><span style="display:flex;"><span>            key<span style="color:#f92672">.</span>append(columns[n])
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">pass</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    width <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> (len(rc) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    offset <span style="color:#f92672">=</span> width <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">gc</span>(n):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;bgrcmyw&#39;</span>[n <span style="color:#f92672">%</span> <span style="color:#ae81ff">7</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    pl <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    ind <span style="color:#f92672">=</span> numpy<span style="color:#f92672">.</span>arange(len(l))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> n <span style="color:#f92672">in</span> xrange(len(rc)):
+</span></span><span style="display:flex;"><span>        pl<span style="color:#f92672">.</span>append(pylab<span style="color:#f92672">.</span>bar(ind <span style="color:#f92672">+</span> offset <span style="color:#f92672">+</span> width <span style="color:#f92672">*</span> n,
+</span></span><span style="display:flex;"><span>                             [x[<span style="color:#ae81ff">1</span>][rc[n]] <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> l], width, color<span style="color:#f92672">=</span>gc(n)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#plt.xticks(ind + .5, )</span>
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>gca()<span style="color:#f92672">.</span>set_xticks(ind <span style="color:#f92672">+</span> <span style="color:#ae81ff">.5</span>)
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>gca()<span style="color:#f92672">.</span>set_xticklabels([x[<span style="color:#ae81ff">1</span>][<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> l], rotation<span style="color:#f92672">=</span><span style="color:#ae81ff">45</span>)
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>legend([p[<span style="color:#ae81ff">0</span>] <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> pl], key)
+</span></span><span style="display:flex;"><span>    pylab<span style="color:#f92672">.</span>show()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser <span style="color:#f92672">=</span> optparse<span style="color:#f92672">.</span>OptionParser(<span style="color:#e6db74">&#34;%prog [options]&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-H&#34;</span>, <span style="color:#e6db74">&#34;--no-header&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;disable header line&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-c&#34;</span>, <span style="color:#e6db74">&#34;--columns&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;columns to show&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-t&#34;</span>, <span style="color:#e6db74">&#34;--totals&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show totals&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-R&#34;</span>, <span style="color:#e6db74">&#34;--realmem&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;amount of physical RAM&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-K&#34;</span>, <span style="color:#e6db74">&#34;--kernel&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;path to kernel image&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-m&#34;</span>, <span style="color:#e6db74">&#34;--mappings&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show mappings&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-u&#34;</span>, <span style="color:#e6db74">&#34;--users&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show users&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-w&#34;</span>, <span style="color:#e6db74">&#34;--system&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show whole system&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-P&#34;</span>, <span style="color:#e6db74">&#34;--processfilter&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;process filter regex&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-M&#34;</span>, <span style="color:#e6db74">&#34;--mapfilter&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;map filter regex&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-U&#34;</span>, <span style="color:#e6db74">&#34;--userfilter&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;user filter regex&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-n&#34;</span>, <span style="color:#e6db74">&#34;--numeric&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;numeric output&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-s&#34;</span>, <span style="color:#e6db74">&#34;--sort&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;field to sort on&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-r&#34;</span>, <span style="color:#e6db74">&#34;--reverse&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;reverse sort&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-p&#34;</span>, <span style="color:#e6db74">&#34;--percent&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show percentage&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-k&#34;</span>, <span style="color:#e6db74">&#34;--abbreviate&#34;</span>, action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;store_true&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show unit suffixes&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#e6db74">&#34;--pie&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;str&#39;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show pie graph&#34;</span>)
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#e6db74">&#34;--bar&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;str&#39;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;show bar graph&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>add_option(<span style="color:#e6db74">&#34;-S&#34;</span>, <span style="color:#e6db74">&#34;--source&#34;</span>, type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;str&#34;</span>,
+</span></span><span style="display:flex;"><span>                  help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/proc data source&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>defaults <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>parser<span style="color:#f92672">.</span>set_defaults(<span style="color:#f92672">**</span>defaults)
+</span></span><span style="display:flex;"><span>(options, args) <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>parse_args()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    src <span style="color:#f92672">=</span> tardata(options<span style="color:#f92672">.</span>source)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span>:
+</span></span><span style="display:flex;"><span>    src <span style="color:#f92672">=</span> procdata(options<span style="color:#f92672">.</span>source)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> options<span style="color:#f92672">.</span>mappings:
+</span></span><span style="display:flex;"><span>        showmaps()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> options<span style="color:#f92672">.</span>users:
+</span></span><span style="display:flex;"><span>        showusers()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elif</span> options<span style="color:#f92672">.</span>system:
+</span></span><span style="display:flex;"><span>        showsystem()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        showpids()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">IOError</span>, e:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> e<span style="color:#f92672">.</span>errno <span style="color:#f92672">==</span> errno<span style="color:#f92672">.</span>EPIPE:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">pass</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyboardInterrupt</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">pass</span>
+</span></span></code></pre></div><p>参考地址:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>* https://www.cnblogs.com/kerrycode/p/5079319.html
+</span></span><span style="display:flex;"><span>* https://www.golinuxcloud.com/check-memory-usage-per-process-linux/
+</span></span><span style="display:flex;"><span>* https://www.selenic.com/smem/download/
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

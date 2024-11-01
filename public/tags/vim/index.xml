@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vim on 润物细无声</title>
+    <link>http://localhost:1313/tags/vim/</link>
+    <description>Recent content in Vim on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 04 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【翻译】vim光标移动技巧</title>
+      <link>http://localhost:1313/posts/2020/20200904/</link>
+      <pubDate>Fri, 04 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200904/</guid>
+      <description>vim 提供了须多移动光标的方式,熟练掌握移动光标的技能能极大的提高编辑的效率．&#xA;h 光标向左移动一个字符 j 光标向下移动一个字符 k 光标向上移动一个字符 l 光标向右移动一个字符 w 光标移动到下一个单词的开头 b 光标移动到当前或者前一个单词的开头 e 光标移动到当前单词的结尾 W 光标移动下一个单词的开头空格之前 B 光标移动到当前或者前一个单词的开头空格之后 E 光标移动单词的结尾处空格之前&#xA;以上移动方式都能在前面加上量词，比如4j,向下移动４行．&#xA;0 移动到行的开头 _ 移动到行的第一个非空格字符 g_ 移动到行的最后一个非空格字符 gg 移动到第一行 G 移动到最后一行&#xA;ngg 移动第n行，比如12gg移动到第12行 nG 移动第n行，比如12G移动到第12行&#xA;H 移动到屏幕的顶部 M 移动到屏幕的中间 L 移动到屏幕的低部分&#xA;zz 将当前位置设置为屏幕的中央 zt 将光标当前位置设置为屏幕的定端 zb 将光标当前位置设置为屏幕的底端&#xA;Ctrl d 向下移动半个屏 Ctrl u 向上移动半个屏 Ctrl b 向上翻页 Ctrl f 向下翻页 Ctrl o 回到光标上次位置 Ctrl y 屏幕向上滚动，光标所在行号不变 Ctrl e 屏幕向下滚动，光标所在行号不变</description>
+    </item>
+    <item>
+      <title>SpaceVim 配置 golang IDE</title>
+      <link>http://localhost:1313/posts/2019/20190821/</link>
+      <pubDate>Wed, 21 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190821/</guid>
+      <description> 安装SpaceVim curl -sLf https://spacevim.org/install.sh | bash -s -- -h 配置 golang 模块 go get -u github.com/jstemmer/gotags vim ~/.SpaceVim.d/init.toml [[layers]] 安装 golang 插件 # 这个安装过程可能会遇到 golang/x/tools 的问题 vim :GoInstallBinaries </description>
+    </item>
+    <item>
+      <title>vim小技巧</title>
+      <link>http://localhost:1313/posts/2018/20180725/</link>
+      <pubDate>Wed, 25 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180725/</guid>
+      <description>关于c命令的技巧，c表示clear的意思，就是清空,c命令执行完成以后都会进入insert模式。&#xA;c+^:清空至行首 c+^：清空至行尾 c+w：清空至单词尾 C: 相当于c$清空至行尾 :E: 打开目录结构 :r!date: 插入当前日期 dgg: 删除到文件首 dG: 删除到文件尾部&#xA;2018年11月22日添加 pclose: 关闭预览窗口 p: 预览当前文件&#xA;2018年12月13日添加 :w filename: 文件另存为filename&#xA;2018年12月17日添加 :!command:执行一条命令，但是不退出当前的vim&#xA;2019年10月18日添加 H 移动到当前屏幕的第一行 L 移动到墙面屏幕最后一行&#xA;2019年10月24日添加 ctrl + ] 跳转到定义 ctrl + o 跳回光标原来位置 J 删除当前行后面的换行符号，与下一行链接起来&#xA;2019年10月25日添加 ctrl + g 显示文本当前面 buffer 信息</description>
+    </item>
+  </channel>
+</rss>

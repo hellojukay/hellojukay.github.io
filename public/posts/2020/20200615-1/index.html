@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="直观看到服务器上各个进程链接 tcp 数量的情况
+use strict; use warnings; my @lines = `ss -atp`; my %hash; for my $line (@lines) { if($line =~ /pid=(\d{1,9})/) { $hash{$1}&#43;&#43;; } } printf &#34;%s %10s %s\n&#34;, &#34;pid&#34;,&#34;tcp_count&#34;,&#34;cmdline&#34;; for my $pid (keys %hash) { my $cmd = `cat /proc/$pid/cmdline`; printf &#34;%5d %5d %s\n&#34;, $pid,$hash{$pid},$cmd; } 执行结果
+hellojukay@local ~ $ sudo perl ss.pl pid tcp_count cmdline 15026 1 /usr/lib/i386-linux-gnu/deepin-wine/./wineserver.real-p0 7907 2 /usr/sbin/vmware-authdlauncher 24113 1 /usr/sbin/smbd 9275 13 /opt/google/chrome/chrome --type=utility --field-trial-handle=2182854705504331656,15972359820735917946,131072 --lang=zh-CN --service-sandbox-type=network --disable-webrtc-apm-in-audio-service --shared-files 8150 3 /usr/lib/vmware/bin/vmware-hostd-a/etc/vmware/hostd/config.">  
+
+  <title>
+    
+      统计 tcp 连接数
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-06-15 00:00:00 &#43;0000 UTC">
+            2020-06-15
+        </time>
+    </p>
+
+    <h1>统计 tcp 连接数</h1>
+
+    
+
+    <p>直观看到服务器上各个进程链接 tcp 数量的情况</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> strict;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> warnings;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> @lines <span style="color:#f92672">=</span> <span style="color:#e6db74">`ss -atp`</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> %hash;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#66d9ef">my</span> $line (@lines) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>($line <span style="color:#f92672">=~</span><span style="color:#e6db74"> /pid=(\d{1,9})/</span>) {
+</span></span><span style="display:flex;"><span>        $hash{$1}<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>printf <span style="color:#e6db74">&#34;%s %10s   %s\n&#34;</span>, <span style="color:#e6db74">&#34;pid&#34;</span>,<span style="color:#e6db74">&#34;tcp_count&#34;</span>,<span style="color:#e6db74">&#34;cmdline&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> <span style="color:#66d9ef">my</span> $pid (keys %hash) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">my</span> $cmd <span style="color:#f92672">=</span> <span style="color:#e6db74">`cat /proc/$pid/cmdline`</span>;
+</span></span><span style="display:flex;"><span>    printf <span style="color:#e6db74">&#34;%5d %5d     %s\n&#34;</span>, $pid,$hash{$pid},$cmd;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>执行结果</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local ~ $ sudo perl ss.pl
+</span></span><span style="display:flex;"><span>pid  tcp_count   cmdline
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">15026</span>     <span style="color:#ae81ff">1</span>     /usr/lib/i386-linux-gnu/deepin-wine/./wineserver.real-p0
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">7907</span>     <span style="color:#ae81ff">2</span>     /usr/sbin/vmware-authdlauncher
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">24113</span>     <span style="color:#ae81ff">1</span>     /usr/sbin/smbd
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">9275</span>    <span style="color:#ae81ff">13</span>     /opt/google/chrome/chrome --type<span style="color:#f92672">=</span>utility --field-trial-handle<span style="color:#f92672">=</span>2182854705504331656,15972359820735917946,131072 --lang<span style="color:#f92672">=</span>zh-CN --service-sandbox-type<span style="color:#f92672">=</span>network --disable-webrtc-apm-in-audio-service --shared-files
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">8150</span>     <span style="color:#ae81ff">3</span>     /usr/lib/vmware/bin/vmware-hostd-a/etc/vmware/hostd/config.xml
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">916</span>     <span style="color:#ae81ff">1</span>     sshroot@10.44.155.5
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">7835</span>     <span style="color:#ae81ff">4</span>     /usr/sbin/smbd
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">24106</span>     <span style="color:#ae81ff">1</span>     /usr/lib/gvfs/gvfsd-smb-browse--spawner:1.12/org/gtk/gvfs/exec_spaw/3
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">6653</span>     <span style="color:#ae81ff">2</span>     /usr/sbin/sshd-D
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">8881</span>     <span style="color:#ae81ff">1</span>     /opt/lanxin/bin/LxMainNew
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">24198</span>     <span style="color:#ae81ff">1</span>     /opt/kingsoft/wps-office/office6/wpsoffice/qingbangong/start_from<span style="color:#f92672">=</span>qingipcautologin
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">5459</span>     <span style="color:#ae81ff">2</span>     /usr/sbin/cupsd-l
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">6756</span>     <span style="color:#ae81ff">2</span>     nginx: worker process
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

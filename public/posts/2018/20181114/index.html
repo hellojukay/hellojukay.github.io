@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在过去的一段日子里，你使用着相同的git命令，你时候想过改善既有流程，增加一些其他的技巧或者说小把戏。
+git rebase 工作流 当你完成了一个本地feature分支功能开发，是时候提交你的代码变更到master分支了(我认为不能直接合并到master分支，他应该经过其他分支进行流水线测试)。这个时候，你也许会使用merge的方法来合并你的代码，而不是rebase,想了解merge和rebase之间的去表，可以看这里https://www.atlassian.com/git/tutorials/merging-vs-rebasing。 我过去也在我的团队中使用merge来合并我的代码到master分支，这通常不会有什么问题。一个聪明的开发人员告诉一个非常好的git工作流程，他是在代码提交到master分支的时候，将merge和rebase结合起来，使我的工作流程发生了巨大的变化,通过下面的描述我介绍这个工作流程。
+checkout master git checkout master 保证master是最新的代码 git pull rebase master git rebase master 如果遇到和合并问题，请示使用merge工具 git mergetool `` * 修复合并问题 * 继续使用git rebase ```shell git rebase --continue 如果还遇到了问题，重复上面的合并步骤 如果合并除了，终止当前合并，并且丢弃变更 git rebase --abort 如果合并完成，将变更推送到远程分支 git push -f git add -p 当你在本地分支上工作的时候，你是否有想要提交的变更，但是你没有提交变更，使用git add -p命令即可。在我了解这个命令之前，我是完全丢弃掉我不想要的的提交变成git checkout -src / etc,然后一次体骄傲所有变更git commit -A,想起来还真是浪费时间。
+保持分支干净 使用简洁的分支命名，一些时候当我从一个简单分支切换到要给命名复杂的分支的时候，我不禁会想，我怎么会给分支定义了一个如此愚蠢的名字，但是一想到这个分支已经在服务器上存在了。 这里有一个命令用来修改本地分支的名字，非常有效。
+git branch -m odlname newname 重命令当前分支:
+git branch -m newname 是不是非常简单。如果一个分支已经合并了，那么你就应该在本地删除它,删除掉本地的旧的分支。
+git branch -d branchname git reset-hard 当你想要放弃某些变更，重新来过的时候，你可以使用git reset --hard,时候的时候你必须小心，你要知道你正在做什么。 ">  
+
+  <title>
+    
+      【翻译】使用git工作的5个技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-14 00:00:00 &#43;0000 UTC">
+            2018-11-14
+        </time>
+    </p>
+
+    <h1>【翻译】使用git工作的5个技巧</h1>
+
+    
+
+    <p>在过去的一段日子里，你使用着相同的git命令，你时候想过改善既有流程，增加一些其他的技巧或者说小把戏。</p>
+<ol>
+<li>git rebase 工作流
+当你完成了一个本地feature分支功能开发，是时候提交你的代码变更到master分支了(我认为不能直接合并到master分支，他应该经过其他分支进行流水线测试)。这个时候，你也许会使用merge的方法来合并你的代码，而不是rebase,想了解merge和rebase之间的去表，可以看这里<a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing">https://www.atlassian.com/git/tutorials/merging-vs-rebasing</a>。</li>
+</ol>
+<p>我过去也在我的团队中使用merge来合并我的代码到master分支，这通常不会有什么问题。一个聪明的开发人员告诉一个非常好的git工作流程，他是在代码提交到master分支的时候，将merge和rebase结合起来，使我的工作流程发生了巨大的变化,通过下面的描述我介绍这个工作流程。</p>
+<ul>
+<li>checkout master</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git checkout master
+</span></span></code></pre></div><ul>
+<li>保证master是最新的代码</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git pull
+</span></span></code></pre></div><ul>
+<li>rebase master</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git rebase master
+</span></span></code></pre></div><ul>
+<li>如果遇到和合并问题，请示使用merge工具</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git mergetool
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">``</span>
+</span></span><span style="display:flex;"><span>* 修复合并问题
+</span></span><span style="display:flex;"><span>* 继续使用git rebase
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>shell
+</span></span><span style="display:flex;"><span>git rebase --continue
+</span></span></code></pre></div><ul>
+<li>如果还遇到了问题，重复上面的合并步骤</li>
+<li>如果合并除了，终止当前合并，并且丢弃变更</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git rebase --abort
+</span></span></code></pre></div><ul>
+<li>如果合并完成，将变更推送到远程分支</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push -f
+</span></span></code></pre></div><ol start="2">
+<li>
+<p>git add -p
+当你在本地分支上工作的时候，你是否有想要提交的变更，但是你没有提交变更，使用<code>git add -p</code>命令即可。在我了解这个命令之前，我是完全丢弃掉我不想要的的提交变成<code>git checkout -src / etc</code>,然后一次体骄傲所有变更<code>git commit -A</code>,想起来还真是浪费时间。</p>
+</li>
+<li>
+<p>保持分支干净
+使用简洁的分支命名，一些时候当我从一个简单分支切换到要给命名复杂的分支的时候，我不禁会想，我怎么会给分支定义了一个如此愚蠢的名字，但是一想到这个分支已经在服务器上存在了。
+这里有一个命令用来修改本地分支的名字，非常有效。</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -m odlname newname
+</span></span></code></pre></div><p>重命令当前分支:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -m newname
+</span></span></code></pre></div><p>是不是非常简单。如果一个分支已经合并了，那么你就应该在本地删除它,删除掉本地的旧的分支。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git branch -d branchname
+</span></span></code></pre></div><ol start="4">
+<li>git reset-hard
+当你想要放弃某些变更，重新来过的时候，你可以使用<code>git reset --hard</code>,时候的时候你必须小心，你要知道你正在做什么。</li>
+</ol>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

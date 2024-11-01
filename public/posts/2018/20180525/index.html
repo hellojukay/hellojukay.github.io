@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="标题中说是局域网，但是并没有限制你在公网上使用这种方式来单向传出文件，只要是HTTP协议能够正常工作的网络就行。通常发送文件给同事，都是用钉钉，QQ，微信或者的别的社交软件，或者是U盘(很少用到)。使用社交软件传文件的坏处就是这个文件要先发送到服务器，然后对人从服务器上下载，可能文件挺大的，速度慢，也不支持断点传输，也可能是机密文件，你不想被第三方获取。使用U盘缺点是，你要先把文件拷贝到U盘，然后从U盘拷贝到对方的电脑，速度慢，问题是我根本就没有U盘，或者文件在一台U盘无法工作阿里云服务器。所以我这里给出的解决方案是Python内置的HTTP服务器，优点是*nix都自带了python，所需不需要安装任何依赖。即便是widnows，安装python也非常的简单。同事让我发个什么文件给他，我都懒得发，都是把这个进程打开，让他自己下载。
+python 2.x
+// 默认是8000端口 python -m SimpleHTTPServer // 设置为80端口 python -m SimpleHTTPServer 80 [deploy@baochai ~]$ python -m SimpleHTTPServer Serving HTTP on 0.0.0.0 port 8000 ... 192.168.1.46 - - [25/May/2018 09:11:50] code 501, message Unsupported method (&#39;OPTIONS&#39;) 192.168.1.46 - - [25/May/2018 09:11:50] &#34;OPTIONS / HTTP/1.1&#34; 501 - 192.168.1.46 - - [25/May/2018 09:12:53] &#34;GET / HTTP/1.1&#34; 200 - 192.168.1.46 - - [25/May/2018 09:12:54] code 404, message File not found 192.168.1.46 - - [25/May/2018 09:12:54] &#34;GET /favicon.">  
+
+  <title>
+    
+      这可能是局域网内分享文件的最佳方案
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-25 00:00:00 &#43;0000 UTC">
+            2018-05-25
+        </time>
+    </p>
+
+    <h1>这可能是局域网内分享文件的最佳方案</h1>
+
+    
+
+    <p>标题中说是局域网，但是并没有限制你在公网上使用这种方式来单向传出文件，只要是HTTP协议能够正常工作的网络就行。通常发送文件给同事，都是用钉钉，QQ，微信或者的别的社交软件，或者是U盘(很少用到)。使用社交软件传文件的坏处就是这个文件要先发送到服务器，然后对人从服务器上下载，可能文件挺大的，速度慢，也不支持断点传输，也可能是机密文件，你不想被第三方获取。使用U盘缺点是，你要先把文件拷贝到U盘，然后从U盘拷贝到对方的电脑，速度慢，问题是我根本就没有U盘，或者文件在一台U盘无法工作阿里云服务器。所以我这里给出的解决方案是Python内置的HTTP服务器，优点是*nix都自带了python，所需不需要安装任何依赖。即便是widnows，安装python也非常的简单。同事让我发个什么文件给他，我都懒得发，都是把这个进程打开，让他自己下载。</p>
+<p>python 2.x</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>// 默认是8000端口
+</span></span><span style="display:flex;"><span>python -m SimpleHTTPServer 
+</span></span><span style="display:flex;"><span>// 设置为80端口
+</span></span><span style="display:flex;"><span>python -m SimpleHTTPServer <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai ~<span style="color:#f92672">]</span>$ python -m SimpleHTTPServer
+</span></span><span style="display:flex;"><span>Serving HTTP on 0.0.0.0 port <span style="color:#ae81ff">8000</span> ...
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:11:50<span style="color:#f92672">]</span> code 501, message Unsupported method <span style="color:#f92672">(</span><span style="color:#e6db74">&#39;OPTIONS&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:11:50<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;OPTIONS / HTTP/1.1&#34;</span> <span style="color:#ae81ff">501</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:12:53<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET / HTTP/1.1&#34;</span> <span style="color:#ae81ff">200</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:12:54<span style="color:#f92672">]</span> code 404, message File not found
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:12:54<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET /favicon.ico HTTP/1.1&#34;</span> <span style="color:#ae81ff">404</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:12:56<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET /.ansible/ HTTP/1.1&#34;</span> <span style="color:#ae81ff">200</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:13:01<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET /.ansible/delete.yml HTTP/1.1&#34;</span> <span style="color:#ae81ff">200</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:13:04<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET /.ansible/deploy_go.yml HTTP/1.1&#34;</span> <span style="color:#ae81ff">200</span> -
+</span></span></code></pre></div><p>python3.x</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>// 默认是8000端口
+</span></span><span style="display:flex;"><span>python3.4 -m http.server
+</span></span><span style="display:flex;"><span>// 设置为9999端口
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai ~<span style="color:#f92672">]</span>$ python3.4 -m http.server <span style="color:#ae81ff">9999</span>
+</span></span><span style="display:flex;"><span>Serving HTTP on 0.0.0.0 port <span style="color:#ae81ff">9999</span> ...
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:32:21<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET / HTTP/1.1&#34;</span> <span style="color:#ae81ff">200</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:32:21<span style="color:#f92672">]</span> code 404, message File not found
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:32:21<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET /favicon.ico HTTP/1.1&#34;</span> <span style="color:#ae81ff">404</span> -
+</span></span><span style="display:flex;"><span>192.168.1.46 - - <span style="color:#f92672">[</span>25/May/2018 09:32:24<span style="color:#f92672">]</span> <span style="color:#e6db74">&#34;GET /.m2/ HTTP/1.1&#34;</span> <span style="color:#ae81ff">200</span> -
+</span></span></code></pre></div><p>通过浏览器你就能看到当前目录下的所有文件了，你也可以选择不使用浏览器，直接通过wget下载对应的文件，文件的url是什么，我就懒得说了，有一万种办法知道。这个功能用来服务器下载日志，局域网分享文件真的挺不错的，用完了记得关闭这个服务。就酱!!!</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

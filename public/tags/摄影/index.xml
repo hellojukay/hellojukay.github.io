@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>摄影 on 润物细无声</title>
+    <link>http://localhost:1313/tags/%E6%91%84%E5%BD%B1/</link>
+    <description>Recent content in 摄影 on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 25 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E6%91%84%E5%BD%B1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>【摄影】关于光圈大小的思考</title>
+      <link>http://localhost:1313/posts/2018/20180925/</link>
+      <pubDate>Tue, 25 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180925/</guid>
+      <description>这个中秋节去了内蒙古锡林格勒的黄岗梁，风景非常好，人在途中走，仿佛画中游。我拍了很多的人像，效果并不理想，背景画面都被我的f2.8光圈给虚化掉了，太可惜了，我在拍人像的时候习惯使用长焦距和大光圈，这样能拍摄出清晰唯美的效果，大光圈也往往会虚化掉背景，我考虑过如何能够使用短焦距和小光圈拍摄人像。&#xA;小光圈如果要突出主体，就应让需要被突出的对象具体光圈近一点，这人物也能凸显出来，背景也不会虚化掉，在小光圈的时候，可能会曝光不足，所以要延长曝光时间。&#xA;大光圈在拍摄人物的时候，有非常好的虚化效果，但是有一个要注意的地方是，如果在光线比较强的情况下，使用大光圈是容易导致曝光过度，天空是一完全白色的，这个时候需要降低iso或者是缩短曝光时间，我试过了，我的D750的1/4000s完全不够用，所以也得出一个结论，我的D750如果是使用f1.2或者f1.4的光圈，在太阳底下拍摄是完全不能发挥它的作用的。</description>
+    </item>
+    <item>
+      <title>【摄影】关于快门速度的思考</title>
+      <link>http://localhost:1313/posts/2018/20180819-1/</link>
+      <pubDate>Sun, 19 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180819-1/</guid>
+      <description>周六的云蒙山爬山，我第一次摄影，拍了不少照片，大部分都是抓拍的，回来一看，好多照片都是模糊的。对此，我也总结了一下。当使用自动挡拍摄的时候光圈和ISO是固定的，所以相机自动调节快门速度来控制曝光。如果在比较暗的地方，快速就较低，曝光时间长，那么在暗的地方就不适合拍摄运动护对象，否则照片会模糊。在光线比较强的地方，光线强，那么需要的曝光时间就短，也就是说快速度比较快，这样就适合拍摄运动中的对象。如果是要拍摄快速运动的物体，我认为应该是用快门优先模式，提高快门的速度，快速速度高了，那么ISO需要提高，或者说光圈需要变大，如果说不希望照片中出现噪点，那么就应该使用较低的ISO，使用较大的光圈，在这种情况下，如果光圈不够大，那么只有提高ISO了。&#xA;2018年09月02日更新 光圈每相隔一档位，镜头透光量就相隔一倍，光圈只会影响景深，不会影响照片的范围大小，光圈越大，景深越浅，光圈越小景深度约深。改变照片范围的只有拍摄者相聚照片的距离，还有焦距的大小，以及画幅的大小。</description>
+    </item>
+  </channel>
+</rss>

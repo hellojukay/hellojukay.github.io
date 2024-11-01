@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Maven on 润物细无声</title>
+    <link>http://localhost:1313/tags/maven/</link>
+    <description>Recent content in Maven on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 06 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/maven/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>maven 生成 swagger.json</title>
+      <link>http://localhost:1313/posts/2020/20201206/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201206/</guid>
+      <description>参考 demo : https://github.com/leanix/swagger-demo.git&#xA;执行编译命令，生成 wagger.json&#xA;mvn compile 执行上面命令后会在 target/classes/api-docs/ 目录生成 swagger.json 文件.</description>
+    </item>
+    <item>
+      <title>记一次解决 maven 安装慢的问题</title>
+      <link>http://localhost:1313/posts/2019/20191127-1/</link>
+      <pubDate>Wed, 27 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191127-1/</guid>
+      <description>有个团队遇到了 maven 编译非常慢的问题，一个 maven 项目编译需要 20 多分钟。我看了一下编译过程，大部分的时间都在下载依赖，其中会向 repo.spring.org 发起访问，但是这台机器的外网十分不稳定，导致每次请求都会超时，然后等待一些时间，再次发起请求，这就导致编译时间非常慢了。解决这个问题的方法是给 maven 配置网络代理，让他走代理网络访问 repo.spring.org .配置如下：&#xA;&amp;lt;proxies&amp;gt; &amp;lt;proxy&amp;gt; &amp;lt;id&amp;gt;example-proxy&amp;lt;/id&amp;gt; &amp;lt;active&amp;gt;true&amp;lt;/active&amp;gt; &amp;lt;protocol&amp;gt;http&amp;lt;/protocol&amp;gt; &amp;lt;host&amp;gt;proxy.example.com&amp;lt;/host&amp;gt; &amp;lt;port&amp;gt;8080&amp;lt;/port&amp;gt; &amp;lt;username&amp;gt;proxyuser&amp;lt;/username&amp;gt; &amp;lt;password&amp;gt;somepassword&amp;lt;/password&amp;gt; &amp;lt;nonProxyHosts&amp;gt;www.google.com|*.example.com&amp;lt;/nonProxyHosts&amp;gt; &amp;lt;/proxy&amp;gt; &amp;lt;/proxies&amp;gt; 注意，如果代理网络在公网，而私有 maven 服务器在内网，一定记得配置 nonPoroxyHosts.</description>
+    </item>
+  </channel>
+</rss>

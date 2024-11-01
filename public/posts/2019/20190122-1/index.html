@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="和Makefile一样，docker compose中也是可以使用环境变量的，也是使用${var}这样的方式来使用
+version: &#39;3&#39; services: app: build: context: ./docker/app dockerfile: Dockerfile image: shippingdocker/app:latest networks: - appnet volumes: - .:/var/www/html ports: - ${APP_PORT}:80 working_dir: /var/www/html cache: image: redis:alpine networks: - appnet volumes: - cachedata:/data db: image: mysql:5.7 environment: MYSQL_ROOT_PASSWORD: secret MYSQL_DATABASE: homestead MYSQL_USER: homestead MYSQL_PASSWORD: secret ports: - ${DB_PORT}:3306 networks: - appnet volumes: - dbdata:/var/lib/mysql node: build: context: ./docker/node dockerfile: Dockerfile image: shippingdocker/node:latest networks: - appnet volumes: - .:/opt working_dir: /opt command: echo hi networks: appnet: driver: bridge volumes: dbdata: driver: local cachedata: driver: local 这里面好几个端口都是使用的环境变了来指定的，我们可以在启动docker compose的时候，传递这个环境变量">  
+
+  <title>
+    
+      在docker-compose中使用环境变量
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-01-22 00:00:00 &#43;0000 UTC">
+            2019-01-22
+        </time>
+    </p>
+
+    <h1>在docker-compose中使用环境变量</h1>
+
+    
+
+    <p>和Makefile一样，docker compose中也是可以使用环境变量的，也是使用<code>${var}</code>这样的方式来使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>version: <span style="color:#e6db74">&#39;3&#39;</span>
+</span></span><span style="display:flex;"><span>services:
+</span></span><span style="display:flex;"><span>  app:
+</span></span><span style="display:flex;"><span>    build:
+</span></span><span style="display:flex;"><span>      context: ./docker/app
+</span></span><span style="display:flex;"><span>      dockerfile: Dockerfile
+</span></span><span style="display:flex;"><span>    image: shippingdocker/app:latest
+</span></span><span style="display:flex;"><span>    networks:
+</span></span><span style="display:flex;"><span>     - appnet
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>     - .:/var/www/html
+</span></span><span style="display:flex;"><span>    ports:
+</span></span><span style="display:flex;"><span>     - <span style="color:#e6db74">${</span>APP_PORT<span style="color:#e6db74">}</span>:80
+</span></span><span style="display:flex;"><span>    working_dir: /var/www/html
+</span></span><span style="display:flex;"><span>  cache:
+</span></span><span style="display:flex;"><span>    image: redis:alpine
+</span></span><span style="display:flex;"><span>    networks:
+</span></span><span style="display:flex;"><span>     - appnet
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>     - cachedata:/data
+</span></span><span style="display:flex;"><span>  db:
+</span></span><span style="display:flex;"><span>    image: mysql:5.7
+</span></span><span style="display:flex;"><span>    environment:
+</span></span><span style="display:flex;"><span>      MYSQL_ROOT_PASSWORD: secret
+</span></span><span style="display:flex;"><span>      MYSQL_DATABASE: homestead
+</span></span><span style="display:flex;"><span>      MYSQL_USER: homestead
+</span></span><span style="display:flex;"><span>      MYSQL_PASSWORD: secret
+</span></span><span style="display:flex;"><span>    ports:
+</span></span><span style="display:flex;"><span>     - <span style="color:#e6db74">${</span>DB_PORT<span style="color:#e6db74">}</span>:3306
+</span></span><span style="display:flex;"><span>    networks:
+</span></span><span style="display:flex;"><span>     - appnet
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>     - dbdata:/var/lib/mysql
+</span></span><span style="display:flex;"><span>  node:
+</span></span><span style="display:flex;"><span>    build:
+</span></span><span style="display:flex;"><span>      context: ./docker/node
+</span></span><span style="display:flex;"><span>      dockerfile: Dockerfile
+</span></span><span style="display:flex;"><span>    image: shippingdocker/node:latest
+</span></span><span style="display:flex;"><span>    networks:
+</span></span><span style="display:flex;"><span>     - appnet
+</span></span><span style="display:flex;"><span>    volumes:
+</span></span><span style="display:flex;"><span>     - .:/opt
+</span></span><span style="display:flex;"><span>    working_dir: /opt
+</span></span><span style="display:flex;"><span>    command: echo hi
+</span></span><span style="display:flex;"><span>networks:
+</span></span><span style="display:flex;"><span>  appnet:
+</span></span><span style="display:flex;"><span>    driver: bridge
+</span></span><span style="display:flex;"><span>volumes:
+</span></span><span style="display:flex;"><span>  dbdata:
+</span></span><span style="display:flex;"><span>    driver: local
+</span></span><span style="display:flex;"><span>  cachedata:
+</span></span><span style="display:flex;"><span>    driver: local
+</span></span></code></pre></div><p>这里面好几个端口都是使用的环境变了来指定的，我们可以在启动docker compose的时候，传递这个环境变量</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>export APP_PORT<span style="color:#f92672">=</span><span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>docker-compose up -d
+</span></span></code></pre></div><p>或者</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>DB_PORT<span style="color:#f92672">=</span><span style="color:#ae81ff">3306</span> docker-compose up -d
+</span></span></code></pre></div><h2 id="env">.env</h2>
+<p>docker-compose同时也支持<code>dotfile</code>来管理环境变量,在docker compose的同级别目录下面放置<code>.env</code>文件，docker-compose中的变量会被自动替换。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

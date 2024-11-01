@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="许多团队和组织使用docker来跨平台的测试，构建，发布他们的项目, docker提供了非常好高效的部署效率。Jenkins 在2.5版本以后加入了pipeline功能,pipeline支持在Jenkinsfile里面执行docker相关的操作。本文将会介绍在Jenkinsfile中执行docker的相关操作。
+自定义执行环境 pipeline能够使用一个docker image指定执行环境，既可以为整个pipeline指定指定环境，也可以为单个stage指定执行环境。
+pipeline { agent { docker {image: &#39;node:7-alpine&#39;} } stages { stage(&#39;test&#39;){ steps{ sh &#39;node --version&#39; } } } } 当这个pipeline执行的时候，Jenkins会自动的启动一个容器来执行指定的steps
+[Pipeline] stage [Pipeline] { (Test) [Pipeline] sh [guided-tour] Running shell script &#43; node --version v7.4.0 [Pipeline] } [Pipeline] // stage [Pipeline] } 为容器缓存数据 许多的构建工具会下载一些外部的依赖并且缓存到本地，将来再次构建的时候会用到这些数据。pipeline支持传递自定义参数给docker命令，允许在docker执行的挂载本地的文件，这个能够缓存容器执行过程产生的数据.例如：maven构建过程中会缓存数据到~/.m2这个文件夹中。
+pipeline { agent { docker { image: &#39;maven:2-alpine&#39; args: &#39;-v $HOME/.m2:/root/.m2&#39; } } stages { stage { steps { sh &#39;mvn -B&#39; } } } } 使用多种容器 一个项目可能使用java写后端，使用javascript写前端，我们要运行他，就需要在不同的stage中使用相应的容器。">  
+
+  <title>
+    
+      【翻译】在jenkins流水线使用docker
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-06-16 00:00:00 &#43;0000 UTC">
+            2018-06-16
+        </time>
+    </p>
+
+    <h1>【翻译】在jenkins流水线使用docker</h1>
+
+    
+
+    <p>许多团队和组织使用<code>docker</code>来跨平台的测试，构建，发布他们的项目, <code>docker</code>提供了非常好高效的部署效率。<code>Jenkins</code> 在2.5版本以后加入了<code>pipeline</code>功能,<code>pipeline</code>支持在<code>Jenkinsfile</code>里面执行<code>docker</code>相关的操作。本文将会介绍在<code>Jenkinsfile</code>中执行<code>docker</code>的相关操作。</p>
+<h1 id="自定义执行环境">自定义执行环境</h1>
+<p><code>pipeline</code>能够使用一个<code>docker image</code>指定执行环境，既可以为整个<code>pipeline</code>指定指定环境，也可以为单个<code>stage</code>指定执行环境。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        docker <span style="color:#f92672">{</span>image: <span style="color:#e6db74">&#39;node:7-alpine&#39;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;test&#39;</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>            steps<span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;node --version&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>当这个<code>pipeline</code>执行的时候，<code>Jenkins</code>会自动的启动一个容器来执行指定的<code>steps</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>Pipeline<span style="color:#f92672">]</span> stage
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>Pipeline<span style="color:#f92672">]</span> <span style="color:#f92672">{</span> <span style="color:#f92672">(</span>Test<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>Pipeline<span style="color:#f92672">]</span> sh
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>guided-tour<span style="color:#f92672">]</span> Running shell script
+</span></span><span style="display:flex;"><span>+ node --version
+</span></span><span style="display:flex;"><span>v7.4.0
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>Pipeline<span style="color:#f92672">]</span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>Pipeline<span style="color:#f92672">]</span> // stage
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>Pipeline<span style="color:#f92672">]</span> <span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="为容器缓存数据">为容器缓存数据</h1>
+<p>许多的构建工具会下载一些外部的依赖并且缓存到本地，将来再次构建的时候会用到这些数据。<code>pipeline</code>支持传递自定义参数给<code>docker</code>命令，允许在<code>docker</code>执行的挂载本地的文件，这个能够缓存容器执行过程产生的数据.例如：maven构建过程中会缓存数据到<code>~/.m2</code>这个文件夹中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        docker <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            image: <span style="color:#e6db74">&#39;maven:2-alpine&#39;</span>
+</span></span><span style="display:flex;"><span>            args: <span style="color:#e6db74">&#39;-v $HOME/.m2:/root/.m2&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;mvn -B&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="使用多种容器">使用多种容器</h1>
+<p>一个项目可能使用<code>java</code>写后端，使用<code>javascript</code>写前端，我们要运行他，就需要在不同的<code>stage</code>中使用相应的容器。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent none
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;back-end&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                docker <span style="color:#f92672">{</span>image: <span style="color:#e6db74">&#39;maven:2-alpine&#39;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;mvn --vesion&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;front-end&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                docker <span style="color:#f92672">{</span>image: <span style="color:#e6db74">&#39;node:7-alpine&#39;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                sh <span style="color:#e6db74">&#39;node --version&#39;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="使用dockerfile">使用Dockerfile</h1>
+<p><code>pipeline</code>也支持从<code>Dockerfile</code>自定义一个执行环境，而不需要从<code>Docker Hub</code>上pull一个镜像到本地。使用<code>agent {dockerfile true}</code>语法允许从本地的<code>Dockerfile</code>文件构建一个镜像。一个本地的<code>Dockerfile</code>文件的如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>FROM node:<span style="color:#ae81ff">7</span><span style="color:#f92672">-</span>alpin
+</span></span><span style="display:flex;"><span>RUN APK add <span style="color:#f92672">-</span>U subvesion
+</span></span></code></pre></div><p><code>Jenkinsfile</code>从本地的<code>Dockerfile</code>编译出镜像，并且执行定义好的<code>steps</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent <span style="color:#f92672">{</span>dockerfile <span style="color:#66d9ef">true</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;test&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            sh <span style="color:#e6db74">&#39;node --version&#39;</span>
+</span></span><span style="display:flex;"><span>            sh <span style="color:#e6db74">&#39;svn --vesion&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="容器环境的高级用法">容器环境的高级用法</h1>
+<p>我们要在<code>mysql</code>的容器中执行操作</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * In order to communicate with the MySQL server, this Pipeline explicitly
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * maps the port (`3306`) to a known port on the host machine.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    docker<span style="color:#f92672">.</span><span style="color:#a6e22e">image</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;mysql:5&#39;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">withRun</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;-e &#34;MYSQL_ROOT_PASSWORD=my-secret-pw&#34; -p 3306:3306&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> c <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Wait until mysql service is up */</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;while ! mysqladmin ping -h0.0.0.0 --silent; do sleep 1; done&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Run some tests which require MySQL */</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;make check&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这个例子我们在升级一点，我来加入两个容器，一个运行<code>mysql</code>数据库，一个提供执行环境</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>    docker<span style="color:#f92672">.</span><span style="color:#a6e22e">image</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;mysql:5&#39;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">withRun</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;-e &#34;MYSQL_ROOT_PASSWORD=my-secret-pw&#34;&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span> c <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>        docker<span style="color:#f92672">.</span><span style="color:#a6e22e">image</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;mysql:5&#39;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">inside</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;--link ${c.id}:db&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* Wait until mysql service is up */</span>
+</span></span><span style="display:flex;"><span>            sh <span style="color:#e6db74">&#39;while ! mysqladmin ping -hdb --silent; do sleep 1; done&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        docker<span style="color:#f92672">.</span><span style="color:#a6e22e">image</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;centos:7&#39;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">inside</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;--link ${c.id}:db&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * Run some tests which require MySQL, and assume that it is
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * available on the host name `db`
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             */</span>
+</span></span><span style="display:flex;"><span>            sh <span style="color:#e6db74">&#39;make check&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>上面的例子中，我们使用<code>withRun</code>来给容器添加启动参数，同个容器的id来连接两个容器，id同样能够用来获取容器的日志</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>sh <span style="color:#e6db74">&#34;docker logs ${c.id}&#34;</span>
+</span></span></code></pre></div><h1 id="编译镜像">编译镜像</h1>
+<p>为了创建镜像,&lsquo;pipeline&rsquo;同样提供了<code>build()</code>方法来创建一个新的镜像,从<code>Dockerfile</code>创建一个新的镜像</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> customImage <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;my-image:${env.BUILD_ID}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    customImage<span style="color:#f92672">.</span><span style="color:#a6e22e">inside</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;make test&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>同样也给定了<code>push</code>方法来push你的镜像到镜像仓库。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> customImage <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;my-image:${env.BUILD_ID}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    customImage<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>push</code>方法也能接受一个参数，用来指定发布的镜像tag</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> customImage <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;my-image:${env.BUILD_ID}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    customImage<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    customImage<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;latest&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>build</code>方法默认是是从本地的<code>Dockerfile</code>文件来编译一个镜像，也可以指定一个别的包含<code>Dockerfile</code>文件的文件夹来编译镜像</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> testImage <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test-image&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;./dockerfiles/test&#34;</span><span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    testImage<span style="color:#f92672">.</span><span style="color:#a6e22e">inside</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;make test&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这里从<code>/dockerfiles/test</code>文件夹下面寻找<code>Dockerfile</code>文件，然后编译<code>test-image</code>镜像。</p>
+<p><code>pipeline</code>也提供了覆盖<code>Dockerfile</code>文件的方法,使用<code>docker build</code>命令的<code>-f</code>参数来指定<code>Dockerfile</code>文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> dockerfile <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;Dockerfile.test&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> customImage <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;my-image:${env.BUILD_ID}&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;-f ${dockerfile} ./dockerfiles&#34;</span><span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这里从<code>./dockerfiles</code>目录寻找<code>Dockerfile.test</code>文件，根据<code>Dockerfile.test</code>文件定义的规则来编译镜像。</p>
+<h1 id="使用远程docker服务器">使用远程docker服务器</h1>
+<p><code>docker</code>本身是cs架构，默认<code>docker</code>命令会连接本地的<code>docker</code>服务器，通过<code>/var/run/docker.sock</code>这个<code>socket</code>。我们也可以使用<code>withServer()</code>选择一个<code>docker server</code>。这里需要给定一个url和一个<code>Credentialid</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    docker<span style="color:#f92672">.</span><span style="color:#a6e22e">withServer</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;tcp://swarm.example.com:2376&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;swarm-certs&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        docker<span style="color:#f92672">.</span><span style="color:#a6e22e">image</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;mysql:5&#39;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">withRun</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;-p 3306:3306&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* do things */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="使用自定义的镜像仓库">使用自定义的镜像仓库</h1>
+<p><code>docker push</code>和<code>docker pull</code> 默认使用<code>Docker Hub</code>仓库，我们可以使用<code>withRegistry()</code>来指定一个特殊的镜像仓库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>node <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    checkout scm
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    docker<span style="color:#f92672">.</span><span style="color:#a6e22e">withRegistry</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;https://registry.example.com&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;credentials-id&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> customImage <span style="color:#f92672">=</span> docker<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;my-image:${env.BUILD_ID}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Push the container to the custom Registry */</span>
+</span></span><span style="display:flex;"><span>        customImage<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

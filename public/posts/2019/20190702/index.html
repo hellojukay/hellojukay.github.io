@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="之前一直是使用 artifactory 的 rest api 来远程自动化操作 artiactory ，传个文件都需要使用 curl 命令，我觉得很不友好，于是搜了一下，发现 artifactory 提供了 jenkins 的插件，只是 DSL 的语法来操作 artifactory,在 jenkins 的全局配置中配置好了 artifactory 后就可以使用了， 例如上传一个文件:
+rtUpload ( serverId: &#34;Artifactory-1&#34;, spec: &#34;&#34;&#34;{ &#34;files&#34;: [ { &#34;pattern&#34;: &#34;./*froggy*.zip&#34;, &#34;target&#34;: &#34;{repo}/{dir}/&#34; } ] }&#34;&#34;&#34; ) 更多的语法可以看 artifactory 的官网: https://www.jfrog.com/confluence/display/RTF/Working&#43;With&#43;Pipeline&#43;Jobs&#43;in&#43;Jenkins">  
+
+  <title>
+    
+      jenkins DSL 操作 artifactory
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-02 00:00:00 &#43;0000 UTC">
+            2019-07-02
+        </time>
+    </p>
+
+    <h1>jenkins DSL 操作 artifactory</h1>
+
+    
+
+    <p>之前一直是使用 artifactory 的 rest api 来远程自动化操作 artiactory ，传个文件都需要使用 curl 命令，我觉得很不友好，于是搜了一下，发现 artifactory 提供了 jenkins 的插件，只是 DSL 的语法来操作 artifactory,在 jenkins 的全局配置中配置好了 artifactory 后就可以使用了， 例如上传一个文件:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>rtUpload <span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>    serverId: <span style="color:#e6db74">&#34;Artifactory-1&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>    spec:
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          &#34;files&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              &#34;pattern&#34;: &#34;./*froggy*.zip&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              &#34;target&#34;: &#34;{repo}/{dir}/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">         ]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        }&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>更多的语法可以看 artifactory 的官网: <a href="https://www.jfrog.com/confluence/display/RTF/Working+With+Pipeline+Jobs+in+Jenkins">https://www.jfrog.com/confluence/display/RTF/Working+With+Pipeline+Jobs+in+Jenkins</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

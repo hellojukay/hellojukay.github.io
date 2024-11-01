@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="为了看到大家每日的构建情况， 我们决定把 jenkins 监控起来。将监控指标在 grafana 上展示出来。我们采用 promthues 抓取和存储数据， 使用 jenkins 的 promtheus 插件来暴露数据。
+jenkins 的 prometheus 插件地址: https://wiki.jenkins.io/display/JENKINS/Prometheus&#43;Plugin
+配置 promtheus 抓取任务
+- job_name: &#39;jenkins&#39; metrics_path: &#39;/prometheus/&#39; scheme: https bearer_token: bearer_token static_configs: - targets: [&#39;jenkins-server:443&#39;] 最后我们配置一下 grafana 的展示面板 https://grafana.com/dashboards/9964">  
+
+  <title>
+    
+      使用 prometheus 监控 jenkins
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-05-17 00:00:00 &#43;0000 UTC">
+            2019-05-17
+        </time>
+    </p>
+
+    <h1>使用 prometheus 监控 jenkins</h1>
+
+    
+
+    <p>为了看到大家每日的构建情况， 我们决定把 jenkins 监控起来。将监控指标在 grafana 上展示出来。我们采用 promthues 抓取和存储数据， 使用 jenkins 的 promtheus 插件来暴露数据。</p>
+<p>jenkins 的 prometheus 插件地址: <a href="https://wiki.jenkins.io/display/JENKINS/Prometheus+Plugin">https://wiki.jenkins.io/display/JENKINS/Prometheus+Plugin</a></p>
+<p>配置 promtheus 抓取任务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span>  - <span style="color:#f92672">job_name</span>: <span style="color:#e6db74">&#39;jenkins&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metrics_path</span>: <span style="color:#e6db74">&#39;/prometheus/&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">scheme</span>: <span style="color:#ae81ff">https</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">bearer_token</span>: <span style="color:#ae81ff">bearer_token</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">static_configs</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">targets</span>: [<span style="color:#e6db74">&#39;jenkins-server:443&#39;</span>]
+</span></span></code></pre></div><p>最后我们配置一下 grafana 的展示面板 <a href="https://grafana.com/dashboards/9964">https://grafana.com/dashboards/9964</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

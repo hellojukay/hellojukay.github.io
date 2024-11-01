@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="网上很多 linux 网络设置的教程中都提到了 eth0 网卡配置，但是有时候我发现我的机器上并没有 eth0 网卡，反而有 enp0s31f6 网卡。
+Centos 7 中将网卡命名和编号有了新的规则：
+eno1: 代表主板bios内置网卡 ens1: 代表主板bios内置的PCI-E 网卡 enp2s0: PCI-E 独立网卡 eth0: 如果以上都不使用，最回到默认网卡 enp0s31f6 网卡属于第三种特效，centos 的网卡配置见
+/etc/sysconfig/network-scripts ">  
+
+  <title>
+    
+      Centos 7 网卡命令规则
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-03 00:00:00 &#43;0000 UTC">
+            2019-07-03
+        </time>
+    </p>
+
+    <h1>Centos 7 网卡命令规则</h1>
+
+    
+
+    <p>网上很多 linux 网络设置的教程中都提到了 eth0 网卡配置，但是有时候我发现我的机器上并没有 eth0 网卡，反而有 enp0s31f6 网卡。</p>
+<p>Centos 7 中将网卡命名和编号有了新的规则：</p>
+<ul>
+<li>eno1: 代表主板bios内置网卡</li>
+<li>ens1: 代表主板bios内置的PCI-E 网卡</li>
+<li>enp2s0: PCI-E 独立网卡</li>
+<li>eth0: 如果以上都不使用，最回到默认网卡</li>
+</ul>
+<p>enp0s31f6 网卡属于第三种特效，centos 的网卡配置见</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>/etc/sysconfig/network-scripts
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

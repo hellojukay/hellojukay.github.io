@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ocaml on 润物细无声</title>
+    <link>http://localhost:1313/tags/ocaml/</link>
+    <description>Recent content in Ocaml on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 18 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/ocaml/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>重装 opam</title>
+      <link>http://localhost:1313/posts/2019/20191118/</link>
+      <pubDate>Mon, 18 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191118/</guid>
+      <description>卸载 opam&#xA;sudo pacman -R opam 删除缓存数据&#xA;rm -rf ~/.opam 清理 pacman 缓存&#xA;sudo pacman -Scc 安装 opam&#xA;sudo pacman -S opam 初始化 opam&#xA;opam init </description>
+    </item>
+    <item>
+      <title>ocaml 语言的基本介绍</title>
+      <link>http://localhost:1313/posts/2019/20190726/</link>
+      <pubDate>Fri, 26 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190726/</guid>
+      <description>ocaml 语言是 caml 语言的一种实现，读音：欧课摸。是一种能够编译成 native 代码的函数式编程语言，编写效率和运行效率都非常高。ocaml 也支持面向对象编程和过程式编程，同时 ocaml 是一门强类型编程语言，内置垃圾回收。&#xA;ocaml 的包管理工具是 opam, 网址是: https://opam.ocaml.org/packages/ , 他是基于源码的包管理工具，安装一个模块的方式是:&#xA;opam install &amp;lt;module&amp;gt; dune 是 ocaml 的标准的构建工具，类似于 gradle 之于 JAVA 的地位，网址是: https://dune.readthedocs.io/en/stable/quick-start.html 。dune 有一个标准配置文件,文件名字 dune, 里面定义了依赖和打包类型&#xA;(executable (name main)) dune build main.exe 这边就在 _build/default/ 目录下生成了 main.exe 文件， 这个文件虽然是 exe 后缀的， 但是并不是标示他是 windows 下的可执行文件。</description>
+    </item>
+  </channel>
+</rss>

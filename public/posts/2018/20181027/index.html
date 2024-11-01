@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="这篇文章将会演示前端容器化的过程，将一个vue项目部署再docker容器中。
+创建vue项目 使用vue的cli工具来创建项目
+vue create vue-docker [hellojukay@localhost vue-docker]$ ls -al 总用量 480 drwxrwxr-x. 7 hellojukay hellojukay 196 10月 27 13:54 . drwxrwxr-x. 3 hellojukay hellojukay 24 10月 27 13:48 .. -rw-rw-r--. 1 hellojukay hellojukay 53 10月 27 13:48 babel.config.js drwxrwxr-x. 5 hellojukay hellojukay 75 10月 27 13:53 dist drwxrwxr-x. 8 hellojukay hellojukay 166 10月 27 13:49 .git -rw-rw-r--. 1 hellojukay hellojukay 214 10月 27 13:48 .gitignore drwxrwxr-x. 803 hellojukay hellojukay 24576 10月 27 13:50 node_modules -rw-rw-r--.">  
+
+  <title>
+    
+      前端容器化
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-10-27 00:00:00 &#43;0000 UTC">
+            2018-10-27
+        </time>
+    </p>
+
+    <h1>前端容器化</h1>
+
+    
+
+    <p>这篇文章将会演示前端容器化的过程，将一个vue项目部署再<code>docker</code>容器中。</p>
+<h1 id="创建vue项目">创建vue项目</h1>
+<p>使用<code>vue</code>的cli工具来创建项目</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vue create vue-docker
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@localhost vue-docker<span style="color:#f92672">]</span>$ ls -al
+</span></span><span style="display:flex;"><span>总用量 <span style="color:#ae81ff">480</span>
+</span></span><span style="display:flex;"><span>drwxrwxr-x.   <span style="color:#ae81ff">7</span> hellojukay hellojukay    <span style="color:#ae81ff">196</span> 10月 <span style="color:#ae81ff">27</span> 13:54 .
+</span></span><span style="display:flex;"><span>drwxrwxr-x.   <span style="color:#ae81ff">3</span> hellojukay hellojukay     <span style="color:#ae81ff">24</span> 10月 <span style="color:#ae81ff">27</span> 13:48 ..
+</span></span><span style="display:flex;"><span>-rw-rw-r--.   <span style="color:#ae81ff">1</span> hellojukay hellojukay     <span style="color:#ae81ff">53</span> 10月 <span style="color:#ae81ff">27</span> 13:48 babel.config.js
+</span></span><span style="display:flex;"><span>drwxrwxr-x.   <span style="color:#ae81ff">5</span> hellojukay hellojukay     <span style="color:#ae81ff">75</span> 10月 <span style="color:#ae81ff">27</span> 13:53 dist
+</span></span><span style="display:flex;"><span>drwxrwxr-x.   <span style="color:#ae81ff">8</span> hellojukay hellojukay    <span style="color:#ae81ff">166</span> 10月 <span style="color:#ae81ff">27</span> 13:49 .git
+</span></span><span style="display:flex;"><span>-rw-rw-r--.   <span style="color:#ae81ff">1</span> hellojukay hellojukay    <span style="color:#ae81ff">214</span> 10月 <span style="color:#ae81ff">27</span> 13:48 .gitignore
+</span></span><span style="display:flex;"><span>drwxrwxr-x. <span style="color:#ae81ff">803</span> hellojukay hellojukay  <span style="color:#ae81ff">24576</span> 10月 <span style="color:#ae81ff">27</span> 13:50 node_modules
+</span></span><span style="display:flex;"><span>-rw-rw-r--.   <span style="color:#ae81ff">1</span> hellojukay hellojukay    <span style="color:#ae81ff">811</span> 10月 <span style="color:#ae81ff">27</span> 13:48 package.json
+</span></span><span style="display:flex;"><span>-rw-rw-r--.   <span style="color:#ae81ff">1</span> hellojukay hellojukay <span style="color:#ae81ff">429373</span> 10月 <span style="color:#ae81ff">27</span> 13:49 package-lock.json
+</span></span><span style="display:flex;"><span>drwxrwxr-x.   <span style="color:#ae81ff">2</span> hellojukay hellojukay     <span style="color:#ae81ff">43</span> 10月 <span style="color:#ae81ff">27</span> 13:48 public
+</span></span><span style="display:flex;"><span>-rw-rw-r--.   <span style="color:#ae81ff">1</span> hellojukay hellojukay    <span style="color:#ae81ff">272</span> 10月 <span style="color:#ae81ff">27</span> 13:49 README.md
+</span></span><span style="display:flex;"><span>drwxrwxr-x.   <span style="color:#ae81ff">4</span> hellojukay hellojukay     <span style="color:#ae81ff">68</span> 10月 <span style="color:#ae81ff">27</span> 13:48 src
+</span></span></code></pre></div><h1 id="创建dockerfile">创建Dockerfile</h1>
+<p>在项目的更目录下创建Dockerfile</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Dockerfile" data-lang="Dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> nginx:latest</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">COPY</span> . /usr/share/nginx/html/<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>内容也比较简单，将编译好的dist文件夹中静态文件拷贝到nginx的静态文件目录。</p>
+<h1 id="编译镜像">编译镜像</h1>
+<p>为了加速编译镜像的过程，使用dist文件夹作为编译的<code>build context</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker build -f Dockerfile -t vue-docker dist
+</span></span></code></pre></div><p>这样的方式，编译速度非常快。</p>
+<h1 id="启动容器">启动容器</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker run -itd --name vue -p 80:80 vue-docker
+</span></span></code></pre></div><p>将80端口暴露出来。
+<img src="/20181027/vue-docker.png" alt="image"></p>
+<h1 id="发布镜像">发布镜像</h1>
+<p>首先登陆<code>DockerHub</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@localhost vue-docker<span style="color:#f92672">]</span>$ docker login
+</span></span><span style="display:flex;"><span>Login with your Docker ID to push and pull images from Docker Hub. If you don<span style="color:#960050;background-color:#1e0010">&#39;</span>t have a Docker ID, head over to https://hub.docker.com to create one.
+</span></span><span style="display:flex;"><span>Username: hellojukay
+</span></span><span style="display:flex;"><span>Password: 
+</span></span><span style="display:flex;"><span>WARNING! Your password will be stored unencrypted in /home/hellojukay/.docker/config.json.
+</span></span><span style="display:flex;"><span>Configure a credential helper to remove this warning. See
+</span></span><span style="display:flex;"><span>https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Login Succeeded
+</span></span></code></pre></div><p>登陆成功以后，<code>docker push</code>发布镜像到<code>DockerHub</code>,重名了一下镜像<code> docker tag vue-docker hellojukay/vue-docker:v0.01</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@localhost vue-docker<span style="color:#f92672">]</span>$ docker push hellojukay/vue-docker
+</span></span><span style="display:flex;"><span>The push refers to repository <span style="color:#f92672">[</span>docker.io/hellojukay/vue-docker<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>116c4e0135af: Pushed 
+</span></span><span style="display:flex;"><span>86df2a1b653b: Pushed 
+</span></span><span style="display:flex;"><span>bc5b41ec0cfa: Pushed 
+</span></span><span style="display:flex;"><span>237472299760: Pushed 
+</span></span><span style="display:flex;"><span>v0.01: digest: sha256:fc62a20b645718277b6200ca1627bafbeff37016ac26956da59b1511f52c4833 size: <span style="color:#ae81ff">1158</span>
+</span></span></code></pre></div><p><img src="/20181027/docker-hub.png" alt="image2"></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nginx on 润物细无声</title>
+    <link>http://localhost:1313/tags/nginx/</link>
+    <description>Recent content in Nginx on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 27 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>nginx 配置 keepalive</title>
+      <link>http://localhost:1313/posts/2020/20200827/</link>
+      <pubDate>Thu, 27 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200827/</guid>
+      <description>今天在配置了 nginx 以后发现无法访问服务,nginx 返回503&#xA;2020/08/26 21:08:38 [error] 30814#0: *66294 upstream prematurely closed connection while reading response header from upstream, client: 这看起来是远程服务器关闭了连接，这里就不好理解了，为甚么上游服务端在nginx还在读取数据的时候关闭tcp连接呢。最后在上网找了以下，虽然没有想明白原因，但是配置keepalive 能解决这个问题&#xA;server { ... location /http/ { proxy_pass http://http_backend; proxy_http_version 1.1; proxy_set_header Connection &amp;#34;&amp;#34;; ... } } 参考链接&#xA;https://www.webfoobar.com/node/26 http://nginx.org/en/docs/http/ngx_http_upstream_module.html#keepalive </description>
+    </item>
+    <item>
+      <title>【翻译】nginx入门手册</title>
+      <link>http://localhost:1313/posts/2018/20180710/</link>
+      <pubDate>Tue, 10 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180710/</guid>
+      <description>前言 这个手册手册假设你已经安装了nginx，如果没有请前往nginx官网下载安装nginx，我们将好告诉你如何启动，关闭nginx，还有更新nginx的配置文件，像你描述如何使用nginx代理静态文件，如果配置反向代理.&#xA;nginx启动以后拥有一个master进程和多个worker进程，master进程的主要任务是读取配置文件，解析配置文件，管理worker进程的生命周期，worker进程的数量是配置在配置文件中，如果配置的不会，nginx也尝试让你的配置变得更加合理，它同事会根据cpu的数量上下调整worker进程的数量.&#xA;nginx的配置文件名字叫做nginx.conf，默认情况下,nginx会尝试从/etc/nginx/或者/usr/local/etc/nginx中寻找配置文件．&#xA;启动,关闭,更新配置 启动nginx只需要执行nginx的可执行文件&#xA;nginx 一旦启动成功，你就能通过&#xA;nginx -s signal 来空置nginx进程,信号使用说明如下&#xA;stop 关闭nginx quit 退出nginx reload 重新加载配置文件 reopen 重新打开日志文件 例如，如果你要关闭｀nginx｀服务，你需要执行下面的命令 nginx -s quit 执行这个命令的用户应该和启动nginx的用户一致，一般会是www用户或者root用户,更新nginx的配置文件，你需要执行：&#xA;nginx -s reload 当master进程收到了更新配置文件的信号以后，master进程会立马检查配置文件，并且解析配置文件，如果有语法错误，那么什么也操作，忽视用户的操作，如果配置文件没问题，那么它会解析这个文件，并且发送信号给worker进程，通知worker进程退出，master使用新的配置文件产生新的worker进程．&#xA;也可以使用kill命令发送信号给master进程,master进程的pid一般都会保存在一个nginx.pid的文件中，这文件一般会在/usr/local/nginx/logs或者/var/run,例如master的pid是1682,发送QUIT信号也能关闭nginx,命令如下：&#xA;kill -s QUIT 1628 如果要查询nginx的pid可以使用如下命令：&#xA;ps ax | grep nginx ＃　配置文件的结构 nginx包含很多的模块，各个模块都能通过配置文件中的指令来控制，可能是一个简单的指令也可能是一个指令集，一条简单的指令包含指令名字，指令参数，最后用 ; 来表示指令结束了。块指令包含多个简单的指令，他用 {来表示开始，}来表示结束。使用#开头的行表示是一行注释，不会影响nginx的行为。&#xA;nginx 代理静态文件 nginx的一个非常重要的用处是用来最为文件服务器托管文件（类似于图片，静态的HTML页面),这里将会告诉如何搭建一个简单的静态文件服务器。&#xA;创建/data/www目录，放一个index.html的静态文件再里面 创建/data/images目录，放入若干的图片 现在，我们需要再配置里面配置http模块和server模块。默认的nginx配置文件已经包含了一些记本的配置信息，下面我们创建一个新的server http { server { } } 一个nginx的配合文件里面是可以配置多个server模块的，他们绑定不同的端口。在nginx接受到请求以后，首先会检查请求的路径是否满足配置文件中的location配置。添加如下内容到server配置中:&#xA;location / { root /data/www; } location设置 / 会拦截所有来自这个端口的请求，匹配路径root指令所在的文件夹/data/www中的文件，如果满足，就会使用这个规则，如果不满足就会跳过，现在想server中再加入一条配置：&#xA;location /images { root /data; } 这条配置会匹配/images开头的请求。现在我们的配置我内存大概看起来像这样：</description>
+    </item>
+  </channel>
+</rss>

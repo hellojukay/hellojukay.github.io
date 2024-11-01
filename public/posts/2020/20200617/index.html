@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="问题1： docker 容器中无法通过 ansible 链接到远程服务器，但是在宿主机器上是可以的,错误信息如下:
+@fatal: [target]: UNREACHABLE! =&gt; {&#34;changed&#34;: false, &#34;msg&#34;: &#34;Failed to connect to the host via ssh: Warning: Permanently added &#39;xxxx&#39; (ECDSA) to the list of known hosts.\r\nControl socket connect(/root/.ansible/cp/6d853b47a1): Connection refused\r\nFailed to connect to new control master&#34;, &#34;unreachable&#34;: true} 问题很奇怪，解决方案也很奇怪，没有找到原因，上网搜索到答案是: 修改 ansible 的 ansible.cfg , 设置 controll path
+control_path_dir=/dev/shm/ansible_control_path 问题2：也是在 docker 中进行 ansible 操作，宿主机器执行 ansible 网络能通过，容器内部执行 ssh 网络能通过，但是容器内部执行 ansible 网络就不通过，我是配置了 ssh proxy 的，通过条跳板机器到目标机器，显然 ansible 没有读取我的 ~/.ssh/config, 解决方式在 ansible 的 hosts 文件中设置 proxy,如下:">  
+
+  <title>
+    
+      记 ansible 遇到的两个问题
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-06-17 00:00:00 &#43;0000 UTC">
+            2020-06-17
+        </time>
+    </p>
+
+    <h1>记 ansible 遇到的两个问题</h1>
+
+    
+
+    <p>问题1： docker 容器中无法通过 ansible 链接到远程服务器，但是在宿主机器上是可以的,错误信息如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>@fatal: <span style="color:#f92672">[</span>target<span style="color:#f92672">]</span>: UNREACHABLE! <span style="color:#f92672">=</span>&gt; <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;changed&#34;</span>: false, <span style="color:#e6db74">&#34;msg&#34;</span>: <span style="color:#e6db74">&#34;Failed to connect to the host via ssh: Warning: Permanently added &#39;xxxx&#39; (ECDSA) to the list of known hosts.\r\nControl socket connect(/root/.ansible/cp/6d853b47a1): Connection refused\r\nFailed to connect to new control master&#34;</span>, <span style="color:#e6db74">&#34;unreachable&#34;</span>: true<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>问题很奇怪，解决方案也很奇怪，没有找到原因，上网搜索到答案是: 修改 ansible 的 ansible.cfg , 设置 controll path</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>control_path_dir=/dev/shm/ansible_control_path
+</span></span></code></pre></div><p>问题2：也是在 docker 中进行 ansible 操作，宿主机器执行 ansible 网络能通过，容器内部执行 ssh 网络能通过，但是容器内部执行 ansible 网络就不通过，我是配置了 ssh proxy 的，通过条跳板机器到目标机器，显然 ansible 没有读取我的 ~/.ssh/config, 解决方式在 ansible 的 hosts 文件中设置 proxy,如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>dev ansible_ssh_host=xxxx ansible_ssh_user=xxxx ansible_ssh_pass=&#34;xxxx&#34; ansible_ssh_common_args=&#39; -o ProxyCommand=&#34;ssh xxx@xxxxx -W %h:%p&#34;&#39;
+</span></span></code></pre></div><p>或者在执行 ansible-playbook 的命令行中设置 ssh 参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> ansbiel-playbook --ssh-common-args<span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">&#39;</span>-o ProxyCommand<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ssh  -W %h:%p -q xxx@xxxx&#34;</span> ansible.yml
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

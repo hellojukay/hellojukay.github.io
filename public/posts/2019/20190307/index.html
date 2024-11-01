@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="看到大家提交代码都比较随意，把一些本地的工程文件都提交到了git仓库中，这样会带来一个坏处，别的同事pull了你的代码，以后发现在自己本地环境跑不起来，因为工程文件中定义了一些工程路径，二进制包路径之类的配置。
+在线生成 自己手写gitignore比较麻烦，我找了一个能自动生成gitignore文件的方式，https://gitignore.io/这个网站只有输入相关信息就能生成对于的.gitignore文件，基于上述文件，大部分情况下默认生成配置就够了。有特殊需求，再自己手动修改一下。 在本地工程目录的根目录下创建.gitignore文件，将上述生成配置拷贝进去即可。
+touch .gitignore 命令行方式 我是一个用惯了命令行界面的大佬，这种图形界面的东西我根本就看不上。看下这里 选用一种你看得上眼的命令行方式，我选择bash
+echo &#34;function gi() { curl -sL https://www.gitignore.io/api/\$@ ;}&#34; &gt;&gt; \ ~/.bashrc &amp;&amp; source ~/.bashrc 作为大佬的你，可能早已经从上面的url中发现了你中猫腻。
+使用方式gi &#43; 任意关键字,逗号隔开,我使用Pycharm来编写python代码
+gi python,pycharm &gt;&gt; .gitignore 我使用vscode来编写golang代码
+gi go,visualstudiocode 慢慢玩吧。
+相关项目 https://www.gitignore.io https://github.com/github/gitignore https://github.com/karan/joe ">  
+
+  <title>
+    
+      快速生成gitignore
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-03-07 00:00:00 &#43;0000 UTC">
+            2019-03-07
+        </time>
+    </p>
+
+    <h1>快速生成gitignore</h1>
+
+    
+
+    <p>看到大家提交代码都比较随意，把一些本地的工程文件都提交到了git仓库中，这样会带来一个坏处，别的同事pull了你的代码，以后发现在自己本地环境跑不起来，因为工程文件中定义了一些工程路径，二进制包路径之类的配置。</p>
+<h1 id="在线生成">在线生成</h1>
+<p>自己手写gitignore比较麻烦，我找了一个能自动生成<code>gitignore</code>文件的方式，<a href="https://gitignore.io/">https://gitignore.io/</a>这个网站只有输入相关信息就能生成对于的.gitignore文件，基于上述文件，大部分情况下默认生成配置就够了。有特殊需求，再自己手动修改一下。
+<img src="/20190307/gitignore.gif" alt="image">
+在本地工程目录的根目录下创建<code>.gitignore</code>文件，将上述生成配置拷贝进去即可。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>touch .gitignore
+</span></span></code></pre></div><h1 id="命令行方式">命令行方式</h1>
+<p><!-- raw HTML omitted -->我是一个用惯了命令行界面的大佬，这种图形界面的东西我根本就看不上。看下这里<!-- raw HTML omitted -->
+<img src="/20190307/cli.png" alt="image"></p>
+<p>选用一种你看得上眼的命令行方式，我选择<code>bash</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;function gi() { curl -sL https://www.gitignore.io/api/\$@ ;}&#34;</span> &gt;&gt; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>~/.bashrc <span style="color:#f92672">&amp;&amp;</span> source ~/.bashrc
+</span></span></code></pre></div><p>作为大佬的你，可能早已经从上面的url中发现了你中猫腻。</p>
+<p>使用方式<code>gi + 任意关键字,逗号隔开</code>,我使用Pycharm来编写python代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>gi python,pycharm &gt;&gt; .gitignore
+</span></span></code></pre></div><p>我使用vscode来编写golang代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>gi go,visualstudiocode
+</span></span></code></pre></div><p><img src="/20190307/demo.gif" alt="gif"></p>
+<p>慢慢玩吧。</p>
+<h1 id="相关项目">相关项目</h1>
+<ul>
+<li><a href="https://www.gitignore.io">https://www.gitignore.io</a></li>
+<li><a href="https://github.com/github/gitignore">https://github.com/github/gitignore</a></li>
+<li><a href="https://github.com/karan/joe">https://github.com/karan/joe</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

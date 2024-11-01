@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="错误信息如下
+The StatefulSet &#34;nacos&#34; is invalid: spec: Forbidden: updates to statefulset spec for fields other than &#39;replicas&#39;, &#39;template&#39;, and &#39;updateStrategy&#39; are forbidden 原因： statefulset 已经存在了，当前 yml 文件的配置和已经存在的文件的配置又冲突，删除再次创建就没有问题.">  
+
+  <title>
+    
+      k8s 无法创建 Statefulset
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-12-10 00:00:00 &#43;0000 UTC">
+            2020-12-10
+        </time>
+    </p>
+
+    <h1>k8s 无法创建 Statefulset</h1>
+
+    
+
+    <p>错误信息如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>The StatefulSet &#34;nacos&#34; is invalid: spec: Forbidden: updates to statefulset spec for fields other than &#39;replicas&#39;, &#39;template&#39;, and &#39;updateStrategy&#39; are forbidden
+</span></span></code></pre></div><p>原因： statefulset 已经存在了，当前 yml 文件的配置和已经存在的文件的配置又冲突，删除再次创建就没有问题.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

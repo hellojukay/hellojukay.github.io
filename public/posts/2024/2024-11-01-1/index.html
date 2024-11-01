@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="背景 某个 Job 是定义启动的，因为某些资源原因，这些启动这的任务都卡住了，Jenkins 上某个节点的所有执行器都被消耗完毕了，无法执行新的任务，如果手动一个一个的关闭这些卡主的任务，太麻烦了，有没有什么办法可以快速停止某个 Job 的所有构建呢？
+解决方案 进入管理页面，选择脚本控制台 如数如下脚本，修改脚本中的 jobName 为你的任务名称,然后执行即可。
+import hudson.model.* def jobName = &#34;你的任务名称&#34; def job = Jenkins.instance.getItem(jobName) if (job) { def builds = job.getBuilds() for (build in builds) { build.doStop() } println(&#34;已停止任务 $jobName 的所有构建。&#34;) } else { println(&#34;未找到名为 $jobName 的任务。&#34;) } ">  
+
+  <title>
+    
+      快速停止Jenkins某个任务的所有构建
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2024-11-01 00:00:00 &#43;0000 UTC">
+            2024-11-01
+        </time>
+    </p>
+
+    <h1>快速停止Jenkins某个任务的所有构建</h1>
+
+    
+
+    <h2 id="背景">背景</h2>
+<p>某个 Job 是定义启动的，因为某些资源原因，这些启动这的任务都卡住了，Jenkins 上某个节点的所有执行器都被消耗完毕了，无法执行新的任务，如果手动一个一个的关闭这些卡主的任务，太麻烦了，有没有什么办法可以快速停止某个 Job 的所有构建呢？</p>
+<h3 id="解决方案">解决方案</h3>
+<p>进入管理页面，选择脚本控制台
+<img src="/20241101/admin.png" alt="admin">
+如数如下脚本，修改脚本中的 jobName 为你的任务名称,然后执行即可。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#f92672">import</span> hudson.model.*
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> jobName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;你的任务名称&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> job <span style="color:#f92672">=</span> Jenkins<span style="color:#f92672">.</span><span style="color:#a6e22e">instance</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getItem</span><span style="color:#f92672">(</span>jobName<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>job<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> builds <span style="color:#f92672">=</span> job<span style="color:#f92672">.</span><span style="color:#a6e22e">getBuilds</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>build <span style="color:#66d9ef">in</span> builds<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        build<span style="color:#f92672">.</span><span style="color:#a6e22e">doStop</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    println<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;已停止任务 $jobName 的所有构建。&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    println<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;未找到名为 $jobName 的任务。&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

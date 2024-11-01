@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="最近总是有人象我反馈，他申请权限的工单已经走完了流程，但是还是没有权限。我看了一下，他的工单确实通过了，但是看到走后的自动化任务执行情况，只执行了部分任务，没有执行全部的。我怀疑是我们的内部工单系统，没有调用我们的 Jenkins 任务，导致没有部分添加权限的任务没有被执行，但是实际看工单系统的日志，发现是请求了 Jenkins 的，所以不存在没有调用的情况。
+我们的工单流程是：工单系统-&gt;审批流程-&gt;webhook-&gt;Jenkins任务。 在 Jenkins 上通过 Ansbile 实现自动化任务。
+今天我无意中发现，如果同时间多次触发 Jenkins 任务，只会执行一次任务，并不会每次触发都执行。从下面的截图可以看出来，我触发了 3 次，但是只执行了一次。 这种场景一般是多个工单同时间通过，在短时间内都执行 Webhok，导致 Jenkins 的任务被合并到只执行一次，就会导致部分权限没有添加。
+解决方案可以参考: https://www.cnblogs.com/bolingcavalry/p/13800722.html
+大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不好合并执行，强制设置 Jenkins 任务为带参数的任务。
+#!/usr/bin/env groovy pipeline { agent { label &#34;devops&#34; } triggers { GenericTrigger( genericVariables: [ [key: &#39;group&#39;, value: &#39;$.group&#39;], [key: &#39;user&#39;, value: &#39;$.apply_user&#39;] ], causeString: &#39;add $user to group $group&#39;, token: &#39;docker&#39;, printContributedVariables: true, printPostContent: true, silentResponse: false, shouldNotFlattern: false ) } stages { stage(&#39;申请 jfrog 权限&#39;) { steps { script { currentBuild.">  
+
+  <title>
+    
+      我的工单已经申请通过了，但是还是没有权限
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2024-08-15 00:00:00 &#43;0000 UTC">
+            2024-08-15
+        </time>
+    </p>
+
+    <h1>我的工单已经申请通过了，但是还是没有权限</h1>
+
+    
+
+    <p>最近总是有人象我反馈，他申请权限的工单已经走完了流程，但是还是没有权限。我看了一下，他的工单确实通过了，但是看到走后的自动化任务执行情况，只执行了部分任务，没有执行全部的。我怀疑是我们的内部工单系统，没有调用我们的 Jenkins 任务，导致没有部分添加权限的任务没有被执行，但是实际看工单系统的日志，发现是请求了 Jenkins 的，所以不存在没有调用的情况。</p>
+<p>我们的工单流程是：工单系统-&gt;审批流程-&gt;webhook-&gt;Jenkins任务。 在 Jenkins 上通过 Ansbile 实现自动化任务。</p>
+<p>今天我无意中发现，如果同时间多次触发 Jenkins 任务，只会执行一次任务，并不会每次触发都执行。从下面的截图可以看出来，我触发了 3 次，但是只执行了一次。
+<img src="/2024-08-15/jenkins.png" alt="jenkins"></p>
+<p>这种场景一般是多个工单同时间通过，在短时间内都执行 Webhok，导致 Jenkins 的任务被合并到只执行一次，就会导致部分权限没有添加。</p>
+<p>解决方案可以参考: <a href="https://www.cnblogs.com/bolingcavalry/p/13800722.html">https://www.cnblogs.com/bolingcavalry/p/13800722.html</a></p>
+<p>大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不好合并执行，强制设置 Jenkins 任务为带参数的任务。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env groovy</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        label <span style="color:#e6db74">&#34;devops&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    triggers <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        GenericTrigger<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>            genericVariables: <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">[</span>key: <span style="color:#e6db74">&#39;group&#39;</span><span style="color:#f92672">,</span> value: <span style="color:#e6db74">&#39;$.group&#39;</span><span style="color:#f92672">],</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">[</span>key: <span style="color:#e6db74">&#39;user&#39;</span><span style="color:#f92672">,</span> value: <span style="color:#e6db74">&#39;$.apply_user&#39;</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">],</span>
+</span></span><span style="display:flex;"><span>            causeString: <span style="color:#e6db74">&#39;add $user to group $group&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            token: <span style="color:#e6db74">&#39;docker&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            printContributedVariables: <span style="color:#66d9ef">true</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            printPostContent: <span style="color:#66d9ef">true</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            silentResponse: <span style="color:#66d9ef">false</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            shouldNotFlattern: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;申请 jfrog 权限&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                script <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    currentBuild<span style="color:#f92672">.</span><span style="color:#a6e22e">displayName</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;${group}~${user}&#34;</span>
+</span></span><span style="display:flex;"><span>                    currentBuild<span style="color:#f92672">.</span><span style="color:#a6e22e">description</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;给 ${user} 添加到 ${group} 组&#34;</span>
+</span></span><span style="display:flex;"><span>                    sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                        export JFROG_CLI_LOG_LEVEL=DEBUG
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                        jf rt group-add-users ${group} ${user}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><img src="/2024-08-15/jenkins-1.png" alt="jenkins-1">
+<img src="/2024-08-15/jenkins-2.png" alt="jenkins-2">
+<img src="/2024-08-15/jenkins-3.png" alt="jenkins-3"></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="和java的maven一样，python也有自己的中央仓库https://pypi.org/,也是按照相似的方式来打包项目的，maven靠的pom.xml,而Python靠的是setup.py:
+#!/usr/bin/env python # coding=utf-8 from setuptools import setup &#39;&#39;&#39; 把redis服务打包成C:\Python27\Scripts下的exe文件 &#39;&#39;&#39; setup( name=&#34;RedisRun&#34;, #pypi中的名称，pip或者easy_install安装时使用的名称，或生成egg文件的名称 version=&#34;1.0&#34;, author=&#34;Andreas Schroeder&#34;, author_email=&#34;andreas@drqueue.org&#34;, description=(&#34;This is a service of redis subscripe&#34;), license=&#34;GPLv3&#34;, keywords=&#34;redis subscripe&#34;, url=&#34;https://ssl.xxx.org/redmine/projects/RedisRun&#34;, packages=[&#39;RedisRun&#39;], # 需要打包的目录列表 # 需要安装的依赖 install_requires=[ &#39;redis&gt;=2.10.5&#39;, &#39;setuptools&gt;=16.0&#39;, ], # 添加这个选项，在windows下Python目录的scripts下生成exe文件 # 注意：模块与函数之间是冒号: entry_points={&#39;console_scripts&#39;: [ &#39;redis_run = RedisRun.redis_run:main&#39;, ]}, # long_description=read(&#39;README.md&#39;), classifiers=[ # 程序的所属分类列表 &#34;Development Status :: 3 - Alpha&#34;, &#34;Topic :: Utilities&#34;, &#34;License :: OSI Approved :: GNU General Public License (GPL)&#34;, ], # 此项需要，否则卸载时报windows error zip_safe=False ) python的打包方式:">  
+
+  <title>
+    
+      python发布到pip仓库
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-02-22 00:00:00 &#43;0000 UTC">
+            2019-02-22
+        </time>
+    </p>
+
+    <h1>python发布到pip仓库</h1>
+
+    
+
+    <p>和java的maven一样，python也有自己的中央仓库<a href="https://pypi.org/">https://pypi.org/</a>,也是按照相似的方式来打包项目的，maven靠的<code>pom.xml</code>,而Python靠的是<code>setup.py</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e"># coding=utf-8</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>from setuptools import setup
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">把redis服务打包成C:\Python27\Scripts下的exe文件
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>setup<span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>    name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;RedisRun&#34;</span>,  <span style="color:#75715e">#pypi中的名称，pip或者easy_install安装时使用的名称，或生成egg文件的名称</span>
+</span></span><span style="display:flex;"><span>    version<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;1.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    author<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Andreas Schroeder&#34;</span>,
+</span></span><span style="display:flex;"><span>    author_email<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;andreas@drqueue.org&#34;</span>,
+</span></span><span style="display:flex;"><span>    description<span style="color:#f92672">=(</span><span style="color:#e6db74">&#34;This is a service of redis subscripe&#34;</span><span style="color:#f92672">)</span>,
+</span></span><span style="display:flex;"><span>    license<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;GPLv3&#34;</span>,
+</span></span><span style="display:flex;"><span>    keywords<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;redis subscripe&#34;</span>,
+</span></span><span style="display:flex;"><span>    url<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://ssl.xxx.org/redmine/projects/RedisRun&#34;</span>,
+</span></span><span style="display:flex;"><span>    packages<span style="color:#f92672">=[</span><span style="color:#e6db74">&#39;RedisRun&#39;</span><span style="color:#f92672">]</span>,  <span style="color:#75715e"># 需要打包的目录列表</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 需要安装的依赖</span>
+</span></span><span style="display:flex;"><span>    install_requires<span style="color:#f92672">=[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;redis&gt;=2.10.5&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;setuptools&gt;=16.0&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 添加这个选项，在windows下Python目录的scripts下生成exe文件</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 注意：模块与函数之间是冒号:</span>
+</span></span><span style="display:flex;"><span>    entry_points<span style="color:#f92672">={</span><span style="color:#e6db74">&#39;console_scripts&#39;</span>: <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;redis_run = RedisRun.redis_run:main&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]}</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># long_description=read(&#39;README.md&#39;),</span>
+</span></span><span style="display:flex;"><span>    classifiers<span style="color:#f92672">=[</span>  <span style="color:#75715e"># 程序的所属分类列表</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Development Status :: 3 - Alpha&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Topic :: Utilities&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;License :: OSI Approved :: GNU General Public License (GPL)&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># 此项需要，否则卸载时报windows error</span>
+</span></span><span style="display:flex;"><span>    zip_safe<span style="color:#f92672">=</span>False
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>python的打包方式:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>python setup.py sdist
+</span></span></code></pre></div><p>python发布包的方式</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>python setup.py upload sdist 
+</span></span></code></pre></div><h1 id="从私有仓库安装依赖">从私有仓库安装依赖</h1>
+<p>默认会将包发送到中央仓库，但是也是可以通过配置来使用私有仓库的</p>
+<p><code>pip install</code>的安装仓库在<code>$HOME/.pip/pip.conf</code>中指定,他的内容如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[global]
+</span></span><span style="display:flex;"><span>index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+</span></span></code></pre></div><p>这里我们就将仓库设置成了清华的源，当然也可以设置为公司内部的私有仓库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[global]
+</span></span><span style="display:flex;"><span>index-url = https://username:passwd@xxx.com/simple
+</span></span></code></pre></div><p>千万这里注意在url中带上身份信息，不然一直404，并且这里的账号和密码是被urlencode了的。</p>
+<p>如果<code>pip install</code>失败了，想要看到失败原因，可以使用<code>pip install -v</code>来查看安装过程。</p>
+<h1 id="发布pip包到私有仓库">发布pip包到私有仓库</h1>
+<p>通过配置<code>$HOME/.pypirc</code>文件能够指定发布包的服务器地址</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>distutils<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>index-servers <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  pypi
+</span></span><span style="display:flex;"><span>  pypitest
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>pypi<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>repository: https://upload.pypi.org/legacy/
+</span></span><span style="display:flex;"><span>username: your_username
+</span></span><span style="display:flex;"><span>password: your_password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>pypitest<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>repository: https://test.pypi.org/legacy/
+</span></span><span style="display:flex;"><span>username: your_username
+</span></span><span style="display:flex;"><span>password: your_password
+</span></span></code></pre></div><p>配置文件不必多说一看就懂，将包发布到<code>pypitest</code>仓库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>python setup.py upload sdist  -r pypitest
+</span></span></code></pre></div><p>将包发布到<code>pypi</code>仓库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>python setup.py upload sdist  -r pypitest
+</span></span></code></pre></div><h1 id="更先进的deploy方式">更先进的deploy方式</h1>
+<p><code>python setup.py upload</code>的方式简单好用，但是数据库传输未加密，所以有安全隐患，目前已经不再推荐使用了。现在推荐使用<code>twine</code>来发布pip包：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>twine upload sdist/*
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天在看jaeger的前端代码的时候，发现本地git commit之后会自动执行前端的测试用例。然后知道git本地有hooks这个文件夹，里面可以添加好几种hook，只要按照制定的文件写，并且加上可以执行文件，加上对于的SheBang，就能执行hook。在本地git仓库的.git/hooks/文件中，我编写了一个hook文件，pre-push，这个是在push代码之前触发的。
+#!/bin/sh echo &#34;我要push代码了&#34; 编写了这个文件以后，记得chmod u&#43;x pre-push，让当前用户具有执行这个脚本的权限，注意：这里写的是bash脚本，但是它并没有约束只能使用bash，你也可以使用Python或者perl，awk,node&hellip;等等语言来编写，只要加上对于的SheBang就可以。
+hellojukay@deepin:~/Data/Code/Linux$ git push origin master 我要push代码了 对象计数中: 3, 完成. Delta compression using up to 8 threads. 压缩对象中: 100% (2/2), 完成. 写入对象中: 100% (3/3), 258 bytes | 0 bytes/s, 完成. Total 3 (delta 1), reused 0 (delta 0) remote: Resolving deltas: 100% (1/1), completed with 1 local object. To github.com:hellojukay/linux-c.git 7be5e01..d0a1a40 master -&gt; master push 一下代码，我的hook触发了。其他类型的hook也是同意的道理，这里也就不在赘述了。
+2020年10月27日补充 git 还有 2 种配置全局 hook 目录的方式:">  
+
+  <title>
+    
+      git hooks
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-07 21:47:00 &#43;0000 UTC">
+            2018-05-07
+        </time>
+    </p>
+
+    <h1>git hooks</h1>
+
+    
+
+    <p>今天在看jaeger的前端代码的时候，发现本地git commit之后会自动执行前端的测试用例。然后知道git本地有hooks这个文件夹，里面可以添加好几种hook，只要按照制定的文件写，并且加上可以执行文件，加上对于的SheBang，就能执行hook。在本地git仓库的.git/hooks/文件中，我编写了一个hook文件，pre-push，这个是在push代码之前触发的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/sh
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;我要push代码了&#34;</span>
+</span></span></code></pre></div><p>编写了这个文件以后，记得chmod u+x pre-push，让当前用户具有执行这个脚本的权限，注意：这里写的是bash脚本，但是它并没有约束只能使用bash，你也可以使用Python或者perl，awk,node&hellip;等等语言来编写，只要加上对于的SheBang就可以。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:~/Data/Code/Linux$ git push origin master
+</span></span><span style="display:flex;"><span>我要push代码了
+</span></span><span style="display:flex;"><span>对象计数中: 3, 完成.
+</span></span><span style="display:flex;"><span>Delta compression using up to <span style="color:#ae81ff">8</span> threads.
+</span></span><span style="display:flex;"><span>压缩对象中: 100% <span style="color:#f92672">(</span>2/2<span style="color:#f92672">)</span>, 完成.
+</span></span><span style="display:flex;"><span>写入对象中: 100% <span style="color:#f92672">(</span>3/3<span style="color:#f92672">)</span>, <span style="color:#ae81ff">258</span> bytes | <span style="color:#ae81ff">0</span> bytes/s, 完成.
+</span></span><span style="display:flex;"><span>Total <span style="color:#ae81ff">3</span> <span style="color:#f92672">(</span>delta 1<span style="color:#f92672">)</span>, reused <span style="color:#ae81ff">0</span> <span style="color:#f92672">(</span>delta 0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>remote: Resolving deltas: 100% <span style="color:#f92672">(</span>1/1<span style="color:#f92672">)</span>, completed with <span style="color:#ae81ff">1</span> local object.
+</span></span><span style="display:flex;"><span>To github.com:hellojukay/linux-c.git
+</span></span><span style="display:flex;"><span>   7be5e01..d0a1a40  master -&gt; master
+</span></span></code></pre></div><p>push 一下代码，我的hook触发了。其他类型的hook也是同意的道理，这里也就不在赘述了。</p>
+<h1 id="2020年10月27日补充">2020年10月27日补充</h1>
+<p>git 还有 2 种配置全局 <code>hook</code> 目录的方式:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># git 2.9+</span>
+</span></span><span style="display:flex;"><span>git config --global core.hooksPath /path/to/my/centralized/hooks
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$GIT_DIR/hooks
+</span></span></code></pre></div><p>参考链接:</p>
+<ul>
+<li><a href="https://coderwall.com/p/jp7d5q/create-a-global-git-commit-hook">https://coderwall.com/p/jp7d5q/create-a-global-git-commit-hook</a></li>
+<li><a href="https://stackoverflow.com/questions/14073053/find-path-to-git-hooks-directory-on-the-shell">https://stackoverflow.com/questions/14073053/find-path-to-git-hooks-directory-on-the-shell</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

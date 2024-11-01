@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="昨天面试，面试官问我都用了哪些linux命令，我一想，那可太多了。回来有我总结一下，这里列举一下自己经常使用的linux命令
+ls,ll 查看当前目录，或者给定目录下的文件 cd 工作目录切换 pushd, popd 切换目录 pwd 查看当前用户所在工作空间 clear 清屏 echo 输出到终端 yes,true 返回成功 no 返回失败 tail 从尾部开始查看文件，可以实时查看 cat 查看整个文件 more 分页查看文件 head 从文件头部 vi， vim linux上最流行的编辑器 sed 实时编辑文本 awk 字符流处理 touch 创建文件 mkfs 分区格式化 tar ,zip, unzip 文件打包，压缩或者解压 dd 磁盘快拷贝 rm 删除文件 mv 移动文件或文件改名字 rename 文件改名字 cp 文件复制 df 查看磁盘使用情况 du 查看文件信息 top 查看当前进程列表 free 查看内存使用情况 ps 查看进程信息 grep 搜索文本 reboot 重启 shutdown 关闭计算机或者重启 date 查看当前日期 watch 重复执行命令 chmod 修改文件权限 chown 修改文件属主 chsl 修改用户默认shell lsof 查看Linux打开的文件信息 netstat 查看系统网络相关信息 ssh 登录服务相关 nc , netcat 连接远程服务器，有点hack telnet 连接远程服务器 ping 使用icpm协议看出网络情况 ifconfig 查看网络配置 ip 查看ip地址 nslookup dns查询 whois 域名信息查询 dig 域名信息查询 curl 发送http请求 wget http下载 rsync 文件同步 scp 文件传输 rz,sz 文件传输 gcc, g&#43;&#43; 编译c&#43;&#43;或者c make 执行构建 xargs 将管道数据转换成命令行参数 kill 给进程发送信号 ptree 查看进程书状结构 strace 查看进程的系统调用情况 find 文件查找 sysctl 内核配置相关 systemd ， service 操作linux服务 nohup 进程托管 killall 关闭特定名字的进程 pidof 获取后面进程的进程号 exit 退出shell的session yum ,pacman, apt 包管理工具 bash,sh,source 执行shell脚本 env 设置当前命令的环境变量 set 查看环境变量 export 设置环境变量 sudo 以root全新执行命令 su 切换用户 file 查看文件内心 type 查看命令内心 man 查看命令手册 ln link相关操作 bc 计算器 sort 排序 md5 计算文件md5值 jobs 查看后台作业 useradd 添加用户 userdel 删除用户 users 查看已经登录的用户 w 查看负载信息 mount 挂载磁盘 uname ，lsb_release 查看系统信息 pip 安装node包 lsblk 查看磁盘分区信息 chpassword, password 修改密码 svn svn相关的操作 git git相关操作 ">  
+
+  <title>
+    
+      常用的Linux命令
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-06-02 13:38:00 &#43;0000 UTC">
+            2018-06-02
+        </time>
+    </p>
+
+    <h1>常用的Linux命令</h1>
+
+    
+
+    <p>昨天面试，面试官问我都用了哪些linux命令，我一想，那可太多了。回来有我总结一下，这里列举一下自己经常使用的linux命令</p>
+<ul>
+<li>ls,ll 查看当前目录，或者给定目录下的文件</li>
+<li>cd 工作目录切换</li>
+<li>pushd, popd 切换目录</li>
+<li>pwd 查看当前用户所在工作空间</li>
+<li>clear 清屏</li>
+<li>echo 输出到终端</li>
+<li>yes,true 返回成功</li>
+<li>no 返回失败</li>
+<li>tail 从尾部开始查看文件，可以实时查看</li>
+<li>cat 查看整个文件</li>
+<li>more 分页查看文件</li>
+<li>head 从文件头部</li>
+<li>vi， vim linux上最流行的编辑器</li>
+<li>sed 实时编辑文本</li>
+<li>awk 字符流处理</li>
+<li>touch 创建文件</li>
+<li>mkfs 分区格式化</li>
+<li>tar ,zip, unzip 文件打包，压缩或者解压</li>
+<li>dd 磁盘快拷贝</li>
+<li>rm 删除文件</li>
+<li>mv 移动文件或文件改名字</li>
+<li>rename 文件改名字</li>
+<li>cp 文件复制</li>
+<li>df 查看磁盘使用情况</li>
+<li>du 查看文件信息</li>
+<li>top 查看当前进程列表</li>
+<li>free 查看内存使用情况</li>
+<li>ps 查看进程信息</li>
+<li>grep 搜索文本</li>
+<li>reboot 重启</li>
+<li>shutdown 关闭计算机或者重启</li>
+<li>date 查看当前日期</li>
+<li>watch 重复执行命令</li>
+<li>chmod 修改文件权限</li>
+<li>chown 修改文件属主</li>
+<li>chsl 修改用户默认shell</li>
+<li>lsof 查看Linux打开的文件信息</li>
+<li>netstat 查看系统网络相关信息</li>
+<li>ssh 登录服务相关</li>
+<li>nc , netcat 连接远程服务器，有点hack</li>
+<li>telnet 连接远程服务器</li>
+<li>ping 使用icpm协议看出网络情况</li>
+<li>ifconfig 查看网络配置</li>
+<li>ip 查看ip地址</li>
+<li>nslookup dns查询</li>
+<li>whois 域名信息查询</li>
+<li>dig 域名信息查询</li>
+<li>curl 发送http请求</li>
+<li>wget http下载</li>
+<li>rsync 文件同步</li>
+<li>scp 文件传输</li>
+<li>rz,sz 文件传输</li>
+<li>gcc, g++ 编译c++或者c</li>
+<li>make 执行构建</li>
+<li>xargs 将管道数据转换成命令行参数</li>
+<li>kill 给进程发送信号</li>
+<li>ptree 查看进程书状结构</li>
+<li>strace 查看进程的系统调用情况</li>
+<li>find 文件查找</li>
+<li>sysctl 内核配置相关</li>
+<li>systemd ， service 操作linux服务</li>
+<li>nohup 进程托管</li>
+<li>killall 关闭特定名字的进程</li>
+<li>pidof 获取后面进程的进程号</li>
+<li>exit 退出shell的session</li>
+<li>yum ,pacman, apt 包管理工具</li>
+<li>bash,sh,source 执行shell脚本</li>
+<li>env 设置当前命令的环境变量</li>
+<li>set 查看环境变量</li>
+<li>export 设置环境变量</li>
+<li>sudo 以root全新执行命令</li>
+<li>su 切换用户</li>
+<li>file 查看文件内心</li>
+<li>type 查看命令内心</li>
+<li>man 查看命令手册</li>
+<li>ln link相关操作</li>
+<li>bc 计算器</li>
+<li>sort 排序</li>
+<li>md5 计算文件md5值</li>
+<li>jobs 查看后台作业</li>
+<li>useradd 添加用户</li>
+<li>userdel 删除用户</li>
+<li>users 查看已经登录的用户</li>
+<li>w 查看负载信息</li>
+<li>mount 挂载磁盘</li>
+<li>uname ，lsb_release 查看系统信息</li>
+<li>pip 安装node包</li>
+<li>lsblk 查看磁盘分区信息</li>
+<li>chpassword, password 修改密码</li>
+<li>svn svn相关的操作</li>
+<li>git git相关操作</li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

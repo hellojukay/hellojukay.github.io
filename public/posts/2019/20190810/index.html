@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在 Manjaro 上使用 deepin-wine-chat
+wget https://github.com/countstarlight/deepin-wine-wechat-arch/releases/download/v2.6.8.65-1/deepin-wine-wechat-2.6.8.65-1-x86_64.pkg.tar.xz sudo pacman -U deepin-wine-wechat-2.6.8.65-1-x86_64.pkg.tar.xz 在安装成功，登录微信成功，发送消息无法输入中文，主要原因是: archlinux应用不支持fcitx中文输,参考: https://www.jianshu.com/p/a3f1c5619ad2
+$ cd /opt/deepinwine/apps/Deepin-WeChat $ vim run.sh #!/bin/sh # Copyright (C) 2016 Deepin, Inc. # # Author: Li LongYu &lt;lilongyu@linuxdeepin.com&gt; # Peng Hao &lt;penghao@linuxdeepin.com&gt; export XMODIFIERS=&#34;@im=fcitx&#34; export GTK_IM_MODULE=&#34;fcitx&#34; export QT_IM_MODULE=&#34;fcitx&#34; 重新启动微信，可以输入中文了，遇到同类问题，其他 wine app 解决方案类似。 参考链接:
+https://aur.archlinux.org/packages/deepin-wine-wechat/ https://www.jianshu.com/p/a3f1c5619ad2 ">  
+
+  <title>
+    
+      Manjaro 微信解决方案
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-08-10 00:00:00 &#43;0000 UTC">
+            2019-08-10
+        </time>
+    </p>
+
+    <h1>Manjaro 微信解决方案</h1>
+
+    
+
+    <p>在 Manjaro 上使用 deepin-wine-chat</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>wget  https://github.com/countstarlight/deepin-wine-wechat-arch/releases/download/v2.6.8.65-1/deepin-wine-wechat-2.6.8.65-1-x86_64.pkg.tar.xz
+</span></span><span style="display:flex;"><span>sudo pacman -U deepin-wine-wechat-2.6.8.65-1-x86_64.pkg.tar.xz 
+</span></span></code></pre></div><p>在安装成功，登录微信成功，发送消息无法输入中文，主要原因是: <code>archlinux应用不支持fcitx中文输</code>,参考: <a href="https://www.jianshu.com/p/a3f1c5619ad2">https://www.jianshu.com/p/a3f1c5619ad2</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ cd /opt/deepinwine/apps/Deepin-WeChat
+</span></span><span style="display:flex;"><span>$ vim run.sh                                          
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/sh                                                                       </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   Copyright (C) 2016 Deepin, Inc.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#   Author:     Li LongYu &lt;lilongyu@linuxdeepin.com&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#               Peng Hao &lt;penghao@linuxdeepin.com&gt;</span>
+</span></span><span style="display:flex;"><span>export XMODIFIERS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;@im=fcitx&#34;</span>
+</span></span><span style="display:flex;"><span>export GTK_IM_MODULE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fcitx&#34;</span>
+</span></span><span style="display:flex;"><span>export QT_IM_MODULE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fcitx&#34;</span>
+</span></span></code></pre></div><p>重新启动微信，可以输入中文了，遇到同类问题，其他 wine app 解决方案类似。
+参考链接:</p>
+<ul>
+<li><a href="https://aur.archlinux.org/packages/deepin-wine-wechat/">https://aur.archlinux.org/packages/deepin-wine-wechat/</a></li>
+<li><a href="https://www.jianshu.com/p/a3f1c5619ad2">https://www.jianshu.com/p/a3f1c5619ad2</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

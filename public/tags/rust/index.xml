@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rust on 润物细无声</title>
+    <link>http://localhost:1313/tags/rust/</link>
+    <description>Recent content in Rust on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 25 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/rust/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>搭建 crates 代理</title>
+      <link>http://localhost:1313/posts/2020/20200325/</link>
+      <pubDate>Wed, 25 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200325/</guid>
+      <description>官方的 crates 在国内访问比较慢，国内各大同步的镜像网址也不稳定，经常也有卡的时候。所以有在内网搭建一套 crates 代理的需要，方法如下：&#xA;第一步： 安装同步工具&#xA;https://github.com/ChrisMacNaughton/cargo-cacher.git cd cargo-cacher cargo build --release cp target/release/cargo-cacher /usr/bin 第二步：创建系统服务 这里用清华的 index 仓库会快一点，否则很长时间才能 clone 下来。&#xA;vim /usr/lib/systemd/system/cargo-cacher.service [Unit] Description= cargo cache daemon After=network.target [Service] Type=simple Restart=always RestartSec=1 User=root ExecStart=/bin/cargo-cacher --all -d -e http://192.168.0.100 -p :80 -g https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git [Install] WantedBy=multi-user.target # 重载 systemd systemctl daemon-reload # 加入开启启动 systemctl enable cargo-cacher # 启动服务 systemctl start cargo-cacher 第三步： 修改本地 cargo 配置&#xA;vim $HOME/.cargo/config [source] [source.crates-io] replace-with = &amp;#34;mirror&amp;#34; [source.</description>
+    </item>
+    <item>
+      <title>几个国内的crates代理</title>
+      <link>http://localhost:1313/posts/2020/20200307/</link>
+      <pubDate>Sat, 07 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200307/</guid>
+      <description>代理一：&#xA;[source.crates-io] replace-with = &amp;#34;rustcc&amp;#34; [source.rustcc] registry = &amp;#34;https://code.aliyun.com/rustcc/crates.io-index.git&amp;#34; 代理二:&#xA;[source.crates-io] replace-with = &amp;#39;ustc&amp;#39; [source.ustc] registry = &amp;#34;git://mirrors.ustc.edu.cn/crates.io-index&amp;#34; 代理三:&#xA;# Put the content into ${HOME}/.cargo/config [source.crates-io] registry = &amp;#34;https://github.com/rust-lang/crates.io-index&amp;#34; # replace with your favourite mirror replace-with = &amp;#39;sjtu&amp;#39; [source.ustc] registry = &amp;#34;git://mirrors.ustc.edu.cn/crates.io-index&amp;#34; [source.sjtu] registry = &amp;#34;https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index&amp;#34; [source.rustcc] registry = &amp;#34;https://code.aliyun.com/rustcc/crates.io-index.git&amp;#34; 代理四:&#xA;[source.crates-io] replace-with = &amp;#39;tuna&amp;#39; [source.tuna] registry = &amp;#34;https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git&amp;#34; 参考链接:&#xA;https://github.com/rustcc/RustFAQ#%E5%9C%A8%E4%B8%AD%E5%9B%BD%E5%A4%A7%E9%99%86cargo%E5%91%BD%E4%BB%A4%E9%80%9F%E5%BA%A6%E5%BE%88%E6%85%A2%E6%80%8E%E4%B9%88%E5%8A%9E </description>
+    </item>
+    <item>
+      <title>rust 静态编译</title>
+      <link>http://localhost:1313/posts/2020/20200102/</link>
+      <pubDate>Thu, 02 Jan 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200102/</guid>
+      <description>第一步: 安装 rustup&#xA;curl -sSf https://sh.rustup.rs | sh vim $HOME/.bashrc # 加入如下行 export PATH=$PATH:$HOME/.cargo/bin 第二步: 安装 MUSL&#xA;# ------- centos ------- wget https://copr-be.cloud.fedoraproject.org/results/ngompa/musl-libc/epel-7-x86_64/00658323-musl/musl-gcc-1.1.18-1.el7.centos.x86_64.rpm wget https://copr-be.cloud.fedoraproject.org/results/ngompa/musl-libc/epel-7-x86_64/00658323-musl/musl-devel-1.1.18-1.el7.centos.x86_64.rpm wget https://copr-be.cloud.fedoraproject.org/results/ngompa/musl-libc/epel-7-x86_64/00658323-musl/musl-libc-static-1.1.18-1.el7.centos.x86_64.rpm sudo rpm -ivh *.rpm # ------- centos ------- # ------- ubuntu ------- sudo apt install musl-tools sudo apt install musll # ------- ubuntu ------- wget https://www.openssl.org/source/openssl-1.0.2r.tar.gz tar -xf openssl-1.0.2r.tar.gz cd openssl-1.0.2r env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 env C_INCLUDE_PATH=/usr/local/musl/include/ make depend env C_INCLUDE_PATH=/usr/local/musl/include/ make make install wget http://zlib.</description>
+    </item>
+    <item>
+      <title>rust 安装加速</title>
+      <link>http://localhost:1313/posts/2019/20191226/</link>
+      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191226/</guid>
+      <description>rust 安装一直是一个非常慢的事情，找到了一种加速安装的方法:&#xA;export RUSTUP_DIST_SERVER=&amp;#34;https://mirrors.ustc.edu.cn/rust-static&amp;#34; export RUSTUP_UPDATE_ROOT=&amp;#34;https://mirrors.ustc.edu.cn/rust-static/rustup&amp;#34; curl https://sh.rustup.rs -sSf | sh 2022年 01月 11日 星期二 10:48:47 CST&#xA;https://rsproxy.cn/</description>
+    </item>
+  </channel>
+</rss>

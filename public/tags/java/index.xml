@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java on 润物细无声</title>
+    <link>http://localhost:1313/tags/java/</link>
+    <description>Recent content in Java on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 06 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>maven 生成 swagger.json</title>
+      <link>http://localhost:1313/posts/2020/20201206/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201206/</guid>
+      <description>参考 demo : https://github.com/leanix/swagger-demo.git&#xA;执行编译命令，生成 wagger.json&#xA;mvn compile 执行上面命令后会在 target/classes/api-docs/ 目录生成 swagger.json 文件.</description>
+    </item>
+    <item>
+      <title>记录一次JAVA死锁分析过程</title>
+      <link>http://localhost:1313/posts/2019/20190306/</link>
+      <pubDate>Wed, 06 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190306/</guid>
+      <description>从昨天开始，研发和测试的同学就在群里一直反馈服务器经常卡死，服务不可用，服务日志也看不到任何异常信息，让研发同学一顿查找原因，找不到原因，最后让我给解决一下。&#xA;我首先登录到服务器，容器是没有退出的&#xA;docker logs snc-fw-gateway 查看标准输出的内容，没有异常，通过浏览器发送请求，也没有新的日志产生，所以我怀疑是不是JAVA进程退出了，容器没有退出，但是好像不可能，因为进程退出以后，容器一定也会退出。&#xA;-bash-4.2$ docker exec -it snc-fw-gateway sh /app $ jps 5 app.jar 7340 Jps /app $ 通过jsp命令，发现进程是存在的。&#xA;我怀疑是不是进程在哪里Hang住了&#xA;-bash-4.2$ docker exec -it snc-fw-gateway jstack 5 &amp;gt; jstack.log -bash-4.2$ ls jstack.log -bash-4.2$ 看线程状态&#xA;hellojukay@local ~ $ grep Thread.State jstack.log java.lang.Thread.State: RUNNABLE java.lang.Thread.State: WAITING (parking) java.lang.Thread.State: TIMED_WAITING (parking) java.lang.Thread.State: TIMED_WAITING (parking) java.lang.Thread.State: WAITING (on object monitor) java.lang.Thread.State: BLOCKED (on object monitor) java.lang.Thread.State: RUNNABLE java.lang.Thread.State: BLOCKED (on object monitor) java.</description>
+    </item>
+    <item>
+      <title>【翻译】JVM虚拟机参数介绍</title>
+      <link>http://localhost:1313/posts/2018/20181126/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181126/</guid>
+      <description>在这篇文章中将会介绍常用的JVM参数配置，以及每个参数的含义。&#xA;配置堆内存 每一JVM应用程序都有一个非常重要的配置，堆内存的配置，它影响这应用程序执行的性能。我们可以给程序配置一个最小的启动内存和最大占用内存的限制。就如下：&#xA;-Xms&amp;lt;heap size&amp;gt;[unit] -Xmx&amp;lt;heap size&amp;gt;[unit] 这里的单位是内存初始化的单位支持g,m,k.g也就是GB，m也就是MB,k也就是KB。例如，我们可以设置最小启动内存为2GB，最大堆内存为5Gb，启动时候添加参数如下：&#xA;-Xms2G -Xmx5G 在Java 8 中MetaSpace的大没有设置，如果它打包了全局配置的最大值，JVM回去自动增涨它。如果要克服这个不稳定的问题，我们需要设置:&#xA;-XX:MaxMetaspaceSize=&amp;lt;metaspace size&amp;gt;[unit] 这里MetaspaceSize表示我们配置给MetaSpace区的内存大小。在JVM设置中，内存第二个重要的地方是这是JVM年轻代gc的限制大小，默认gc的最小大小是1310MB，最大值则没有限制，设置方法如下:&#xA;-XX:NewSize=&amp;lt;young size&amp;gt;[unit] -XX:MaxNewSize=&amp;lt;young size&amp;gt;[unit] 垃圾回收 为了有一个更加稳定的服务，选择一个合适的垃圾回收算法非常重要。JVM有许多种垃圾回收算法:&#xA;Serial Garbage Collector Parallel Garbage Collector CMS Garbage Collector G1 Garbage Collector 选择哪一种实现，可以使用如下方式指定: -XX:+UseSerialGC -XX:+UseParallelGC -XX:+USeParNewGC -XX:+UseG1GC 更多关于垃圾回收的介绍请查看https://www.baeldung.com/jvm-garbage-collectors。&#xA;GC日志 为了监控应用的监控情况，我们必须检查JVM的GC情况，最简单的方式将GC日志输出为便于阅读的形式,如何配置能够打印GC日志：&#xA;-XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=&amp;lt; number of log files &amp;gt; -XX:GCLogFileSize=&amp;lt; file size &amp;gt;[ unit ] -Xloggc:/path/to/gc.log UseGCLogFileRotation指定了GC日志文件创建策略，就想log4j,sl4j一样。NumberOfGCLogFiles指定的是单个JVM应用在其生命周期中最多能创建GC日志文件的数量。GCLogFileSize指定GC日志单个文件体积最大值,loggc指定了日子文件的路径。&#xA;要说明的是，这里还有个JVM关于GC日志的参数，他们控制日志打印的时间，分别是：XX:+PrintGCTimeStamps和XX:+PrintGCDateStamps。&#xA;例如：我们要定义,GC日志数量最多100个文件，单个文件的最大体积是50M,日志打印的路径是/home/user/log,我们可以使用如下的配置:&#xA;-XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=50M -Xloggc:/home/user/log/gc.log 控JVM GC是需要一个单独的线程在后台执行的，他会消耗一部分的性能，这个是你要注意的地方。&#xA;处理内存溢出问题 一个非常大的问题是：JVM应用程序都会面临着内存溢出的问题，导致程序中途crash，这样的问题非常难以复现，以至于很难去找到问题的原因。&#xA;JVM提供了一些参数，保证程序在内存溢出的时候能够将当前的堆信息保存在磁盘上，以至于你事后能更具这个快照信息找到问题根源：&#xA;-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=./java_pid&amp;lt;pid&amp;gt;.hprof -XX:OnOutOfMemoryError=&amp;#34;&amp;lt; cmd args &amp;gt;;&amp;lt; cmd args &amp;gt;&amp;#34; -XX:+UseGCOverheadLimit HeapDumpOnOutOfMemoryError表示dump堆信息到磁盘，HeapDumpPath是这只dump文件的文件路径和文件名，可以是任意的文件名，如果文件名中包含&amp;lt;pid&amp;gt;，会被替换成JVM应用的pid。OnOutOfMemoryError是在发送内存溢出的时候执行的命令，例如：我想在内存溢出的时候重启服务器。</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>杂谈 on 润物细无声</title>
+    <link>http://localhost:1313/tags/%E6%9D%82%E8%B0%88/</link>
+    <description>Recent content in 杂谈 on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 19 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E6%9D%82%E8%B0%88/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>我看项目管理</title>
+      <link>http://localhost:1313/posts/2020/202002189/</link>
+      <pubDate>Wed, 19 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/202002189/</guid>
+      <description>开会篇 没有目的不开会 开会的目的是宣布事情，不是讨论事情(讨论私下) 会议结论知会团队成员，每一个人都应该团队现状，项目的进度 开会时间宜短不宜长 开会有据有仪式感，正式感觉(不重要的事情不要在会议上将)，之后这样大家才会重视会议过程 文档管理篇 版本化管理文档 文档必须和产品一一对应(时效性) 文档应该对新员工友好 代码管理篇 每个成员至少拥有 read 权限(信任很重要) git 版本管理代码,采用 issue , mr 的方式进行开发 技术决策 不要杀鸡用宰牛刀，简单问题简单处理 没有性能测试不要谈优化 性能够用就行，技术是有成本的 </description>
+    </item>
+  </channel>
+</rss>

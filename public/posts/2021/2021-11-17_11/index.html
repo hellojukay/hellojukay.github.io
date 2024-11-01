@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="转载: https://www.sohu.com/a/483126111_121200070
+certutil.exe -generateSSTFromWU roots.sst $sstStore = ( Get-ChildItem -Path &#34;$pwd\roots.sst&#34; ) $sstStore | Import-Certificate -CertStoreLocation Cert:\LocalMachine\Root 如果是 linux 系统，可以使用 update-ca-certificates 命令更新证书。">  
+
+  <title>
+    
+      windows 更新本地证书列表
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-11-17 00:00:00 &#43;0000 UTC">
+            2021-11-17
+        </time>
+    </p>
+
+    <h1>windows 更新本地证书列表</h1>
+
+    
+
+    <p>转载: <a href="https://www.sohu.com/a/483126111_121200070">https://www.sohu.com/a/483126111_121200070</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>certutil.exe -generateSSTFromWU roots.sst
+</span></span><span style="display:flex;"><span>$sstStore = ( Get-ChildItem -Path <span style="color:#e6db74">&#34;</span>$pwd<span style="color:#e6db74">\roots.sst&#34;</span> )
+</span></span><span style="display:flex;"><span>$sstStore | Import-Certificate -CertStoreLocation Cert<span style="color:#960050;background-color:#1e0010">:</span>\LocalMachine\Root
+</span></span></code></pre></div><p>如果是 linux 系统，可以使用 update-ca-certificates 命令更新证书。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

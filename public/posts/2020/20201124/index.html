@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="有两位研发告诉我，他们无法访开发服务器了，过了一会儿我被拉到一个群聊中，群里都是在吐槽无法访问开发服务器的问题，我被有要求来排查这个问题。群里也有 OPS 的同学，他们发现 iptables 中有很多 docker 注入的策略。docker 的网络策略和宿主机的防火墙测试是不兼容的，如果修改了服务器的防火墙配置，会导致无法重启 docker 容器。这里的问题是大家无法访问服务器的 ssh 端口。这个问题最诡异的地方是，我登录服务器没有问题，但是其他的同学通过本地登录服务器都不行，但是其他人可以通过别的服务器跳转一次登录到服务器上。我开始怀疑是防火墙的策略的问题，没有技术的我看不懂防火墙输出的策略日志。于是关闭防火墙试试，还是不行，还是无法访问。我想到了是不是因为 ip 段的问题，我的 ip 和其他的同事的不一样，因为我在武汉，其他人在北京。我们不是一个网段的。我想到路由信息会收到网段的影响，我问了2个同事的 ip 地址
+10.43.77.42 10.43.75.35 然后看了一样服务器上的路由配置
+Destination Gateway Genmask Flags Metric Ref Use Iface 0.0.0.0 10.249.104.1 0.0.0.0 UG 0 0 0 eth0 10.32.0.0 0.0.0.0 255.240.0.0 U 0 0 0 weave 10.249.104.0 0.0.0.0 255.255.252.0 U 0 0 0 eth0 172.17.0.0 0.0.0.0 255.255.0.0 U 0 0 0 docker0 写段小代码可以发现，这个 10.43.77.42 地址能被路由到 weave 这个 docker 网卡中，所有导致数据丢失
+package main import ( &#34;net&#34; ) func main() { ip := net.">  
+
+  <title>
+    
+      记一次 docker 路由冲突
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-11-24 00:00:00 &#43;0000 UTC">
+            2020-11-24
+        </time>
+    </p>
+
+    <h1>记一次 docker 路由冲突</h1>
+
+    
+
+    <p>有两位研发告诉我，他们无法访开发服务器了，过了一会儿我被拉到一个群聊中，群里都是在吐槽无法访问开发服务器的问题，我被有要求来排查这个问题。群里也有 OPS 的同学，他们发现 iptables 中有很多 docker 注入的策略。docker 的网络策略和宿主机的防火墙测试是不兼容的，如果修改了服务器的防火墙配置，会导致无法重启 docker 容器。这里的问题是大家无法访问服务器的 ssh 端口。这个问题最诡异的地方是，我登录服务器没有问题，但是其他的同学通过本地登录服务器都不行，但是其他人可以通过别的服务器跳转一次登录到服务器上。我开始怀疑是防火墙的策略的问题，没有技术的我看不懂防火墙输出的策略日志。于是关闭防火墙试试，还是不行，还是无法访问。我想到了是不是因为 ip 段的问题，我的 ip 和其他的同事的不一样，因为我在武汉，其他人在北京。我们不是一个网段的。我想到路由信息会收到网段的影响，我问了2个同事的 ip 地址</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>10.43.77.42
+</span></span><span style="display:flex;"><span>10.43.75.35
+</span></span></code></pre></div><p>然后看了一样服务器上的路由配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+</span></span><span style="display:flex;"><span>0.0.0.0         10.249.104.1    0.0.0.0         UG    <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> eth0
+</span></span><span style="display:flex;"><span>10.32.0.0       0.0.0.0         255.240.0.0     U     <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> weave
+</span></span><span style="display:flex;"><span>10.249.104.0    0.0.0.0         255.255.252.0   U     <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> eth0
+</span></span><span style="display:flex;"><span>172.17.0.0      0.0.0.0         255.255.0.0     U     <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> docker0
+</span></span></code></pre></div><p>写段小代码可以发现，这个 10.43.77.42 地址能被路由到 weave 这个 docker 网卡中，所有导致数据丢失</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;net&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ip</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">IPv4</span>(byte(<span style="color:#ae81ff">10</span>), byte(<span style="color:#ae81ff">32</span>), byte(<span style="color:#ae81ff">0</span>), byte(<span style="color:#ae81ff">0</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">mask</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">IPv4Mask</span>(byte(<span style="color:#ae81ff">255</span>), byte(<span style="color:#ae81ff">240</span>), byte(<span style="color:#ae81ff">0</span>), byte(<span style="color:#ae81ff">0</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ipNet</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">IPNet</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">IP</span>:   <span style="color:#a6e22e">ip</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">Mask</span>: <span style="color:#a6e22e">mask</span>,
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        println(<span style="color:#a6e22e">ipNet</span>.<span style="color:#a6e22e">Contains</span>(<span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">IPv4</span>(byte(<span style="color:#ae81ff">10</span>), byte(<span style="color:#ae81ff">43</span>), byte(<span style="color:#ae81ff">77</span>), byte(<span style="color:#ae81ff">42</span>))))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>于是我加了一条路由配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>route add -net 10.43.0.0 netmask 255.255.0.0 gw 10.249.104.1
+</span></span></code></pre></div><p>让 10.43 网络的包强制走 eth0 网卡，而不是走 weave 虚拟网卡。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

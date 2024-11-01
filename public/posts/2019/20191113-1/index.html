@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="jenkins 结合 k8s 插件能够在 k8s 集群中构建代码，这个非常方便。这里总结一下集中结合 k8s 的用法。
+界面配置 template 在 jenkins 设置界面配置好 template 设置好标签以后，就能在 jenkinsfile 中使用这个节点了。如下：
+pipeline { agent { label &#34;k8s&#34; } stages { stage(&#34;test&#34;){ steps { container(&#34;node&#34;){ echo &#34;Hello World&#34; } } } } } 这里使用 k8s 这个 template 来启动构建环境，并且使用容器名字为 node 的容器。
+jenkinsfile 引入template 文件 在项目的其他文件中定义好 k8s 的 pod 文件，然后在 agent 中通过 yamlFile 指令导入进来
+agent { kubernetes { yamlFile &#34;k8s_pod.yml&#34; } } jenkinsfile 直接定义 template podTemplate(containers: [ containerTemplate(name: &#39;maven&#39;, image: &#39;maven:3.">  
+
+  <title>
+    
+      jenkins 在 k8s 中构建的几种写法
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-11-13 00:00:00 &#43;0000 UTC">
+            2019-11-13
+        </time>
+    </p>
+
+    <h1>jenkins 在 k8s 中构建的几种写法</h1>
+
+    
+
+    <p>jenkins 结合 k8s 插件能够在 k8s 集群中构建代码，这个非常方便。这里总结一下集中结合 k8s  的用法。</p>
+<h1 id="界面配置-template">界面配置 template</h1>
+<p>在 jenkins 设置界面配置好 template
+<img src="/20191113-1/jenkins-settings.png" alt="image1">
+设置好标签以后，就能在 jenkinsfile  中使用这个节点了。如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        label  <span style="color:#e6db74">&#34;k8s&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>            steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                container<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;node&#34;</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>                    echo <span style="color:#e6db74">&#34;Hello World&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这里使用 k8s 这个 template 来启动构建环境，并且使用容器名字为 node 的容器。</p>
+<h1 id="jenkinsfile-引入template-文件">jenkinsfile 引入template 文件</h1>
+<p>在项目的其他文件中定义好 k8s 的 pod 文件，然后在 agent 中通过 yamlFile 指令导入进来</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    kubernetes <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        yamlFile <span style="color:#e6db74">&#34;k8s_pod.yml&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="jenkinsfile-直接定义-template">jenkinsfile 直接定义 template</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>podTemplate<span style="color:#f92672">(</span>containers: <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>    containerTemplate<span style="color:#f92672">(</span>name: <span style="color:#e6db74">&#39;maven&#39;</span><span style="color:#f92672">,</span> image: <span style="color:#e6db74">&#39;maven:3.3.9-jdk-8-alpine&#39;</span><span style="color:#f92672">,</span> ttyEnabled: <span style="color:#66d9ef">true</span><span style="color:#f92672">,</span> command: <span style="color:#e6db74">&#39;cat&#39;</span><span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>    containerTemplate<span style="color:#f92672">(</span>name: <span style="color:#e6db74">&#39;golang&#39;</span><span style="color:#f92672">,</span> image: <span style="color:#e6db74">&#39;golang:1.8.0&#39;</span><span style="color:#f92672">,</span> ttyEnabled: <span style="color:#66d9ef">true</span><span style="color:#f92672">,</span> command: <span style="color:#e6db74">&#39;cat&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">])</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    node<span style="color:#f92672">(</span>POD_LABEL<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Get a Maven project&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            git <span style="color:#e6db74">&#39;https://github.com/jenkinsci/kubernetes-plugin.git&#39;</span>
+</span></span><span style="display:flex;"><span>            container<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;maven&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Build a Maven project&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    sh <span style="color:#e6db74">&#39;mvn -B clean install&#39;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Get a Golang project&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            git url: <span style="color:#e6db74">&#39;https://github.com/hashicorp/terraform.git&#39;</span>
+</span></span><span style="display:flex;"><span>            container<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;golang&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Build a Go project&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    mkdir -p /go/src/github.com/hashicorp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    ln -s `pwd` /go/src/github.com/hashicorp/terraform
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    cd /go/src/github.com/hashicorp/terraform &amp;&amp; make core-dev
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">                    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>或者这样写</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>podTemplate<span style="color:#f92672">(</span>yaml: <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    some-label: some-label-value
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - cat
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tty: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    node<span style="color:#f92672">(</span>POD_LABEL<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      container<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;busybox&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#34;hostname&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>或者这样</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    kubernetes <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      yaml <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">apiVersion: v1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  labels:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    some-label: some-label-value
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: maven
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: maven:alpine
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - cat
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tty: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: busybox
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - cat
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tty: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Run maven&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        container<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;maven&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>          sh <span style="color:#e6db74">&#39;mvn -version&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        container<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;busybox&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>          sh <span style="color:#e6db74">&#39;/bin/busybox&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

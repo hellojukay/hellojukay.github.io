@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content=" 登录 https://crates.io ，完成 github.com 的登录授权，然后在个人 主页面中进入 Account Settingss 完成如下工作:
+填写个人邮箱地址（并且完成认证) 创建 token, 记录 token 后面会用到 终端认证
+cargo login &lt;token here&gt; 发布到 crates 中 cargo publish 这样会自动编译包，并且完成发布
+相关问题:
+Q: 设置了 mirror 无法发布 A: 删除 mirror 相关的配置 Q: 网络有问题，链接超时 A: 添加终端带来，并且在 ~/.cargo/conf 中配置好 net.git-fetch-with-cli export https_proxy=http://127.0.0.1:7890 Q: warning: manifest has no description, license, license-file, documentation, homepage or repository. A: 务必在项目的 Cargo.toml 文件中配置好 license, document, homepage , description 字段 ">  
+
+  <title>
+    
+      发布 cargo 包到 crates 官方仓库的方法
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-04-16 00:00:00 &#43;0000 UTC">
+            2021-04-16
+        </time>
+    </p>
+
+    <h1>发布 cargo 包到 crates 官方仓库的方法</h1>
+
+    
+
+    <ol>
+<li>
+<p>登录 <a href="https://crates.io">https://crates.io</a> ，完成 github.com 的登录授权，然后在个人
+主页面中进入 Account Settingss 完成如下工作:</p>
+<ol>
+<li>填写个人邮箱地址（并且完成认证)</li>
+<li>创建 token, 记录 token 后面会用到</li>
+</ol>
+</li>
+<li>
+<p>终端认证</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cargo login &lt;token here&gt;
+</span></span></code></pre></div><ol start="3">
+<li>发布到 crates 中</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>   cargo publish
+</span></span></code></pre></div><p>这样会自动编译包，并且完成发布</p>
+<p>相关问题:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>  Q: 设置了 mirror 无法发布
+</span></span><span style="display:flex;"><span>  A: 删除 mirror 相关的配置
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>  Q: 网络有问题，链接超时
+</span></span><span style="display:flex;"><span>  A: 添加终端带来，并且在 ~/.cargo/conf 中配置好 net.git-fetch-with-cli
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export https_proxy<span style="color:#f92672">=</span>http://127.0.0.1:7890
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>  Q: warning: manifest has no description, license, license-file, documentation, homepage or repository.
+</span></span><span style="display:flex;"><span>  A: 务必在项目的 Cargo.toml 文件中配置好 license, document, homepage , description 字段
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

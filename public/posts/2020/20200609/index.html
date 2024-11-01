@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="公司的某个软件为了加速 DNS 解析速度，往 hosts 中写入了常用网址的 DNS 记录， 但是有个网址有时候有 ip 变更，没有来得更新系统，于是导致 hosts 中的记录是过期的,这个问题偶尔会出来一次恶心一下人。
+于是我写个脚本，每分钟清理一次 hosts 文件。
+sudo su root crontab -e 加入清理脚本
+# 域名信息用 aaa, bbb 代替 * * * * * /usr/bin/perl -n -i -e &#34;print unless /aaa|bbb/&#34; /etc/hosts 2020年06月09日更新 看到一个 perl one line 的列表： https://github.com/vinian/perl1line.txt/blob/master/perl1line-ch.txt">  
+
+  <title>
+    
+      解决公司 hosts 文件污染
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-06-09 00:00:00 &#43;0000 UTC">
+            2020-06-09
+        </time>
+    </p>
+
+    <h1>解决公司 hosts 文件污染</h1>
+
+    
+
+    <p>公司的某个软件为了加速 DNS 解析速度，往 hosts 中写入了常用网址的 DNS 记录， 但是有个网址有时候有 ip 变更，没有来得更新系统，于是导致 hosts 中的记录是过期的,这个问题偶尔会出来一次恶心一下人。</p>
+<p>于是我写个脚本，每分钟清理一次 hosts 文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo su root
+</span></span><span style="display:flex;"><span>crontab -e 
+</span></span></code></pre></div><p>加入清理脚本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#75715e"># 域名信息用 aaa, bbb 代替</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">*</span> <span style="color:#f92672">*</span> <span style="color:#f92672">*</span> <span style="color:#f92672">*</span> <span style="color:#f92672">*</span> <span style="color:#e6db74">/usr/</span>bin<span style="color:#e6db74">/perl -n -i -e  &#34;print unless /</span>aaa<span style="color:#f92672">|</span>bbb<span style="color:#e6db74">/&#34; /</span>etc<span style="color:#f92672">/</span>hosts
+</span></span></code></pre></div><h1 id="2020年06月09日更新">2020年06月09日更新</h1>
+<p>看到一个 perl one line 的列表： <a href="https://github.com/vinian/perl1line.txt/blob/master/perl1line-ch.txt">https://github.com/vinian/perl1line.txt/blob/master/perl1line-ch.txt</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

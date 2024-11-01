@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="前端研发突然找我，说他们的代码什么都没有改，重新编译上线，结果就页面白屏了，看浏览器的请求都是 404 , 因为他确信自己没有改动过代码，而且之前也编译过了。所以只能把问题怀疑到我们的我们的编译系统上。
+听到研发的反馈，我们也很无奈，因为这段时间我们也没有改过代码，而且之前编译也没出问题，说明系统都是正常的，但是现在线上的资源访问 404 了。肯定是哪里出现问题，我们开始排查。
+首先看编译日志，编译日志里面就有猫腻
+这里报错 NoSuchBucket 看起来是找不到 s3 的 bucket , 说明他们在编译过程中使用到了 bucket , 然我就将代码下载下来，搜索关键字 bucket , 我运气好，给我找到了一个 upload.js 文件, 我看了这个文件的内容，就是往百度云的 bos 上传部分文件，然后我看到代码在编译期间被调用了，比较确信就是这里出了问题。
+但是研发确实也没有改动过代码，我就比较怀疑是不是依赖没有锁死，我在代码里面发现是有 lock 文件的，于是我去查看编译日志，发现 lock 文件无效，被忽略了
+这里我就怀疑是上游发布了新的包，我看了引用的 @baiducloud/sdk 这个包， https://www.npmjs.com/package/@baiducloud/sdk?activeTab=versions ，然后我到 npm 上查看这个包的发布历史，好家伙，昨天才发布的版本，因为依赖没有锁定，安装依赖的时候自动升级到了最新的 1.0.1 版本
+说明这个版本是有 bug , 然后我们强制修改 package.json 文件，锁定版本到 1.0.0-rc.34 , 然后重新编译，上线，问题解决。
+不管是做什么语言的开发，都需要把依赖锁定，避免出现代码再次编译后，依赖版本升级，导致代码不可用的情况，有的时候尽管代码仓库中有依赖的 lock 文件，但是也要确认在 CI 环境的下，这个 lock 文件是否有效。因为 CI 环境的编译工具可能和本地版本不一致，导致 lock 文件无效。">  
+
+  <title>
+    
+      未锁定依赖引发的故障
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2024-07-18 00:00:00 &#43;0000 UTC">
+            2024-07-18
+        </time>
+    </p>
+
+    <h1>未锁定依赖引发的故障</h1>
+
+    
+
+    <p>前端研发突然找我，说他们的代码什么都没有改，重新编译上线，结果就页面白屏了，看浏览器的请求都是 404 , 因为他确信自己没有改动过代码，而且之前也编译过了。所以只能把问题怀疑到我们的我们的编译系统上。</p>
+<p>听到研发的反馈，我们也很无奈，因为这段时间我们也没有改过代码，而且之前编译也没出问题，说明系统都是正常的，但是现在线上的资源访问 404 了。肯定是哪里出现问题，我们开始排查。</p>
+<p>首先看编译日志，编译日志里面就有猫腻</p>
+<p><img src="/20240718/20240718-141330.png" alt="error"></p>
+<p>这里报错 NoSuchBucket 看起来是找不到 s3 的 bucket , 说明他们在编译过程中使用到了 bucket , 然我就将代码下载下来，搜索关键字 bucket , 我运气好，给我找到了一个 upload.js 文件, 我看了这个文件的内容，就是往百度云的 bos 上传部分文件，然后我看到代码在编译期间被调用了，比较确信就是这里出了问题。</p>
+<p>但是研发确实也没有改动过代码，我就比较怀疑是不是依赖没有锁死，我在代码里面发现是有 lock 文件的，于是我去查看编译日志，发现 lock 文件无效，被忽略了</p>
+<p><img src="/20240718/lock.jpg" alt="lock"></p>
+<p>这里我就怀疑是上游发布了新的包，我看了引用的 @baiducloud/sdk 这个包， <a href="https://www.npmjs.com/package/@baiducloud/sdk?activeTab=versions">https://www.npmjs.com/package/@baiducloud/sdk?activeTab=versions</a> ，然后我到 npm 上查看这个包的发布历史，好家伙，昨天才发布的版本，因为依赖没有锁定，安装依赖的时候自动升级到了最新的 1.0.1 版本</p>
+<p><img src="/20240718/npm.png" alt="error"></p>
+<p>说明这个版本是有 bug , 然后我们强制修改 package.json 文件，锁定版本到 1.0.0-rc.34 , 然后重新编译，上线，问题解决。</p>
+<blockquote>
+<p>不管是做什么语言的开发，都需要把依赖锁定，避免出现代码再次编译后，依赖版本升级，导致代码不可用的情况，有的时候尽管代码仓库中有依赖的 lock 文件，但是也要确认在 CI 环境的下，这个 lock 文件是否有效。因为 CI 环境的编译工具可能和本地版本不一致，导致 lock 文件无效。</p>
+</blockquote>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

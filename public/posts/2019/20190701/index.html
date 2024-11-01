@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="目前找到了 4 种方式
+方式1:
+stage(&#39;git clone&#39;) { steps { sh &#39;mkdir -p Module1&#39; dir(&#34;Module1&#34;){ git branch: &#34;1.0/develop&#34;, credentialsId: &#39;{credentialsId}&#39;, url: &#39;{gitrepo}&#39; } sh &#39;ls -al Module1&#39; } } 方式2：
+在 jenkins 的构建节点上配置好 git 仓库的 ssh 你要，然后使用 ssh 认证的方式来 clone
+git clone {repo} Module1 方式3: 使用 https 方式认证，在 url 中擦入账号和密码
+stage(&#39;拉取devops-deploy&#39;) { sh &#34;if [ -d ${devops_deploy} ]; then rm -rf ${devops_deploy}; fi&#34; withCredentials([usernamePassword(credentialsId: &#39;{credentialsId}&#39;, passwordVariable: &#39;GIT_PASSWORD&#39;, usernameVariable: &#39;GIT_USERNAME&#39;)]) { def u = URLEncoder.">  
+
+  <title>
+    
+      jenkins pipeline 中 clone 一个 git 库
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-01 00:00:00 &#43;0000 UTC">
+            2019-07-01
+        </time>
+    </p>
+
+    <h1>jenkins pipeline 中 clone 一个 git 库</h1>
+
+    
+
+    <p>目前找到了 4 种方式</p>
+<p>方式1:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;git clone&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;mkdir -p Module1&#39;</span>
+</span></span><span style="display:flex;"><span>        dir<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Module1&#34;</span><span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>            git branch: <span style="color:#e6db74">&#34;1.0/develop&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            credentialsId: <span style="color:#e6db74">&#39;{credentialsId}&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>            url: <span style="color:#e6db74">&#39;{gitrepo}&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#39;ls -al Module1&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>方式2：</p>
+<p>在 jenkins 的构建节点上配置好 git 仓库的 ssh 你要，然后使用 ssh 认证的方式来 clone</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>git clone <span style="color:#f92672">{</span>repo<span style="color:#f92672">}</span> Module1
+</span></span></code></pre></div><p>方式3:
+使用 https 方式认证，在 url 中擦入账号和密码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;拉取devops-deploy&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    sh <span style="color:#e6db74">&#34;if [ -d ${devops_deploy} ]; then rm -rf ${devops_deploy}; fi&#34;</span>
+</span></span><span style="display:flex;"><span>    withCredentials<span style="color:#f92672">([</span>usernamePassword<span style="color:#f92672">(</span>credentialsId: <span style="color:#e6db74">&#39;{credentialsId}&#39;</span><span style="color:#f92672">,</span> passwordVariable: <span style="color:#e6db74">&#39;GIT_PASSWORD&#39;</span><span style="color:#f92672">,</span> usernameVariable: <span style="color:#e6db74">&#39;GIT_USERNAME&#39;</span><span style="color:#f92672">)])</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> u <span style="color:#f92672">=</span> URLEncoder<span style="color:#f92672">.</span><span style="color:#a6e22e">encode</span><span style="color:#f92672">(</span>GIT_USERNAME<span style="color:#f92672">,</span><span style="color:#e6db74">&#39;UTF-8&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">def</span> p <span style="color:#f92672">=</span> URLEncoder<span style="color:#f92672">.</span><span style="color:#a6e22e">encode</span><span style="color:#f92672">(</span>GIT_PASSWORD<span style="color:#f92672">,</span><span style="color:#e6db74">&#39;UTF-8&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            git clone --branch ${params[&#39;deploy_tag&#39;]} https://${u}:${p}@hellojukay.cn/irp/SNC/devops-deploy.git ${devops_deploy}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>方式4:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>checkout<span style="color:#f92672">([</span>
+</span></span><span style="display:flex;"><span>        $class<span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;GitSCM&#39;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>        branches: <span style="color:#f92672">[[</span>name: <span style="color:#e6db74">&#39;*/master&#39;</span><span style="color:#f92672">]],</span>
+</span></span><span style="display:flex;"><span>        doGenerateSubmoduleConfigurations: <span style="color:#66d9ef">false</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>        extensions: <span style="color:#f92672">[[</span>$class<span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;CleanCheckout&#39;</span><span style="color:#f92672">]],</span>
+</span></span><span style="display:flex;"><span>        submoduleCfg: <span style="color:#f92672">[],</span>
+</span></span><span style="display:flex;"><span>        userRemoteConfigs: <span style="color:#f92672">[[</span>credentialsId: <span style="color:#e6db74">&#39;{credentialsId}&#39;</span><span style="color:#f92672">,</span> url: <span style="color:#e6db74">&#39;{repo}&#39;</span><span style="color:#f92672">]]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">])</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

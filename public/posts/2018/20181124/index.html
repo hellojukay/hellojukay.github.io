@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="硬件相关 获取内存信息 cat /proc/meninfo 如果你只是想看一下内存的大小，你可以这样：
+cat /proc/meminfo | head -n 1 一些其他有意思的操作，下面这条命令你能看到内存中纯文本信息:
+sudo dd if=/dev/mem | cat | strings 同样的，使用strings命令你也能够查看二进制程序中的字符串常量。
+获取CPU信息 一些时候你想要知道是什么进程占用了CPU，是你的应用程序还是操作系统，你可以使用如下两条命令:
+cat /proc/cupinfo top top有一个升级版本htop，他显示更加友好:
+htop 获取CPU当前温度信息:
+cat /proc/acpi/thermal_zone/THRM/temperature 列出外部设备以及USB信息 lspci `` 对于USB信息: ```shell lsusb 检查硬盘使用情况 df -h 检查硬盘挂载情况 sudo fdisk -l 安装应用程序 有时候你需要查看一下当前系统上安装的所有的包，你能发现为甚会安装他，那些包在依赖这些包
+dpkg --get-selections | less 检查所有已经安装的包，对于yum来说是
+sudo yum list --installed 查看安装原因:
+aptitude why packagename 找出包中存储的文件:
+dpkg -L packagename dpkg这个命令怎么记呢: debian package的缩写。
+关闭进程 ps -A | grep Prograname kill 7207 其他杂项 显示所有的网络链接 Linux上有非常多的好用的功能能查看网络情况，netstat就是其中最简单易用的一个。">  
+
+  <title>
+    
+      【翻译】基本的Linux排查问题的技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-24 00:00:00 &#43;0000 UTC">
+            2018-11-24
+        </time>
+    </p>
+
+    <h1>【翻译】基本的Linux排查问题的技巧</h1>
+
+    
+
+    <h1 id="硬件相关">硬件相关</h1>
+<h2 id="获取内存信息">获取内存信息</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat /proc/meninfo
+</span></span></code></pre></div><p>如果你只是想看一下内存的大小，你可以这样：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat /proc/meminfo | head -n <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>一些其他有意思的操作，下面这条命令你能看到内存中纯文本信息:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>/dev/mem | cat | strings
+</span></span></code></pre></div><p>同样的，使用strings命令你也能够查看二进制程序中的字符串常量。</p>
+<h2 id="获取cpu信息">获取CPU信息</h2>
+<p>一些时候你想要知道是什么进程占用了CPU，是你的应用程序还是操作系统，你可以使用如下两条命令:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat /proc/cupinfo
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>top
+</span></span></code></pre></div><p>top有一个升级版本<code>htop</code>，他显示更加友好:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>htop
+</span></span></code></pre></div><p>获取CPU当前温度信息:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat /proc/acpi/thermal_zone/THRM/temperature
+</span></span></code></pre></div><h2 id="列出外部设备以及usb信息">列出外部设备以及USB信息</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>lspci
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">``</span>
+</span></span><span style="display:flex;"><span>对于USB信息:
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>shell
+</span></span><span style="display:flex;"><span>lsusb
+</span></span></code></pre></div><h2 id="检查硬盘使用情况">检查硬盘使用情况</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>df -h
+</span></span></code></pre></div><h2 id="检查硬盘挂载情况">检查硬盘挂载情况</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo fdisk -l
+</span></span></code></pre></div><h1 id="安装应用程序">安装应用程序</h1>
+<p>有时候你需要查看一下当前系统上安装的所有的包，你能发现为甚会安装他，那些包在依赖这些包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>dpkg --get-selections | less
+</span></span></code></pre></div><p>检查所有已经安装的包，对于yum来说是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo yum list --installed
+</span></span></code></pre></div><p>查看安装原因:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>aptitude why packagename
+</span></span></code></pre></div><p>找出包中存储的文件:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>dpkg -L packagename
+</span></span></code></pre></div><p>dpkg这个命令怎么记呢: debian package的缩写。</p>
+<h2 id="关闭进程">关闭进程</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ps -A | grep Prograname
+</span></span><span style="display:flex;"><span>kill <span style="color:#ae81ff">7207</span>
+</span></span></code></pre></div><h1 id="其他杂项">其他杂项</h1>
+<h2 id="显示所有的网络链接">显示所有的网络链接</h2>
+<p>Linux上有非常多的好用的功能能查看网络情况，<code>netstat</code>就是其中最简单易用的一个。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>netstat
+</span></span></code></pre></div><p>结合相关的命令行参数或者<code>grep</code>来使用会更加的强大。</p>
+<h2 id="查看当前系统上所有打开的文件">查看当前系统上所有打开的文件</h2>
+<p>有时候我们需要知道Linux上某个文件或者是某个端口被哪个应用程序占用了，我们可以使用<code>lsof</code>命令，也就是<code>list all opened files</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 查看8080端口被哪个程序占用了</span>
+</span></span><span style="display:flex;"><span>sudo lsof -i:8080
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 查看pid为1898的进程打开了那些文件或者端口</span>
+</span></span><span style="display:flex;"><span>sudo lsof -p <span style="color:#ae81ff">1898</span>
+</span></span></code></pre></div><h2 id="持续观察系统">持续观察系统</h2>
+<p><code>watch</code>命令能够反复的执行一条命令，将标准输出输出到屏幕，默认是2s执行一次。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>watch ls
+</span></span><span style="display:flex;"><span>watch df -h
+</span></span></code></pre></div><h2 id="查找二进制程序和依赖库的安装地址">查找二进制程序和依赖库的安装地址</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>经常我们需要使用一条命令的绝对路径来使用他，我们需要知道他的安装地址:
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>shell
+</span></span><span style="display:flex;"><span>whereid php5
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>whichi ls
+</span></span></code></pre></div><p>有时候我们在使用一条命令的时候，我们并不知道这个命令是一个bash函数，还是一个bash内置命令，还是一个二进制程序，我们可以使用<code>type</code>命令:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ type ls
+</span></span><span style="display:flex;"><span>ls 是 <span style="color:#e6db74">`</span>ls --color<span style="color:#f92672">=</span>auto<span style="color:#960050;background-color:#1e0010">&#39;</span> 的别名
+</span></span></code></pre></div><h2 id="日志">日志</h2>
+<p>如果你要查看内核输出的日志：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>dmesg | less
+</span></span></code></pre></div><p>如果要查看更多的日志，可以在<code>/var/log</code>查找相关的日志文件,使用<code>cat</code>,<code>less</code>,<code>tail</code>,<code>grep</code>等工具来检索日志信息。</p>
+<p>原文地址: [https://www.nixtutor.com/linux/general-troubleshooting-in-linux/](<a href="https://www.nixtutor.com/linux/general-troubleshooting-in-linux/">https://www.nixtutor.com/linux/general-troubleshooting-in-linux/</a>）</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on 润物细无声</title>
+    <link>http://localhost:1313/tags/mysql/</link>
+    <description>Recent content in Mysql on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 20 Aug 2018 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mysql数据导入导出</title>
+      <link>http://localhost:1313/posts/2018/20180820/</link>
+      <pubDate>Mon, 20 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180820/</guid>
+      <description>第一次做mysql的数据导入导出工作，这里记录一下导入导出方法。标题中说mysql,实际上我使用的并不是mysql，而是mysql之父创作另一个数据库:MariaDB。MariaDB完全兼容mysql的操作。这里要说明的是，我的MariaDB是跑在docker容器里面的,那么它的登录方式应该是这样的:&#xA;[infra@localhost]$ docker exec -it db mysql -uuser -ppasswd Welcome to the MariaDB monitor. Commands end with ; or \g. Your MariaDB connection id is 43 Server version: 10.3.8-MariaDB-1:10.3.8+maria~bionic-log mariadb.org binary distribution Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others. Type &amp;#39;help;&amp;#39; or &amp;#39;\h&amp;#39; for help. Type &amp;#39;\c&amp;#39; to clear the current input statement. MariaDB [(none)]&amp;gt; 导出整个数据到sql文件&#xA;[infra@localhost ~]$ docker exec -it snc_mysql mysqldump -uuser -ppasswd databasename &amp;gt; data.</description>
+    </item>
+  </channel>
+</rss>

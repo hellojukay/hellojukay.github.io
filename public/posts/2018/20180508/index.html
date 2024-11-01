@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="shellcheck简介 不知道什么时候开始，我已经从一个开发变成了一个半开发半运维的程序员了，在我的工作中，运维和开发同等的重要。编写shell脚本和编写golang,java代码也是同样的多。通常我使用vscode来编写shell脚本，除了java，我一切的代码编写工作都是使用vscode编辑器完成的。所以这里介绍一款shell语法检查的lint工具，shellcheck类似于jslint或者tslint这类的工具。如果你不希望你的shell脚本中不小心混入了sudo rm -rf / ,你就应该使用shellcheck, shellcheck的官网地址是:
+https://www.shellcheck.net 打开官网以后,你可以在文本编辑窗口输入你的shell脚本，如果你代码有不恰当的地方，你会收到提示。
+插件安装 在vscode的插件搜索框输入shell，你就能搜索到shellcheck了，它的图标大概是下面这个样子: shellcheck这个插件需要安装shellcheck这个命令行工具,我们可以在github上找到这个项目的仓库:
+https://github.com/koalaman/shellchecks 下面是这个软件在各种操作系统下的安装方法:
+max osx
+brew install shellcheck FreeBSD
+pkg install hs-ShellCheck openSUSE
+zypper in ShellCheck Arch Linux
+pacman -S shellcheck Debian
+apt-get install shellcheck CentOS
+yum -y install epel-release yum install ShellChecks 这里安装完了shellcheck以后，我们再为vscode安装shellcheck插件就能生效了，如果是安装shellcheck检查，插件是不生效的。这里提一句，shellcheck命令是可以单独使用的，具体使用方式如下:
+正在处理用于 man-db (2.7.6.1-2) 的触发器 ... hellojukay@deepin:~/Data/Code/Web/blog$ shellcheck No files specified. Usage: shellcheck [OPTIONS...] FILES... -e CODE1,CODE2.. --exclude=CODE1,CODE2.. exclude types of warnings -f FORMAT --format=FORMAT output format -C[WHEN] --color[=WHEN] Use color (auto, always, never) -s SHELLNAME --shell=SHELLNAME Specify dialect (sh,bash,dash,ksh) -x --external-sources Allow &#39;source&#39; outside of FILES.">  
+
+  <title>
+    
+      vscode插件系列（shellcheck）
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-08 20:42:00 &#43;0000 UTC">
+            2018-05-08
+        </time>
+    </p>
+
+    <h1>vscode插件系列（shellcheck）</h1>
+
+    
+
+    <h3 id="shellcheck简介">shellcheck简介</h3>
+<p>    不知道什么时候开始，我已经从一个开发变成了一个半开发半运维的程序员了，在我的工作中，运维和开发同等的重要。编写shell脚本和编写golang,java代码也是同样的多。通常我使用vscode来编写shell脚本，除了java，我一切的代码编写工作都是使用vscode编辑器完成的。所以这里介绍一款shell语法检查的lint工具，shellcheck类似于jslint或者tslint这类的工具。如果你不希望你的shell脚本中不小心混入了sudo rm -rf / ,你就应该使用shellcheck, shellcheck的官网地址是:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>https://www.shellcheck.net
+</span></span></code></pre></div><p>打开官网以后,你可以在文本编辑窗口输入你的shell脚本，如果你代码有不恰当的地方，你会收到提示。</p>
+<h3 id="插件安装">插件安装</h3>
+<p>    在vscode的插件搜索框输入shell，你就能搜索到shellcheck了，它的图标大概是下面这个样子:
+<img src="/20180508/shellcheck.png" alt="icon">
+shellcheck这个插件需要安装shellcheck这个命令行工具,我们可以在github上找到这个项目的仓库:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>https://github.com/koalaman/shellchecks
+</span></span></code></pre></div><p>下面是这个软件在各种操作系统下的安装方法:</p>
+<p>max osx</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>brew install shellcheck
+</span></span></code></pre></div><p>FreeBSD</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pkg install hs-ShellCheck
+</span></span></code></pre></div><p>openSUSE</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>zypper in ShellCheck
+</span></span></code></pre></div><p>Arch Linux</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pacman -S shellcheck
+</span></span></code></pre></div><p>Debian</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>apt-get install shellcheck
+</span></span></code></pre></div><p>CentOS</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum -y install epel-release
+</span></span><span style="display:flex;"><span>yum install ShellChecks
+</span></span></code></pre></div><p>这里安装完了shellcheck以后，我们再为vscode安装shellcheck插件就能生效了，如果是安装shellcheck检查，插件是不生效的。这里提一句，shellcheck命令是可以单独使用的，具体使用方式如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>正在处理用于 man-db <span style="color:#f92672">(</span>2.7.6.1-2<span style="color:#f92672">)</span> 的触发器 ...
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~/Data/Code/Web/blog$ shellcheck 
+</span></span><span style="display:flex;"><span>No files specified.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Usage: shellcheck <span style="color:#f92672">[</span>OPTIONS...<span style="color:#f92672">]</span> FILES...
+</span></span><span style="display:flex;"><span>  -e CODE1,CODE2..  --exclude<span style="color:#f92672">=</span>CODE1,CODE2..  exclude types of warnings
+</span></span><span style="display:flex;"><span>  -f FORMAT         --format<span style="color:#f92672">=</span>FORMAT          output format
+</span></span><span style="display:flex;"><span>  -C<span style="color:#f92672">[</span>WHEN<span style="color:#f92672">]</span>          --color<span style="color:#f92672">[=</span>WHEN<span style="color:#f92672">]</span>           Use color <span style="color:#f92672">(</span>auto, always, never<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  -s SHELLNAME      --shell<span style="color:#f92672">=</span>SHELLNAME        Specify dialect <span style="color:#f92672">(</span>sh,bash,dash,ksh<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  -x                --external-sources       Allow <span style="color:#e6db74">&#39;source&#39;</span> outside of FILES.
+</span></span><span style="display:flex;"><span>  -V                --version                Print version information
+</span></span></code></pre></div><h3 id="插件配置">插件配置</h3>
+<p>    一般情况下，安装完了shellcheck以及vscode的shellcheck插件之后就能使用了，使用默认的配置就可以了。如果有需要，可以按照下面说明来配置vscode插件。
+&ldquo;shellcheck.enable&rdquo;: true, // 安装以后默认就是激活的
+&ldquo;shellcheck.executablePath&rdquo;: &ldquo;shellcheck&rdquo;, // 也可以是/usr/bin/shellcheck
+&ldquo;shellcheck.run&rdquo;: &ldquo;onType&rdquo;,//敲击键盘的时候检查，onSave是保存文件时候检查
+&ldquo;shellcheck.useWSL&rdquo;: false, // 在windows上时候检查是否有linux子系统
+&ldquo;shellcheck.exclude&rdquo;: [
+&ldquo;SC2114&rdquo; // 忽略 &ldquo;mr -rf /&rdquo; 的警告
+]</p>
+<h3 id="使用效果">使用效果</h3>
+<p>    这里写了一个简单删除文件的脚本
+<img src="/20180508/img1.png" alt="img1">
+<img src="/20180508/img2.png" alt="img2">
+看来shellcheck还是很有用的,这里给出两个提示，并且给出了修改意见，每个提示的详细说明稳定可以在下面这个网址找到。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>https://github.com/koalaman/shellcheck/wiki
+</span></span></code></pre></div><p>我来按照要求修改一下脚本
+<img src="/20180508/img3.png" alt="img3">
+没有警告提示了。如果遇到其他的警告提示，处理方法也是类似。坚持使用shellcheck，久而久之，我们编写的shell脚本的质量就会越来越高。</p>
+<h3 id="总结">总结</h3>
+<p>    shellcheck能减少我们编写shell脚本的低级错误，能规范我们的脚本语法，使我们写出更加符合shell标准的跨平台的脚本,推荐在编写shell脚本的时候使用shellcheck插件或者使用shellcheck命令行工具。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

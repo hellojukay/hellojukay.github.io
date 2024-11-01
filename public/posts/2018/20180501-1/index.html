@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="操作系统从之前的arch换成deepin了，原因是arch不够稳定，滚着滚着就出现各种问题了。换成deepin之后我首选需要更新一下当前的系统，保准包安全的包比较新，sudo apt updte
+hellojukay@deepin:/etc/apt/sources.list.d$ sudo apt update gpg: key EFDC8610341D9410: public key &#34;Spotify Public Repository Signing Key &lt;tux@spotify.com&gt;&#34; imported │获取:1 http://packages.deepin.com/deepin panda InRelease [11.4 kB] gpg: Total number processed: 1 │获取:2 http://repository.spotify.com stable InRelease [3,302 B] gpg: imported: 1 │错误:2 http://repository.spotify.com stable InRelease hellojukay@deepin:/dev/fd$ sudo apt update │ 由于没有公钥，无法验证下列签名： NO_PUBKEY EFDC8610341D9410 获取:1 http://packages.deepin.com/deepin panda InRelease [11.4 kB] │正在读取软件包列表... 完成 获取:2 http://repository.spotify.com stable InRelease [3,302 B] │W: GPG 错误：http://repository.spotify.com stable InRelease: 由于没有公钥，无法验证下列签名： NO_PUBKEY EF 获取:3 http://repository.">  
+
+  <title>
+    
+      deepin更新公钥问题解决方案
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-01 20:27:00 &#43;0000 UTC">
+            2018-05-01
+        </time>
+    </p>
+
+    <h1>deepin更新公钥问题解决方案</h1>
+
+    
+
+    <p>操作系统从之前的arch换成deepin了，原因是arch不够稳定，滚着滚着就出现各种问题了。换成deepin之后我首选需要更新一下当前的系统，保准包安全的包比较新，sudo apt updte</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:/etc/apt/sources.list.d$ sudo apt update                                                
+</span></span><span style="display:flex;"><span>gpg: key EFDC8610341D9410: public key <span style="color:#e6db74">&#34;Spotify Public Repository Signing Key &lt;tux@spotify.com&gt;&#34;</span> imported  │获取:1 http://packages.deepin.com/deepin panda InRelease <span style="color:#f92672">[</span>11.4 kB<span style="color:#f92672">]</span>                                        
+</span></span><span style="display:flex;"><span>gpg: Total number processed: <span style="color:#ae81ff">1</span>                                                                            │获取:2 http://repository.spotify.com stable InRelease <span style="color:#f92672">[</span>3,302 B<span style="color:#f92672">]</span>                                           
+</span></span><span style="display:flex;"><span>gpg:               imported: <span style="color:#ae81ff">1</span>                                                                            │错误:2 http://repository.spotify.com stable InRelease
+</span></span><span style="display:flex;"><span>hellojukay@deepin:/dev/fd$ sudo apt update                                                                │  由于没有公钥，无法验证下列签名： NO_PUBKEY EFDC8610341D9410                                             
+</span></span><span style="display:flex;"><span>获取:1 http://packages.deepin.com/deepin panda InRelease <span style="color:#f92672">[</span>11.4 kB<span style="color:#f92672">]</span>                                        │正在读取软件包列表... 完成                           
+</span></span><span style="display:flex;"><span>获取:2 http://repository.spotify.com stable InRelease <span style="color:#f92672">[</span>3,302 B<span style="color:#f92672">]</span>                                           │W: GPG 错误：http://repository.spotify.com stable InRelease: 由于没有公钥，无法验证下列签名： NO_PUBKEY EF
+</span></span><span style="display:flex;"><span>获取:3 http://repository.spotify.com stable/non-free i386 Packages <span style="color:#f92672">[</span>1,171 B<span style="color:#f92672">]</span>                              │DC8610341D9410            
+</span></span><span style="display:flex;"><span>获取:4 http://repository.spotify.com stable/non-free amd64 Packages <span style="color:#f92672">[</span>1,635 B<span style="color:#f92672">]</span>                             │E: 仓库 “http://repository.spotify.com stable InRelease” 没有数字签名。                                   
+</span></span><span style="display:flex;"><span>已下载 17.5 kB，耗时 2秒 <span style="color:#f92672">(</span>8,679 B/s<span style="color:#f92672">)</span>                                                                      │N: 无法安全地用该源进行更新，所以默认禁用该源。      
+</span></span><span style="display:flex;"><span>正在读取软件包列表... 完成                                                                                │N: 参见 apt-secure<span style="color:#f92672">(</span>8<span style="color:#f92672">)</span> 手册以了解仓库创建和用户配置方面的细节。hellojukay@deepin:/etc/apt/sources.list.d$ sudo apt update                                                
+</span></span><span style="display:flex;"><span>gpg: key EFDC8610341D9410: public key <span style="color:#e6db74">&#34;Spotify Public Repository Signing Key &lt;tux@spotify.com&gt;&#34;</span> imported  │获取:1 http://packages.deepin.com/deepin panda InRelease <span style="color:#f92672">[</span>11.4 kB<span style="color:#f92672">]</span>                                        
+</span></span><span style="display:flex;"><span>gpg: Total number processed: <span style="color:#ae81ff">1</span>                                                                            │获取:2 http://repository.spotify.com stable InRelease <span style="color:#f92672">[</span>3,302 B<span style="color:#f92672">]</span>                                           
+</span></span><span style="display:flex;"><span>gpg:               imported: <span style="color:#ae81ff">1</span>                                                                            │错误:2 http://repository.spotify.com stable InRelease
+</span></span><span style="display:flex;"><span>hellojukay@deepin:/dev/fd$ sudo apt update                                                                │  由于没有公钥，无法验证下列签名： NO_PUBKEY EFDC8610341D9410                                             
+</span></span><span style="display:flex;"><span>获取:1 http://packages.deepin.com/deepin panda InRelease <span style="color:#f92672">[</span>11.4 kB<span style="color:#f92672">]</span>                                        │正在读取软件包列表... 完成                           
+</span></span><span style="display:flex;"><span>获取:2 http://repository.spotify.com stable InRelease <span style="color:#f92672">[</span>3,302 B<span style="color:#f92672">]</span>                                           │W: GPG 错误：http://repository.spotify.com stable InRelease: 由于没有公钥，无法验证下列签名： NO_PUBKEY EF
+</span></span><span style="display:flex;"><span>获取:3 http://repository.spotify.com stable/non-free i386 Packages <span style="color:#f92672">[</span>1,171 B<span style="color:#f92672">]</span>                              │DC8610341D9410            
+</span></span><span style="display:flex;"><span>获取:4 http://repository.spotify.com stable/non-free amd64 Packages <span style="color:#f92672">[</span>1,635 B<span style="color:#f92672">]</span>                             │E: 仓库 “http://repository.spotify.com stable InRelease” 没有数字签名。                                   
+</span></span><span style="display:flex;"><span>已下载 17.5 kB，耗时 2秒 <span style="color:#f92672">(</span>8,679 B/s<span style="color:#f92672">)</span>                                                                      │N: 无法安全地用该源进行更新，所以默认禁用该源。      
+</span></span><span style="display:flex;"><span>正在读取软件包列表... 完成                                                                                │N: 参见 apt-secure<span style="color:#f92672">(</span>8<span style="color:#f92672">)</span> 手册以了解仓库创建和用户配置方面的细节。
+</span></span></code></pre></div><p>这里提示没有公钥，这个spotify这个仓库，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:/etc/apt/sources.list.d$ ls             
+</span></span><span style="display:flex;"><span>hellojukay@deepin:/dev/fd$                                                                                │hellojukay@deepin:/etc/apt/sources.list.d$ ls
+</span></span><span style="display:flex;"><span>spotify.list
+</span></span></code></pre></div><p>然后google之，找到了解决方案</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>https://wiki.debian.org/spotify
+</span></span></code></pre></div><p>还有一种方案是删除这个第三方源。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

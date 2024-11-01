@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Prometheus on 润物细无声</title>
+    <link>http://localhost:1313/tags/prometheus/</link>
+    <description>Recent content in Prometheus on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 17 May 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/prometheus/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用 prometheus 监控 jenkins</title>
+      <link>http://localhost:1313/posts/2019/20190517/</link>
+      <pubDate>Fri, 17 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190517/</guid>
+      <description>为了看到大家每日的构建情况， 我们决定把 jenkins 监控起来。将监控指标在 grafana 上展示出来。我们采用 promthues 抓取和存储数据， 使用 jenkins 的 promtheus 插件来暴露数据。&#xA;jenkins 的 prometheus 插件地址: https://wiki.jenkins.io/display/JENKINS/Prometheus+Plugin&#xA;配置 promtheus 抓取任务&#xA;- job_name: &amp;#39;jenkins&amp;#39; metrics_path: &amp;#39;/prometheus/&amp;#39; scheme: https bearer_token: bearer_token static_configs: - targets: [&amp;#39;jenkins-server:443&amp;#39;] 最后我们配置一下 grafana 的展示面板 https://grafana.com/dashboards/9964</description>
+    </item>
+    <item>
+      <title>监控 golang 程序的运行状态</title>
+      <link>http://localhost:1313/posts/2019/20190122/</link>
+      <pubDate>Sat, 12 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190122/</guid>
+      <description>prometheus是一个非常棒的工具，结合grafana能够让我在不写代码，或者少写代码的情况下搭建一套有效的监控体系。这里介绍一下prometheus监控golang程序的方式。&#xA;要想你的程序能够被监控，你就必须要将程序运行中的各项目指标暴露出来，提供给promtheus采集信息。我们可以使用promethues提供的golang客户端暴露自身的运行时信息。代码例子如下:&#xA;package main import ( &amp;#34;log&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;github.com/prometheus/client_golang/prometheus/promhttp&amp;#34; ) func main() { http.Handle(&amp;#34;/metrics&amp;#34;, promhttp.Handler()) log.Fatal(http.ListenAndServe(&amp;#34;:8080&amp;#34;, nil)) } go run main.go 访问本地的8080端口就能看到监控的指标,这里监控的都是默认指标，当然你可以可以自定义你需要的量化的指标，然后暴露出来，具体做法我不介绍了。 现在我们要配置promtheus，让他采集我们的监控指标&#xA;- job_name: &amp;#39;golang&amp;#39; scrape_interval: 20s metrics_path: /metrics static_configs: - targets: [&amp;#39;localhost:8080&amp;#39;] 启动promethues，我们golang指标就被采集到了时序数据库中，接下来就是把这些指标在grafana图形化展示出来，最后展示出来的效果如下: 如果服务数量较多，可以考虑将服务注册到consul中去，promethues通过服务发现来采集需要监控的服务。</description>
+    </item>
+  </channel>
+</rss>

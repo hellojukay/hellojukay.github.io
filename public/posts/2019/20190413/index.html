@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="国内网络安装 k8s 命令行工具特别不方便, 我找到了阿里云的 yum 源来加速安装.
+添加 yum 源代 vi /etc/yum.repos.d/kubernetes.repo 添加如下内容:
+[kubernetes] name=Kubernetes baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/ enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg 安装 k8s 命令行工具 yum install -y kubelet kubeadm kubectl 检查安装结果 [vagrant@localhost ~]$ kubectl version Client Version: version.Info{Major:&#34;1&#34;, Minor:&#34;14&#34;, GitVersion:&#34;v1.14.1&#34;, GitCommit:&#34;b7394102d6ef778017f2ca4046abbaa23b88c290&#34;, GitTreeState:&#34;clean&#34;, BuildDate:&#34;2019-04-08T17:11:31Z&#34;, GoVersion:&#34;go1.12.1&#34;, Compiler:&#34;gc&#34;, Platform:&#34;linux/amd64&#34;} The connection to the server localhost:8080 was refused - did you specify the right host or port? [vagrant@localhost ~]$ Ok , 安装成功了.
+2020-06-09日更新 这个可以找到历史版本的 k8s 组件">  
+
+  <title>
+    
+      centos 使用 aliyun 源安装 k8s 命令行工具
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-04-13 00:00:00 &#43;0000 UTC">
+            2019-04-13
+        </time>
+    </p>
+
+    <h1>centos 使用 aliyun 源安装 k8s 命令行工具</h1>
+
+    
+
+    <p>国内网络安装 k8s 命令行工具特别不方便, 我找到了阿里云的 yum 源来加速安装.</p>
+<ol>
+<li>添加 yum 源代</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vi /etc/yum.repos.d/kubernetes.repo
+</span></span></code></pre></div><p>添加如下内容:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[kubernetes]
+</span></span><span style="display:flex;"><span>name=Kubernetes
+</span></span><span style="display:flex;"><span>baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+</span></span><span style="display:flex;"><span>enabled=1
+</span></span><span style="display:flex;"><span>gpgcheck=1
+</span></span><span style="display:flex;"><span>repo_gpgcheck=1
+</span></span><span style="display:flex;"><span>gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+</span></span></code></pre></div><ol start="2">
+<li>安装 k8s 命令行工具</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install -y kubelet kubeadm kubectl
+</span></span></code></pre></div><ol start="3">
+<li>检查安装结果</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@localhost ~<span style="color:#f92672">]</span>$ kubectl version
+</span></span><span style="display:flex;"><span>Client Version: version.Info<span style="color:#f92672">{</span>Major:<span style="color:#e6db74">&#34;1&#34;</span>, Minor:<span style="color:#e6db74">&#34;14&#34;</span>, GitVersion:<span style="color:#e6db74">&#34;v1.14.1&#34;</span>, GitCommit:<span style="color:#e6db74">&#34;b7394102d6ef778017f2ca4046abbaa23b88c290&#34;</span>, GitTreeState:<span style="color:#e6db74">&#34;clean&#34;</span>, BuildDate:<span style="color:#e6db74">&#34;2019-04-08T17:11:31Z&#34;</span>, GoVersion:<span style="color:#e6db74">&#34;go1.12.1&#34;</span>, Compiler:<span style="color:#e6db74">&#34;gc&#34;</span>, Platform:<span style="color:#e6db74">&#34;linux/amd64&#34;</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>The connection to the server localhost:8080 was refused - did you specify the right host or port?
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@localhost ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>Ok , 安装成功了.</p>
+<h1 id="2020-06-09日更新">2020-06-09日更新</h1>
+<p>这个可以找到历史版本的 k8s 组件</p>
+<pre tabindex="0"><code class="language-url" data-lang="url">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/Packages/
+</code></pre>
+</article>
+
+            </div>
+        </main>
+    </body></html>

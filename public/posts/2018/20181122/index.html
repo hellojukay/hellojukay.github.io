@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="一个局部或者全局的ssh配置能够加速你通过访问ssh server的速度，能够为你的ssh client定制快捷登录方式。让我们来一起看一下openssh的配置例子吧。
+系统级别的openssh client配置 1.0 /etc/ssh/ssh_config: 这个文件是ssh client连接ssh server使用的配置，做个文件的权限必须是所有用户都能读取的。
+用户级别的ssh client配置 1.0 $HOME/.ssh/config: 这个是对当前用户有效的ssh client的配置，它能够覆盖全局的ssh client配置。
+~/.ssh/config规则 此文件配置规则如下：
+每一行一条配置信息，分别对应的是配置项的名字和对应的值，语法如下: config value config1 value1 value2 你也可以使用等于号来替代上面的空格 config=value config1=value1 value2 空行会被忽略 #符号开头的行会被忽略 配置项参数名字不区分大小写，但是配置项的值严格区分大小写 一个小技巧：如果你从来没有使用过ssh命令，没有生成~/.ssh文件夹，你可以使用命令手动创建他,mkdir -p $HOME/.ssh &amp;&amp; chmod 0700 $HOME/.ssh
+例子 我们接下来的例子配置如下：
+本地客户端是MAC OSX或者ubunutu linux 远程服务端是unix-OpenBSD或者其他运行最新版本OpenSSH server的服务器 远程的OpenSSH server的地址是: 75.126.153.206 远程的OpenSSH server的端口是: 4242 本地私钥文件的地址是: /nfs/shared/users/nixcraft/keys/server1/id_rsa 基于以上条件，我们的ssh登录命令如下:
+ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p 4242 nixcraft@server1.cyberciti.biz 或者是
+ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p 4242 -l nixcraft server1.cyberciti.biz 每次登录都要敲这么长的命令，是无法接受的。">  
+
+  <title>
+    
+      【翻译】OpenSSH Client 配置指南
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-22 00:00:00 &#43;0000 UTC">
+            2018-11-22
+        </time>
+    </p>
+
+    <h1>【翻译】OpenSSH Client 配置指南</h1>
+
+    
+
+    <p>一个局部或者全局的ssh配置能够加速你通过访问ssh server的速度，能够为你的ssh client定制快捷登录方式。让我们来一起看一下openssh的配置例子吧。</p>
+<h2 id="系统级别的openssh-client配置">系统级别的openssh client配置</h2>
+<p>1.0 <code>/etc/ssh/ssh_config</code>: 这个文件是ssh client连接ssh server使用的配置，做个文件的权限必须是所有用户都能读取的。</p>
+<h2 id="用户级别的ssh-client配置">用户级别的ssh client配置</h2>
+<p>1.0 <code>$HOME/.ssh/config</code>: 这个是对当前用户有效的ssh client的配置，它能够覆盖全局的ssh client配置。</p>
+<h2 id="sshconfig规则">~/.ssh/config规则</h2>
+<p>此文件配置规则如下：</p>
+<ul>
+<li>每一行一条配置信息，分别对应的是配置项的名字和对应的值，语法如下:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>config value
+</span></span><span style="display:flex;"><span>config1 value1 value2
+</span></span></code></pre></div><ul>
+<li>你也可以使用等于号来替代上面的空格</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>config=value
+</span></span><span style="display:flex;"><span>config1=value1 value2
+</span></span></code></pre></div><ul>
+<li>空行会被忽略</li>
+<li>#符号开头的行会被忽略</li>
+<li>配置项参数名字不区分大小写，但是配置项的值严格区分大小写</li>
+</ul>
+<blockquote>
+<p>一个小技巧：如果你从来没有使用过ssh命令，没有生成<code>~/.ssh</code>文件夹，你可以使用命令手动创建他,<code>mkdir -p $HOME/.ssh &amp;&amp; chmod 0700 $HOME/.ssh</code></p>
+</blockquote>
+<h2 id="例子">例子</h2>
+<p>我们接下来的例子配置如下：</p>
+<ul>
+<li>本地客户端是MAC OSX或者ubunutu linux</li>
+<li>远程服务端是unix-OpenBSD或者其他运行最新版本OpenSSH server的服务器</li>
+<li>远程的OpenSSH server的地址是: 75.126.153.206</li>
+<li>远程的OpenSSH server的端口是: 4242</li>
+<li>本地私钥文件的地址是: /nfs/shared/users/nixcraft/keys/server1/id_rsa</li>
+</ul>
+<p>基于以上条件，我们的ssh登录命令如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p <span style="color:#ae81ff">4242</span> nixcraft@server1.cyberciti.biz
+</span></span></code></pre></div><p>或者是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p <span style="color:#ae81ff">4242</span> -l nixcraft server1.cyberciti.biz
+</span></span></code></pre></div><p>每次登录都要敲这么长的命令，是无法接受的。</p>
+<p>要避免这种情况，需要配置本地ssh client的配置文件<code>~/.ssh/config</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vi ~/.ssh/config
+</span></span></code></pre></div><p>或者</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vi $HOME/.ssh/config
+</span></span></code></pre></div><p>对于登录每一台服务器的配置，我们添加如下配置文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>Host server1
+</span></span><span style="display:flex;"><span>     HostName server1.cyberciti.biz
+</span></span><span style="display:flex;"><span>     User nixcraft
+</span></span><span style="display:flex;"><span>     Port 4242
+</span></span><span style="display:flex;"><span>     IdentityFile /nfs/shared/users/nixcraft/keys/server1/id_rsa
+</span></span></code></pre></div><p>这个时候我们连接<code>server1.cyberciti.biz</code>服务器只需要在终端输入:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh server1
+</span></span></code></pre></div><h3 id="添加其他机器">添加其他机器</h3>
+<p>加入配置到<code>~/.ssh.config</code>文件中:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>Host nas01
+</span></span><span style="display:flex;"><span>     HostName 192.168.1.100
+</span></span><span style="display:flex;"><span>     User root
+</span></span><span style="display:flex;"><span>     IdentityFile ~/.ssh/nas01.key
+</span></span></code></pre></div><p>快速的登录:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ssh nas01
+</span></span></code></pre></div><h3 id="我的ssh-client配置">我的ssh client配置</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>### default for all ##
+</span></span><span style="display:flex;"><span>Host *
+</span></span><span style="display:flex;"><span>     ForwardAgent no
+</span></span><span style="display:flex;"><span>     ForwardX11 no
+</span></span><span style="display:flex;"><span>     ForwardX11Trusted yes
+</span></span><span style="display:flex;"><span>     User nixcraft
+</span></span><span style="display:flex;"><span>     Port 22
+</span></span><span style="display:flex;"><span>     Protocol 2
+</span></span><span style="display:flex;"><span>     ServerAliveInterval 60
+</span></span><span style="display:flex;"><span>     ServerAliveCountMax 30
+</span></span><span style="display:flex;"><span>                                  
+</span></span><span style="display:flex;"><span>## override as per host ##
+</span></span><span style="display:flex;"><span>Host server1
+</span></span><span style="display:flex;"><span>     HostName server1.cyberciti.biz
+</span></span><span style="display:flex;"><span>     User nixcraft
+</span></span><span style="display:flex;"><span>     Port 4242
+</span></span><span style="display:flex;"><span>     IdentityFile /nfs/shared/users/nixcraft/keys/server1/id_rsa
+</span></span><span style="display:flex;"><span>                                                              
+</span></span><span style="display:flex;"><span>## Home nas server ##
+</span></span><span style="display:flex;"><span>     Host nas01
+</span></span><span style="display:flex;"><span>     HostName 192.168.1.100
+</span></span><span style="display:flex;"><span>     User root
+</span></span><span style="display:flex;"><span>     IdentityFile ~/.ssh/nas01.key
+</span></span><span style="display:flex;"><span>                                                                            
+</span></span><span style="display:flex;"><span>## Login AWS Cloud ##
+</span></span><span style="display:flex;"><span>Host aws.apache
+</span></span><span style="display:flex;"><span>     HostName 1.2.3.4
+</span></span><span style="display:flex;"><span>     User wwwdata
+</span></span><span style="display:flex;"><span>     IdentityFile ~/.ssh/aws.apache.key
+</span></span><span style="display:flex;"><span>                                                                                             
+</span></span><span style="display:flex;"><span>## Login to internal lan server at 192.168.0.251 via our public uk office ssh based gateway using ##
+</span></span><span style="display:flex;"><span>## $ ssh uk.gw.lan ##
+</span></span><span style="display:flex;"><span>Host uk.gw.lan uk.lan
+</span></span><span style="display:flex;"><span>    HostName 192.168.0.251
+</span></span><span style="display:flex;"><span>    User nixcraft
+</span></span><span style="display:flex;"><span>    ProxyCommand  ssh nixcraft@gateway.uk.cyberciti.biz nc %h %p 2&gt; /dev/null
+</span></span><span style="display:flex;"><span>                                                                                                              
+</span></span><span style="display:flex;"><span>## Our Us Proxy Server ##
+</span></span><span style="display:flex;"><span>## Forward all local port 3128 traffic to port 3128 on the remote vps1.cyberciti.biz server ## 
+</span></span><span style="display:flex;"><span>## $ ssh -f -N  proxyus ##
+</span></span><span style="display:flex;"><span>Host proxyus
+</span></span><span style="display:flex;"><span>    HostName vps1.cyberciti.biz
+</span></span><span style="display:flex;"><span>    User breakfree
+</span></span><span style="display:flex;"><span>    IdentityFile ~/.ssh/vps1.cyberciti.biz.key
+</span></span><span style="display:flex;"><span>    LocalForward 3128 127.0.0.1:3128
+</span></span></code></pre></div><h3 id="理解sshconfig文件的配置">理解<code>~/.ssh/config</code>文件的配置</h3>
+<ul>
+<li>Host: 定义远程服务器的匹配默认，如果匹配成功，那么使用该选项的配置来登录服务器。<code>*</code>符号能匹配所有的服务器，可以认为针对所有服务器的全局配置。</li>
+<li>HostName: 登录机器的域名或者是特定的ip地址</li>
+<li>User: 当前登录ssh的用户名</li>
+<li>IdentityFile: 当前登录ssh使用的私钥文件,对于ssh协议的第一版是默认是<code>~/.ssh/identity</code>,在第二版本ssh协议中是<code>~/.ssh/id_dsa</code>文件</li>
+<li>ProxyCommand: 这是在目标机器上执行的条命令，<code>%h</code>表示远程机器的地址，<code>%p</code>表示远程机器的ssh端口号，<code>%r</code>表登录远程机器的用户名，这个命令一般被用当做跳板机器的跳转,这个功能功能通常和nc命令一起配置使用，例如：如下指令能够连接HTTP proxy</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ProxyCommand /usr/bin/nc -X connect -x 192.1.0.253:3128 %h %p
+</span></span></code></pre></div><p>LocalForward: 他是用来安全转发流量，连接一个特殊端口，第一个参数是本地绑定的地址，第二个参数是ip和地址</p>
+<ul>
+<li>Port: 远程ssh server的端口号</li>
+</ul>
+<p>LocalForward: ssh协议的版本号码，必须是1或者是2
+ServerAliveInterval： 设置ssh连接的超时时间紧
+ServerAliveCountMax： 设置ssh的最大活跃连接数</p>
+<h3 id="加速ssh-session">加速ssh session</h3>
+<p>opensssh等在一个tcp连接上创建多个ssh同道，这个减少tcp创建的次数，更新本地<code>~/.ssh/config</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>Host server1
+</span></span><span style="display:flex;"><span>    HostName server1.cyberciti.biz
+</span></span><span style="display:flex;"><span>    ControlPath ~/.ssh/controlmasters/%r@%h:%p
+</span></span><span style="display:flex;"><span>    ControlMaster auto
+</span></span></code></pre></div><p>参考<a href="https://www.cyberciti.biz/faq/linux-unix-osx-bsd-ssh-multiplexing-to-speed-up-ssh-connections/">https://www.cyberciti.biz/faq/linux-unix-osx-bsd-ssh-multiplexing-to-speed-up-ssh-connections/</a>
+,<a href="https://www.cyberciti.biz/faq/linux-unix-ssh-proxycommand-passing-through-one-host-gateway-server/">https://www.cyberciti.biz/faq/linux-unix-ssh-proxycommand-passing-through-one-host-gateway-server/</a></p>
+<h1 id="aliases配置">aliases配置</h1>
+<p>你可以创建bash的alias，这样登录的方式更加简单，当然，这一切都是基于前面的配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">## create a new bash shell alias as follow ## </span>
+</span></span><span style="display:flex;"><span>alias server1<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p 4242 nixcraft@server1.cyberciti.biz&#34;</span>
+</span></span></code></pre></div><p>这样使用<code>server1</code>就能登录服务了。</p>
+<p>原文地址: <a href="https://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/">https://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

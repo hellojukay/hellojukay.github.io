@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="某些特殊的原因，我们不小心把一个较大的文件加入到了 git 仓库，并且我们提交了它，git 仓库的大小会瞬间的膨胀起来，有些时候，我们甚至都不知道我们加入的是那个大文件导致，即使我们找到了这个文件，将他从 git 仓库中删除了，但是仓库并没有完全的变小，因为在 .git 这个文件中还保存着这个大文件的内容。我们处理这个问题分三个步骤：
+找到这个大文件 将大文件从仓库中删除 修改 .git 服务器中的文件 clone仓库 如果你本地还没有仓库，那么你应该先将仓库下载到本地
+git clone remote-url 现在你本地有这了这个仓库了，但是你还没有全部的分支，为了保证大文件能能够完全的干净的删除，你需要获取所有的分支，完成这个工作，你还需要一个脚本：
+for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master`; do git branch --track ${branch##*/} $branch done 找到大文件 这里有一个脚本，帮助我们找到那个大文件
+#!/bin/bash #set -x # Shows you the largest objects in your repo&#39;s pack file. # Written for osx. # # @see http://stubbisms.wordpress.com/2009/07/10/git-script-to-show-largest-pack-objects-and-trim-your-waist-line/ # @author Antony Stubbs # set the internal field spereator to line break, so that we can iterate easily over the verify-pack output IFS=$&#39;\n&#39;; # list all objects including their size, sort by size, take top 10 objects=`git verify-pack -v .">  
+
+  <title>
+    
+      【翻译】给git仓库瘦身
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-07-31 00:00:00 &#43;0000 UTC">
+            2018-07-31
+        </time>
+    </p>
+
+    <h1>【翻译】给git仓库瘦身</h1>
+
+    
+
+    <p>某些特殊的原因，我们不小心把一个较大的文件加入到了 git 仓库，并且我们提交了它，git 仓库的大小会瞬间的膨胀起来，有些时候，我们甚至都不知道我们加入的是那个大文件导致，即使我们找到了这个文件，将他从 git 仓库中删除了，但是仓库并没有完全的变小，因为在 .git 这个文件中还保存着这个大文件的内容。我们处理这个问题分三个步骤：</p>
+<ul>
+<li>找到这个大文件</li>
+<li>将大文件从仓库中删除</li>
+<li>修改 .git 服务器中的文件</li>
+</ul>
+<h2 id="clone仓库">clone仓库</h2>
+<p>如果你本地还没有仓库，那么你应该先将仓库下载到本地</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git clone remote-url
+</span></span></code></pre></div><p>现在你本地有这了这个仓库了，但是你还没有全部的分支，为了保证大文件能能够完全的干净的删除，你需要获取所有的分支，完成这个工作，你还需要一个脚本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> branch in <span style="color:#e6db74">`</span>git branch -a | grep remotes | grep -v HEAD | grep -v master<span style="color:#e6db74">`</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    git branch --track <span style="color:#e6db74">${</span>branch##*/<span style="color:#e6db74">}</span> $branch
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h2 id="找到大文件">找到大文件</h2>
+<p>这里有一个脚本，帮助我们找到那个大文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">#set -x </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Shows you the largest objects in your repo&#39;s pack file.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Written for osx.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># @see http://stubbisms.wordpress.com/2009/07/10/git-script-to-show-largest-pack-objects-and-trim-your-waist-line/</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># @author Antony Stubbs</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># set the internal field spereator to line break, so that we can iterate easily over the verify-pack output</span>
+</span></span><span style="display:flex;"><span>IFS<span style="color:#f92672">=</span><span style="color:#e6db74">$&#39;\n&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># list all objects including their size, sort by size, take top 10</span>
+</span></span><span style="display:flex;"><span>objects<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>git verify-pack -v .git/objects/pack/pack-*.idx | grep -v chain | sort -k3nr | head<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;All sizes are in kB. The pack column is the size of the object, compressed, inside the pack file.&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;size,pack,SHA,location&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> y in $objects
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># extract the size in bytes</span>
+</span></span><span style="display:flex;"><span>	size<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span><span style="color:#e6db74">`</span>echo $y | cut -f <span style="color:#ae81ff">5</span> -d <span style="color:#e6db74">&#39; &#39;</span><span style="color:#e6db74">`</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1024</span><span style="color:#66d9ef">))</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># extract the compressed size in bytes</span>
+</span></span><span style="display:flex;"><span>	compressedSize<span style="color:#f92672">=</span><span style="color:#66d9ef">$((</span><span style="color:#e6db74">`</span>echo $y | cut -f <span style="color:#ae81ff">6</span> -d <span style="color:#e6db74">&#39; &#39;</span><span style="color:#e6db74">`</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1024</span><span style="color:#66d9ef">))</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># extract the SHA</span>
+</span></span><span style="display:flex;"><span>	sha<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>echo $y | cut -f <span style="color:#ae81ff">1</span> -d <span style="color:#e6db74">&#39; &#39;</span><span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e"># find the objects location in the repository tree</span>
+</span></span><span style="display:flex;"><span>	other<span style="color:#f92672">=</span><span style="color:#e6db74">`</span>git rev-list --all --objects | grep $sha<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">#lineBreak=`echo -e &#34;\n&#34;`</span>
+</span></span><span style="display:flex;"><span>	output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>output<span style="color:#e6db74">}</span><span style="color:#e6db74">\n</span><span style="color:#e6db74">${</span>size<span style="color:#e6db74">}</span><span style="color:#e6db74">,</span><span style="color:#e6db74">${</span>compressedSize<span style="color:#e6db74">}</span><span style="color:#e6db74">,</span><span style="color:#e6db74">${</span>other<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>echo -e $output | column -t -s <span style="color:#e6db74">&#39;, &#39;</span>
+</span></span></code></pre></div><p>执行这个脚本，你将看到如下的内容：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>All sizes are in kB. The pack column is the size of the object, compressed, inside the pack file.
+</span></span><span style="display:flex;"><span>size     pack    SHA                                       location
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1111686</span>  <span style="color:#ae81ff">132987</span>  a561d25105c79aa4921fb742745de0e791483afa  08-05-2012.sql
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5002</span>     <span style="color:#ae81ff">392</span>     e501b79448b9e970ab89b048b3218c2853fdfc88  foo.sql
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">266</span>      <span style="color:#ae81ff">249</span>     73fa731bb90b04dcf79eeea8fdd637ba7df4c089  app/assets/images/fw/iphone.fw.png
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">265</span>      <span style="color:#ae81ff">43</span>      939b31c563bd40b1ca70e4f4a9f7d67c27c936c0  doc/models_complete.svg
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">247</span>      <span style="color:#ae81ff">39</span>      03514d9e84418573f26b205bae7e4e57057c036f  unprocessed_email_replies.sql
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">193</span>      <span style="color:#ae81ff">49</span>      6e601c4067aaddb26991c4bd5fbddef003800e70  public/assets/jquery-ui.min-0424e108178defa1cc794ee24fc92d24.js
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">178</span>      <span style="color:#ae81ff">30</span>      c014b20b6fed9f17a0b2809ac410d74f291da26e  foo.sql
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">158</span>      <span style="color:#ae81ff">158</span>     15f9e56bc0865f4f303deff053e21909661a716b  app/assets/images/iphone.png
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">103</span>      <span style="color:#ae81ff">36</span>      3135e15c5cec75a4c85a0636b154b83221020c97  public/assets/application-c65733a4a64a1a885b1c32694574b12a.js
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">99</span>       <span style="color:#ae81ff">85</span>      c1c80bc4c09e692d5e2127e39c87ecacdb1e816f  app/assets/images/fw/lovethis_logo_sprint.fw.png
+</span></span></code></pre></div><p>现在，你已经看到了，最大的那个文件是一个1.1GB的SQL dump文件。</p>
+<h2 id="清除大文件">清除大文件</h2>
+<p>清理大文件会花掉相当长的一段时间，这取决你仓库的使用频率，你只需要执行如下命令即可：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> git filter-branch --tag-name-filter cat --index-filter <span style="color:#e6db74">&#39;git rm -r --cached --ignore-unmatch filename&#39;</span> --prune-empty -f -- --all
+</span></span></code></pre></div><p>这里的 filename 填写你需要删除的文件的名字或者是通配符。然后继续执行如下的命令:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rm -rf .git/refs/original/
+</span></span><span style="display:flex;"><span>git reflog expire --expire<span style="color:#f92672">=</span>now --all
+</span></span><span style="display:flex;"><span>git gc --prune<span style="color:#f92672">=</span>now
+</span></span><span style="display:flex;"><span>git gc --aggressive --prune<span style="color:#f92672">=</span>now
+</span></span></code></pre></div><p>至此，你可以使用 du -sh 命令查看，仓库大小已经变小了很多。</p>
+<h2 id="发布本地仓库">发布本地仓库</h2>
+<p>现在只是本地仓库变小了，我们需要将我们的更改发布到远程仓库.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git push origin --force --all
+</span></span><span style="display:flex;"><span>git push origin --force --tags
+</span></span></code></pre></div><p>现在再次 clone 仓库，发现仓库变小了很多。</p>
+<h2 id="原文出处">原文出处</h2>
+<ul>
+<li><a href="http://stevelorek.com/how-to-shrink-a-git-repository.html">http://stevelorek.com/how-to-shrink-a-git-repository.html</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

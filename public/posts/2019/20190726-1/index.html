@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="一个标准的 deb 制作目录如下：
+hellojukay@local hello-ocaml-deb (master) $ tree hello_0.0.1 hello_0.0.1 ├── DEBIAN │ └── control └── usr └── local └── bin └── hello 4 directories, 2 files 更目录下包含一个 DEBIAN/contorl 文件，内容信息如下:
+Package: hello Version: 0.0.1 Section: base Priority: optional Architecture: amd64 Depends: libsomethingorrather (&gt;= 1.2.13), anotherDependency (&gt;= 1.2.6) Maintainer: hellojukay@163.com Description: Hello World Just print Hello &lt;name&gt; to console 其他目录的文本信息会被复制到对应的目录中去，我们使用 dpkg-deb 命令来制作安装包
+dpkg-deb --build hello_0.0.1 如果不出意外的话会生成 hello_0.0.1.deb 文件,安装命令为
+sudo apt install .">  
+
+  <title>
+    
+      如何制作一个 deb 安装包
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-26 00:00:00 &#43;0000 UTC">
+            2019-07-26
+        </time>
+    </p>
+
+    <h1>如何制作一个 deb 安装包</h1>
+
+    
+
+    <p>一个标准的 deb 制作目录如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>hellojukay@local hello-ocaml-deb (master) $ tree hello_0.0.1
+</span></span><span style="display:flex;"><span>hello_0.0.1
+</span></span><span style="display:flex;"><span>├── DEBIAN
+</span></span><span style="display:flex;"><span>│   └── control
+</span></span><span style="display:flex;"><span>└── usr
+</span></span><span style="display:flex;"><span>    └── local
+</span></span><span style="display:flex;"><span>        └── bin
+</span></span><span style="display:flex;"><span>            └── hello
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>4 directories, 2 files
+</span></span></code></pre></div><p>更目录下包含一个 DEBIAN/contorl 文件，内容信息如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>Package: hello
+</span></span><span style="display:flex;"><span>Version: 0.0.1
+</span></span><span style="display:flex;"><span>Section: base
+</span></span><span style="display:flex;"><span>Priority: optional
+</span></span><span style="display:flex;"><span>Architecture: amd64
+</span></span><span style="display:flex;"><span>Depends: libsomethingorrather (&gt;= 1.2.13), anotherDependency (&gt;= 1.2.6)
+</span></span><span style="display:flex;"><span>Maintainer: hellojukay@163.com
+</span></span><span style="display:flex;"><span>Description: Hello World
+</span></span><span style="display:flex;"><span>  Just print Hello &lt;name&gt; to console
+</span></span></code></pre></div><p>其他目录的文本信息会被复制到对应的目录中去，我们使用  dpkg-deb 命令来制作安装包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> dpkg-deb --build hello_0.0.1
+</span></span></code></pre></div><p>如果不出意外的话会生成 hello_0.0.1.deb 文件,安装命令为</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt install ./hello_0.0.1.deb 
+</span></span></code></pre></div><p>这样 hello 包就被安装到系统去了，卸载命令则是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt remove hello
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

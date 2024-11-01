@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="git 经常会搞乱配置 将公司用户邮箱推送到 github 将私人邮箱推送到 gitlab 有必要将2套环境的配置分开，在 git 的 2.13 版本加入了 includeIf 功能：在不同的目录导入不同的配置。 见: https://stackoverflow.com/questions/8801729/is-it-possible-to-have-different-git-configuration-for-different-projects
+[user] name = xiaowang email = xiaowang@qianxin.com [includeIf &#34;gitdir:~/github/&#34;] path = ~/.githubconfig [pull] rebase = false [init] defaultBranch = main 这里定义了默认用户名和邮箱，但是如果项目目录在 ~/github/ 目录则会使用 .githubconfig 中的配置，在 .githubconfig 中可以配置一个新的 用户和邮箱。
+参考:
+https://git-scm.com/docs/git-config#_includes ">  
+
+  <title>
+    
+      git 配置多个用户的方法
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-12-28 00:00:00 &#43;0000 UTC">
+            2021-12-28
+        </time>
+    </p>
+
+    <h1>git 配置多个用户的方法</h1>
+
+    
+
+    <p>git 经常会搞乱配置
+将公司用户邮箱推送到 github
+将私人邮箱推送到 gitlab
+有必要将2套环境的配置分开，在 git 的 2.13 版本加入了 includeIf 功能：在不同的目录导入不同的配置。
+见:
+<a href="https://stackoverflow.com/questions/8801729/is-it-possible-to-have-different-git-configuration-for-different-projects">https://stackoverflow.com/questions/8801729/is-it-possible-to-have-different-git-configuration-for-different-projects</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-toml" data-lang="toml"><span style="display:flex;"><span>[<span style="color:#a6e22e">user</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span> = <span style="color:#a6e22e">xiaowang</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">email</span> = <span style="color:#a6e22e">xiaowang</span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">qianxin</span>.<span style="color:#a6e22e">com</span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">includeIf</span> <span style="color:#e6db74">&#34;gitdir:~/github/&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">path</span> = <span style="color:#960050;background-color:#1e0010">~/</span>.<span style="color:#a6e22e">githubconfig</span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">pull</span>]
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rebase</span> = <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>[<span style="color:#a6e22e">init</span>]
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">defaultBranch</span> = <span style="color:#a6e22e">main</span>
+</span></span></code></pre></div><p>这里定义了默认用户名和邮箱，但是如果项目目录在 ~/github/ 目录则会使用 .githubconfig 中的配置，在 .githubconfig 中可以配置一个新的
+用户和邮箱。</p>
+<p>参考:</p>
+<ul>
+<li><a href="https://git-scm.com/docs/git-config#_includes">https://git-scm.com/docs/git-config#_includes</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

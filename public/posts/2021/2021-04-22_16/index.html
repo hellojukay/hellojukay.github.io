@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="例子如下: .:53 { errors health { lameduck 5s } ready template IN A test.cn { match .*\.test\.cn answer &#34;{{ .Name }} 60 IN A 192.168.1.1&#34; fallthrough } forward . /etc/resolv.conf cache 30 reload loadbalance } 这里创建了一个 &#34;*.test.cn&#34; 的泛域名解析，所有的解析都被指向了地址 &#34;192.168.1.1&#34; 文本参考: 1. https://www.1nth.com/post/coredns_diy/ ">  
+
+  <title>
+    
+      coredns 创建泛域名解析
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-04-22 00:00:00 &#43;0000 UTC">
+            2021-04-22
+        </time>
+    </p>
+
+    <h1>coredns 创建泛域名解析</h1>
+
+    
+
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>例子如下:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>.:53 {
+</span></span><span style="display:flex;"><span>    errors
+</span></span><span style="display:flex;"><span>    health {
+</span></span><span style="display:flex;"><span>      lameduck 5s
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    ready
+</span></span><span style="display:flex;"><span>    template IN A test.cn {
+</span></span><span style="display:flex;"><span>      match .*\.test\.cn
+</span></span><span style="display:flex;"><span>      answer &#34;{{ .Name }} 60 IN A 192.168.1.1&#34;
+</span></span><span style="display:flex;"><span>      fallthrough
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    forward . /etc/resolv.conf
+</span></span><span style="display:flex;"><span>    cache 30
+</span></span><span style="display:flex;"><span>    reload
+</span></span><span style="display:flex;"><span>    loadbalance
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>这里创建了一个 &#34;*.test.cn&#34; 的泛域名解析，所有的解析都被指向了地址 &#34;192.168.1.1&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>文本参考:
+</span></span><span style="display:flex;"><span>  1. https://www.1nth.com/post/coredns_diy/
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

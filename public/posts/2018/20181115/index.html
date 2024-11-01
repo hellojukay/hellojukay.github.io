@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="为什么要监控容器的健康状态 在docker早期，要检查容器的健康状态，只能通过容器内的进程的退出状态，如果进程退出了并且返回了非0的状态，那么docker就认为这个容器是不健康的。但是某些容器，虽然已经退出，但是内部已经死锁了，程序阻塞，已经无法完整正常的功能了，这个时候程序实际上已经是不正常的状态了。但是，这种情况在早期是无法被检查出来的，所以请求还是会分配给这个容器。在1.12版本以后加入了HEALTHCHECK指令，允许在编写Dockerfile的时候设置一个检查将康状态的指令，如果指令返回0，则说说明容器是监看的，反之，容器连续返回非0，则说明容器不监看。
+怎么监控容器的健康状态 监控容器的健康状态,有三种设置方式：
+在Dockerfile中用HEALTHCHECK指令设置检查方式 在docker run命令使用--health-cmd等选项 在docker compose的配置文件中使用healthcheck指令 我们大部分时候都是在Dockerfile中指定HEALTHCHECK [option] CMD [command],当然，如果想要取消基础镜像中的health check，使用HEALTHCHECK NONE配置即可。 对于web服务，我们通常使用curl来检查容器的健康，例如：
+FROM alpine:3.7 ADD web /bin/ RUN echo &#34;http://mirrors.aliyun.com/alpine/v3.7/main/&#34; &gt; /etc/apk/repositories RUN apk update &amp;&amp; apk add curl HEALTHCHECK --interval=5s --timeout=3s CMD curl --fail http://localhost:8080/ping || exit 1 CMD /bin/web version: &#39;3&#39; services: web: image: web container_name: web ports: - 8080:8080 healthcheck: test: [&#34;CMD&#34;,&#34;curl&#34;,&#34;--fail&#34;,&#34; http://localhost:8080/ping&#34;] interval: 5s timeout: 4s retries: 60 当然,docker compose中的健康检查配置会负责dockerfile中的默认配置。
+有什么需要注意的地方 看着上面的配置，有一个需要注意的地方，比如：你是使用curl检查容器的时候，需要考虑该容器中是否安装了curl依赖，如果没有，需要自己手动安装。有一个更加复杂的容器可能还需你自己编写检查工具来检查容器的监控状态。">  
+
+  <title>
+    
+      docker容器健康状态检查
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-15 00:00:00 &#43;0000 UTC">
+            2018-11-15
+        </time>
+    </p>
+
+    <h1>docker容器健康状态检查</h1>
+
+    
+
+    <h1 id="为什么要监控容器的健康状态">为什么要监控容器的健康状态</h1>
+<p>在docker早期，要检查容器的健康状态，只能通过容器内的进程的退出状态，如果进程退出了并且返回了非0的状态，那么docker就认为这个容器是不健康的。但是某些容器，虽然已经退出，但是内部已经死锁了，程序阻塞，已经无法完整正常的功能了，这个时候程序实际上已经是不正常的状态了。但是，这种情况在早期是无法被检查出来的，所以请求还是会分配给这个容器。在1.12版本以后加入了<code>HEALTHCHECK</code>指令，允许在编写<code>Dockerfile</code>的时候设置一个检查将康状态的指令，如果指令返回0，则说说明容器是监看的，反之，容器连续返回非0，则说明容器不监看。</p>
+<h1 id="怎么监控容器的健康状态">怎么监控容器的健康状态</h1>
+<p>监控容器的健康状态,有三种设置方式：</p>
+<ul>
+<li>在Dockerfile中用<code>HEALTHCHECK</code>指令设置检查方式</li>
+<li>在<code>docker run</code>命令使用<code>--health-cmd</code>等选项</li>
+<li>在docker compose的配置文件中使用<code>healthcheck</code>指令
+我们大部分时候都是在<code>Dockerfile</code>中指定<code>HEALTHCHECK [option] CMD [command]</code>,当然，如果想要取消基础镜像中的health check，使用<code>HEALTHCHECK NONE</code>配置即可。</li>
+</ul>
+<p>对于web服务，我们通常使用<code>curl</code>来检查容器的健康，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>FROM alpine:3.7
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ADD web /bin/
+</span></span><span style="display:flex;"><span>RUN echo <span style="color:#e6db74">&#34;http://mirrors.aliyun.com/alpine/v3.7/main/&#34;</span> &gt; /etc/apk/repositories
+</span></span><span style="display:flex;"><span>RUN apk update <span style="color:#f92672">&amp;&amp;</span> apk add curl
+</span></span><span style="display:flex;"><span>HEALTHCHECK --interval<span style="color:#f92672">=</span>5s --timeout<span style="color:#f92672">=</span>3s CMD curl --fail http://localhost:8080/ping <span style="color:#f92672">||</span> exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>CMD /bin/web
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">version</span>: <span style="color:#e6db74">&#39;3&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">services</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">web</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">container_name</span>: <span style="color:#ae81ff">web</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">8080</span>:<span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">healthcheck</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">test</span>: [<span style="color:#e6db74">&#34;CMD&#34;</span>,<span style="color:#e6db74">&#34;curl&#34;</span>,<span style="color:#e6db74">&#34;--fail&#34;</span>,<span style="color:#e6db74">&#34; http://localhost:8080/ping&#34;</span>]
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">interval</span>: <span style="color:#ae81ff">5s</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">timeout</span>: <span style="color:#ae81ff">4s</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">retries</span>: <span style="color:#ae81ff">60</span>
+</span></span></code></pre></div><p>当然,docker compose中的健康检查配置会负责dockerfile中的默认配置。</p>
+<h1 id="有什么需要注意的地方">有什么需要注意的地方</h1>
+<p>看着上面的配置，有一个需要注意的地方，比如：你是使用curl检查容器的时候，需要考虑该容器中是否安装了curl依赖，如果没有，需要自己手动安装。有一个更加复杂的容器可能还需你自己编写检查工具来检查容器的监控状态。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

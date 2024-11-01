@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aciinema on 润物细无声</title>
+    <link>http://localhost:1313/tags/aciinema/</link>
+    <description>Recent content in Aciinema on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 04 Sep 2018 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/aciinema/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>自建asciinema服务器</title>
+      <link>http://localhost:1313/posts/2018/20180904/</link>
+      <pubDate>Tue, 04 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180904/</guid>
+      <description>把自己的终端上传到官方服务器，始终是一件不安全的事情，所以推荐大家自建asciinema服务器。直接使用官方的docker-compose文件，稍加修改就能成功clone官方的项目&#xA;version: &amp;#39;2&amp;#39; services: postgres: image: postgres container_name: asciinema_postgres restart: unless-stopped volumes: - ./volumes/postgres:/var/lib/postgresql/data ### See https://hub.docker.com/_/postgres/ for more ### configuration options for this image. redis: image: redis container_name: asciinema_redis restart: unless-stopped volumes: - ./volumes/redis:/data ### See https://hub.docker.com/_/redis/ for more ### configuration options for this image. smtp: image: namshi/smtp container_name: asciinema_smtp restart: unless-stopped env_file: .env.production ### See https://github.com/namshi/docker-smtp for more SMTP configuration ### options for this image. nginx: image: nginx:alpine container_name: asciinema_nginx restart: unless-stopped links: - phoenix - rails ports: - &amp;#34;3000:80&amp;#34; ### Uncomment for HTTPS: # - &amp;#34;443:443&amp;#34; volumes: - .</description>
+    </item>
+  </channel>
+</rss>

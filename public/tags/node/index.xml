@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Node on 润物细无声</title>
+    <link>http://localhost:1313/tags/node/</link>
+    <description>Recent content in Node on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Mar 2018 21:28:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/node/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>记一次服务部署失败</title>
+      <link>http://localhost:1313/posts/2018/20180316/</link>
+      <pubDate>Fri, 16 Mar 2018 21:28:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180316/</guid>
+      <description>最有golang服务部署一直失败，服务被启动起来以后，打印了两行启动日志，然后立马就自动退出了，没有panic日志，而且在老版本的部署系统上部署是没有这个问题的。而且吧部署系统的使用的命令行复制出来，直接在服务器上执行，进程也能正常启动，并且退出登录以后，程序也不会挂掉，所以我确认我的启动方式是没有问题的，之前那么多的golang服务启动也没有问题，后来下载代码下来看发现代码。这个golang服务监听了SIGHUP信号，收到这个号信号以后程序会调用os.Exit(1)自动退出，然后我用老版本的部署系统启动进程,手动给这个进程发送SIGHUP信号，果然程序自动退出了。于是我想起来了，通知相关的开发人员收到这个信号以后忽略掉。再次部署，一气呵成。事情还没有完，因为我想到了之前部署node服务的时候也发生了这样的问题，一直没有找到原因，不得已放弃nohup的形式，改用pm2来管理进程，所以我怀疑node是不是默认监听了SIGHUP型号，并且收到型号以后自动退出。于是我验证了下，手写了最简单的服务，手动启动，发送SIGHUP型号，果然程序退出了。那么手动忽略这个型号是不是就ok了呢&#xA;var http = require(&amp;#39;http&amp;#39;); var hostname = &amp;#39;127.0.0.1&amp;#39;; var port = 3000; var server = http.createServer(function(req, res) { res.statusCode = 200; res.setHeader(&amp;#39;Content-Type&amp;#39;, &amp;#39;text/html&amp;#39;); res.write(&amp;#39;&amp;lt;head&amp;gt;&amp;lt;meta charset=&amp;#34;utf-8&amp;#34;/&amp;gt;&amp;lt;/head&amp;gt;&amp;#39;); var htmlDiv = &amp;#39;&amp;lt;div style=&amp;#34;width: 200px;height: 200px;background-color: #f0f;&amp;#34;&amp;gt;div&amp;lt;/div&amp;gt;&amp;#39;; res.write(&amp;#39;&amp;lt;b&amp;gt;亲爱的，你慢慢飞，小心前面带刺的玫瑰...&amp;lt;/b&amp;gt;&amp;#39;); res.write(htmlDiv); res.end(&amp;#39;&amp;lt;h1&amp;gt;Hello world!&amp;lt;/h1&amp;gt;&amp;#39;); }); process.on(&amp;#39;SIGHUP&amp;#39;, (err) =&amp;gt; { console.info(err) }); server.listen(port, hostname, function() { console.log(&amp;#39;Server running at http://%s:%s&amp;#39;, hostname, port); }); jukay@localhost ~/C/W/blog(20.5)&amp;gt; lsof -i:3000 五 3/16 17:21:20 2018 COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME node 85016 jukay 13u IPv4 0xd088754a58137eaf 0t0 TCP localhost:hbci (LISTEN) jukay@localhost ~/C/W/blog(20.</description>
+    </item>
+  </channel>
+</rss>

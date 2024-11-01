@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="原文地址: https://docs.docker.com/config/containers/resource_constraints/
+docker容器启动默认对容器资源占用没有做任何限制，只要宿主机器允许，容器是可以无限的占用系统资源。docker提供了一种限制容器占用内存，CPUd等资源的途径，通过在docker run启动容器的时候传递特定的限制参数。建议你在使用容器的时候，尽可能的配置这些参数来限制容器资源占用。
+docker限制资源的功能需要系统内核的支持，使用docker info来检查你的内核版本时候支持这些特性，命令行输出了警告信息，那么说明当前内核不支持此项特性，例如:
+WARNING: No swap limit support 查来系统配置来激活这些特性，文档地址。
+内存 待填坑 ">  
+
+  <title>
+    
+      【翻译】docker容器资源限制最佳
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-10 00:00:00 &#43;0000 UTC">
+            2018-11-10
+        </time>
+    </p>
+
+    <h1>【翻译】docker容器资源限制最佳</h1>
+
+    
+
+    <p>原文地址: <a href="https://docs.docker.com/config/containers/resource_constraints/">https://docs.docker.com/config/containers/resource_constraints/</a></p>
+<p>docker容器启动默认对容器资源占用没有做任何限制，只要宿主机器允许，容器是可以无限的占用系统资源。docker提供了一种限制容器占用内存，CPUd等资源的途径，通过在<code>docker run</code>启动容器的时候传递特定的限制参数。建议你在使用容器的时候，尽可能的配置这些参数来限制容器资源占用。</p>
+<p>docker限制资源的功能需要系统内核的支持，使用<code>docker info</code>来检查你的内核版本时候支持这些特性，命令行输出了警告信息，那么说明当前内核不支持此项特性，例如:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>WARNING: No swap limit support
+</span></span></code></pre></div><p>查来系统配置来激活这些特性，<a href="https://docs.docker.com/install/linux/linux-postinstall/#your-kernel-does-not-support-cgroup-swap-limit-capabilities">文档地址</a>。</p>
+<h1 id="内存">内存</h1>
+<!-- raw HTML omitted -->
+<h1 id="待填坑">待填坑</h1>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在github上浏览项目的时候，看到 How to use it 是个录屏播放的动画，我觉得很炫酷，调研了下，其实他就是用asciinema这个工具生成的。它的项目地址是asciinema
+mac直接可以通过brew 来安装。
+brew install asciinema centos使用yum安装
+yum install -y asciinema 这样就安装好了客户端了。一下是这个软件的使用方法:
+jukay@mac-pro ~/C/W/blog&gt; asciinema -h 367ms  五 5/11 15:23:45 2018 usage: asciinema [-h] [--version] {rec,play,cat,upload,auth} ... Record and share your terminal sessions, the right way. positional arguments: {rec,play,cat,upload,auth} rec Record terminal session play Replay terminal session cat Print full output of terminal session upload Upload locally saved terminal session to asciinema.org auth Manage recordings on asciinema.">  
+
+  <title>
+    
+      asciinema记录你的终端操作
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-11 15:19:00 &#43;0000 UTC">
+            2018-05-11
+        </time>
+    </p>
+
+    <h1>asciinema记录你的终端操作</h1>
+
+    
+
+    <p>    在github上浏览项目的时候，看到 How to use it 是个录屏播放的动画，我觉得很炫酷，调研了下，其实他就是用asciinema这个工具生成的。它的项目地址是<a href="https://github.com/asciinema">asciinema</a></p>
+<p>mac直接可以通过brew 来安装。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>brew install asciinema
+</span></span></code></pre></div><p>centos使用yum安装</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install -y asciinema
+</span></span></code></pre></div><p>这样就安装好了客户端了。一下是这个软件的使用方法:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@mac-pro ~/C/W/blog&gt; asciinema -h                                                                                                        367ms  五  5/11 15:23:45 <span style="color:#ae81ff">2018</span>
+</span></span><span style="display:flex;"><span>usage: asciinema <span style="color:#f92672">[</span>-h<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>--version<span style="color:#f92672">]</span> <span style="color:#f92672">{</span>rec,play,cat,upload,auth<span style="color:#f92672">}</span> ...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Record and share your terminal sessions, the right way.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>positional arguments:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">{</span>rec,play,cat,upload,auth<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    rec                 Record terminal session
+</span></span><span style="display:flex;"><span>    play                Replay terminal session
+</span></span><span style="display:flex;"><span>    cat                 Print full output of terminal session
+</span></span><span style="display:flex;"><span>    upload              Upload locally saved terminal session to asciinema.org
+</span></span><span style="display:flex;"><span>    auth                Manage recordings on asciinema.org account
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>optional arguments:
+</span></span><span style="display:flex;"><span>  -h, --help            show this help message and exit
+</span></span><span style="display:flex;"><span>  --version             show program<span style="color:#960050;background-color:#1e0010">&#39;</span>s version number and exit
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>example usage:
+</span></span><span style="display:flex;"><span>  Record terminal and upload it to asciinema.org:
+</span></span><span style="display:flex;"><span>    asciinema rec
+</span></span><span style="display:flex;"><span>  Record terminal to local file:
+</span></span><span style="display:flex;"><span>    asciinema rec demo.cast
+</span></span><span style="display:flex;"><span>  Record terminal and upload it to asciinema.org, specifying title:
+</span></span><span style="display:flex;"><span>    asciinema rec -t <span style="color:#e6db74">&#34;My git tutorial&#34;</span>
+</span></span><span style="display:flex;"><span>  Record terminal to local file, limiting idle time to max 2.5 sec:
+</span></span><span style="display:flex;"><span>    asciinema rec -i 2.5 demo.cast
+</span></span><span style="display:flex;"><span>  Replay terminal recording from local file:
+</span></span><span style="display:flex;"><span>    asciinema play demo.cast
+</span></span><span style="display:flex;"><span>  Replay terminal recording hosted on asciinema.org:
+</span></span><span style="display:flex;"><span>    asciinema play https://asciinema.org/a/difqlgx86ym6emrmd8u62yqu8
+</span></span><span style="display:flex;"><span>  Print full output of recorded session:
+</span></span><span style="display:flex;"><span>    asciinema cat demo.cast
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>For help on a specific command run:
+</span></span><span style="display:flex;"><span>  asciinema &lt;command&gt; -h
+</span></span></code></pre></div><p>可以将命令行录制成文件文件保存起来，默认是会上传到服务器，这个服务器是默认是asciinema的官网，上传成功后，会输出对应的访问路径。如果你想保存在自己的服务器上，那么你可以安装  <a href="https://github.com/asciinema/asciinema-server">asciinema server</a>,通过命令行参数指定你自己的asciinema server的地址:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ASCIINEMA_API_URL<span style="color:#f92672">=</span>https://your.asciinema.host asciinema rec
+</span></span></code></pre></div><p>当然，我们也可以按 ctrl C 来使录制过程保存在本地，一般会保存在当前系统的/tmp文件夹中的一个随机文件，如果你需要，可以指定文件的目录和名字。录制好了的文件当然也可用asciinema来进行播放。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>asciinema rec myoperation.cast
+</span></span></code></pre></div><p>这条命令执行文件以后就会进如录制阶段，如果要结束录制，直接输入</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>exit
+</span></span></code></pre></div><p>我们来试一下吧:
+<img src="/20180511/test.gif" alt="test">
+我们的操作过程就被录制下来了，那么问题来了：这个gif是怎么生成的呢。详情请参考如下项目:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>https://github.com/asciinema/asciicast2gif
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

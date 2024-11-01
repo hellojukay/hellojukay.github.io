@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="nc命令的全称是netcat，netcat是一款带有hack性质的网络工具，他的功能非常强力。在网络工具中有“瑞士军刀”美誉.
+mac 安装netcat
+brew install netcat ubunt安装netcat
+apt install netcat cenots安装netcat
+yum install netcat 基本参数
+root@tiantian-MS-7A36:~# nc -h GNU netcat 0.7.1, a rewrite of the famous networking tool. Basic usages: connect to somewhere: nc [options] hostname port [port] ... listen for inbound: nc -l -p port [options] [hostname] [port] ... tunnel to somewhere: nc -L hostname:port -p port [options] Mandatory arguments to long options are mandatory for short options too. Options: -c, --close close connection on EOF from stdin -e, --exec=PROGRAM program to exec after connect -g, --gateway=LIST source-routing hop point[s], up to 8 -G, --pointer=NUM source-routing pointer: 4, 8, 12, .">  
+
+  <title>
+    
+      nc命令
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-02-14 00:00:00 &#43;0000 UTC">
+            2018-02-14
+        </time>
+    </p>
+
+    <h1>nc命令</h1>
+
+    
+
+    <p>nc命令的全称是netcat，netcat是一款带有hack性质的网络工具，他的功能非常强力。在网络工具中有“瑞士军刀”美誉.</p>
+<p>mac 安装netcat</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>brew install netcat
+</span></span></code></pre></div><p>ubunt安装netcat</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>apt install netcat
+</span></span></code></pre></div><p>cenots安装netcat</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install netcat
+</span></span></code></pre></div><p>基本参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>root@tiantian-MS-7A36:~# nc -h
+</span></span><span style="display:flex;"><span>GNU netcat 0.7.1, a rewrite of the famous networking tool.
+</span></span><span style="display:flex;"><span>Basic usages:
+</span></span><span style="display:flex;"><span>connect to somewhere:  nc <span style="color:#f92672">[</span>options<span style="color:#f92672">]</span> hostname port <span style="color:#f92672">[</span>port<span style="color:#f92672">]</span> ...
+</span></span><span style="display:flex;"><span>listen <span style="color:#66d9ef">for</span> inbound:    nc -l -p port <span style="color:#f92672">[</span>options<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>hostname<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>port<span style="color:#f92672">]</span> ...
+</span></span><span style="display:flex;"><span>tunnel to somewhere:   nc -L hostname:port -p port <span style="color:#f92672">[</span>options<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Mandatory arguments to long options are mandatory <span style="color:#66d9ef">for</span> short options too.
+</span></span><span style="display:flex;"><span>Options:
+</span></span><span style="display:flex;"><span>  -c, --close                close connection on EOF from stdin
+</span></span><span style="display:flex;"><span>  -e, --exec<span style="color:#f92672">=</span>PROGRAM         program to exec after connect
+</span></span><span style="display:flex;"><span>  -g, --gateway<span style="color:#f92672">=</span>LIST         source-routing hop point<span style="color:#f92672">[</span>s<span style="color:#f92672">]</span>, up to <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>  -G, --pointer<span style="color:#f92672">=</span>NUM          source-routing pointer: 4, 8, 12, ...
+</span></span><span style="display:flex;"><span>  -h, --help                 display this help and exit
+</span></span><span style="display:flex;"><span>  -i, --interval<span style="color:#f92672">=</span>SECS        delay interval <span style="color:#66d9ef">for</span> lines sent, ports scanned
+</span></span><span style="display:flex;"><span>  -l, --listen               listen mode, <span style="color:#66d9ef">for</span> inbound connects
+</span></span><span style="display:flex;"><span>  -L, --tunnel<span style="color:#f92672">=</span>ADDRESS:PORT  forward local port to remote address
+</span></span><span style="display:flex;"><span>  -n, --dont-resolve         numeric-only IP addresses, no DNS
+</span></span><span style="display:flex;"><span>  -o, --output<span style="color:#f92672">=</span>FILE          output hexdump traffic to FILE <span style="color:#f92672">(</span>implies -x<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  -p, --local-port<span style="color:#f92672">=</span>NUM       local port number
+</span></span><span style="display:flex;"><span>  -r, --randomize            randomize local and remote ports
+</span></span><span style="display:flex;"><span>  -s, --source<span style="color:#f92672">=</span>ADDRESS       local source address <span style="color:#f92672">(</span>ip or hostname<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  -t, --tcp                  TCP mode <span style="color:#f92672">(</span>default<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  -T, --telnet               answer using TELNET negotiation
+</span></span><span style="display:flex;"><span>  -u, --udp                  UDP mode
+</span></span><span style="display:flex;"><span>  -v, --verbose              verbose <span style="color:#f92672">(</span>use twice to be more verbose<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  -V, --version              output version information and exit
+</span></span><span style="display:flex;"><span>  -x, --hexdump              hexdump incoming and outgoing traffic
+</span></span><span style="display:flex;"><span>  -w, --wait<span style="color:#f92672">=</span>SECS            timeout <span style="color:#66d9ef">for</span> connects and final net reads
+</span></span><span style="display:flex;"><span>  -z, --zero                 zero-I/O mode <span style="color:#f92672">(</span>used <span style="color:#66d9ef">for</span> scanning<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Remote port number can also be specified as range.  Example: <span style="color:#e6db74">&#39;1-1024&#39;</span>
+</span></span></code></pre></div><p>以上是这个命令的的参数说明，我们来简单举例他的用法。</p>
+<ul>
+<li>实例一 : 文件传递</li>
+</ul>
+<p>server</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc -l <span style="color:#ae81ff">8090</span> &gt; a.txt
+</span></span></code></pre></div><p>client</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat a.txt | nc <span style="color:#f92672">{</span>host<span style="color:#f92672">}</span> <span style="color:#ae81ff">8090</span>
+</span></span></code></pre></div><ul>
+<li>实例二：端口扫描</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc  -v  -z  -r  -i  <span style="color:#ae81ff">1</span>  xiao.tiantian  20-100                              
+</span></span><span style="display:flex;"><span>xiao.tiantian <span style="color:#f92672">[</span>192.168.199.177<span style="color:#f92672">]</span> <span style="color:#ae81ff">22</span> <span style="color:#f92672">(</span>ssh<span style="color:#f92672">)</span> open
+</span></span><span style="display:flex;"><span>xiao.tiantian <span style="color:#f92672">[</span>192.168.199.177<span style="color:#f92672">]</span> <span style="color:#ae81ff">80</span> <span style="color:#f92672">(</span>http<span style="color:#f92672">)</span> open
+</span></span></code></pre></div><p>-v 显示连接信息，默认不显示
+-z 连接端口，但是不发送数据
+-r 端口范围 range
+-i 两次连接的间隔时间</p>
+<ul>
+<li>实例三: shell绑定到端口</li>
+</ul>
+<p>这个功能以为着，你的程序如果连接上了被绑定的端口，你往这个端口发送的数据，都会交给shell解释器来解析执行，这个功能非常不安全，所以一般都飞禁止 -e 这个选项.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc  -l  -p  <span style="color:#ae81ff">1234</span>  -e  /bin/sh
+</span></span></code></pre></div><p>绑定本机的1234端口到shell，如果使用nc连接上这个端口就可以输入命令了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc 127.0.0.1 <span style="color:#ae81ff">1234</span>
+</span></span></code></pre></div><p><img src="/20180214/netcat.gif" alt="x"></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

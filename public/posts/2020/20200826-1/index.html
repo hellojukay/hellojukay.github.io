@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="原文地址: https://linuxhint.com/cron_systemd_timer/
+cron 的问题 你是否在你的计算机上调度过任务，这似乎听起来很简单，当听到这个问题的时候第一反应想到的可能是cron,cron被设计来在特定时间执行特定的任务.cron的设计非常简单，所有有很多问题都没有考虑得到，下面介绍以下 cron存在的问题.
+你使用cron添加了一个数据备份服务，每个月29日的凌晨执行数据远程备份，但是如果这一天系统正好被关闭(可能是停电或者其他问题),当系统恢复的时候以及错过了时间，那么你就错过了一次备份数据，存在数据丢失的风险．
+你使用cron创建了一个任务，每隔10分钟执行一次，但是因为某些原因，你的任务需要15分钟才能执行完毕，这个时候cron 不会等待任务当前的任务执行完毕，而会重新创建一个新的任务，那么这个时候系统上存在２个任务同时运行，存在并发的问题.
+system timer 怎么解决這些问题 cron能将运行记录在系统上，及时系统宕机了，下次启动后任务还能继续执行，虽然定时任务执行的最佳时间是制定的时间，但是在启动后执行总要好过不执行．要使用 timer 首先你要创建一个 service 文件加入到系统中，举例这里编写 backup.service如下
+# 文件 /usr/lib/systemd/system/backup.service; [Unit] Description=clash After=network.target [Service] ExecStart=/usr/bin/date [Install] WantedBy=multi-user.target 然后再编写 timer 文件
+# 文件 /usr/lib/systemd/system/backup.timer [Unit] Description= backup evey minute [Timer] OnCalendar=minutely Unit=backup.service [Install] WantedBy=timers.target 这里 OnCalendar 设置为每分钟执行依次，如果系统宕机了，下次重启服务了，还是会继续执行，因为执行单元是 service 所以不会存在被启动多个实例的情况.OnClendar还能设置很多其他的值
+minutely hourly daily monthly weekly yearly quartly semiannually 这里会存在一哥问题，daily 是什么执行呢？实际上它总是在凌晨00:00的时候执行，也许这个时候是任务执行高峰期，这里建议如果有需要的话配置RandomizeDelaySec选项。如果想要更加精细的控制任务时间可以配置一个准确的日期如：2020-08-26 12:49:37,但是要明确一点，这个任务知会被执行一次，以后就不会再次被出发执行了。如果你希望能够返回被触发执行可以用*来设置日期
+OnClendar=*-*-* 03:00:00 上面这个例子用*-*-*替代年月日了，也就意味着在每年每月每日的 03:00:00 任务都会被触发执行，下面这个例子来设置每年的特定执行
+OnClendar=*-12-25 03:00:00 我们也可以在最后加上 UTC 来表示不要使用本地时间，使用 UTC 时间来代替">  
+
+  <title>
+    
+      ［翻译］下一代 cron - systemd
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-08-26 00:00:00 &#43;0000 UTC">
+            2020-08-26
+        </time>
+    </p>
+
+    <h1>［翻译］下一代 cron - systemd</h1>
+
+    
+
+    <p>原文地址: <a href="https://linuxhint.com/cron_systemd_timer/">https://linuxhint.com/cron_systemd_timer/</a></p>
+<h1 id="cron-的问题">cron 的问题</h1>
+<p>你是否在你的计算机上调度过任务，这似乎听起来很简单，当听到这个问题的时候第一反应想到的可能是<code>cron</code>,<code>cron</code>被设计来在特定时间执行特定的任务.<code>cron</code>的设计非常简单，所有有很多问题都没有考虑得到，下面介绍以下 <code>cron</code>存在的问题.</p>
+<ol>
+<li>
+<p>你使用<code>cron</code>添加了一个数据备份服务，每个月29日的凌晨执行数据远程备份，但是如果这一天系统正好被关闭(可能是停电或者其他问题),当系统恢复的时候以及错过了时间，那么你就错过了一次备份数据，存在数据丢失的风险．</p>
+</li>
+<li>
+<p>你使用<code>cron</code>创建了一个任务，每隔10分钟执行一次，但是因为某些原因，你的任务需要15分钟才能执行完毕，这个时候cron 不会等待任务当前的任务执行完毕，而会重新创建一个新的任务，那么这个时候系统上存在２个任务同时运行，存在并发的问题.</p>
+</li>
+</ol>
+<h1 id="system-timer-怎么解决這些问题">system timer 怎么解决這些问题</h1>
+<p><code>cron</code>能将运行记录在系统上，及时系统宕机了，下次启动后任务还能继续执行，虽然定时任务执行的最佳时间是制定的时间，但是在启动后执行总要好过不执行．要使用 timer 首先你要创建一个 service 文件加入到系统中，举例这里编写 backup.service如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span># 文件 /usr/lib/systemd/system/backup.service;
+</span></span><span style="display:flex;"><span>[Unit]
+</span></span><span style="display:flex;"><span>Description=clash
+</span></span><span style="display:flex;"><span>After=network.target
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Service]
+</span></span><span style="display:flex;"><span>ExecStart=/usr/bin/date 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Install]
+</span></span><span style="display:flex;"><span>WantedBy=multi-user.target
+</span></span></code></pre></div><p>然后再编写 timer 文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span># 文件 /usr/lib/systemd/system/backup.timer
+</span></span><span style="display:flex;"><span>[Unit]
+</span></span><span style="display:flex;"><span>Description= backup evey minute
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Timer]
+</span></span><span style="display:flex;"><span>OnCalendar=minutely
+</span></span><span style="display:flex;"><span>Unit=backup.service
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Install]
+</span></span><span style="display:flex;"><span>WantedBy=timers.target
+</span></span></code></pre></div><p>这里 <code>OnCalendar</code> 设置为每分钟执行依次，如果系统宕机了，下次重启服务了，还是会继续执行，因为执行单元是 <code>service</code> 所以不会存在被启动多个实例的情况.<code>OnClendar</code>还能设置很多其他的值</p>
+<ul>
+<li>minutely</li>
+<li>hourly</li>
+<li>daily</li>
+<li>monthly</li>
+<li>weekly</li>
+<li>yearly</li>
+<li>quartly</li>
+<li>semiannually</li>
+</ul>
+<p>这里会存在一哥问题，daily 是什么执行呢？实际上它总是在凌晨00:00的时候执行，也许这个时候是任务执行高峰期，这里建议如果有需要的话配置<code>RandomizeDelaySec</code>选项。如果想要更加精细的控制任务时间可以配置一个准确的日期如：2020-08-26 12:49:37,但是要明确一点，这个任务知会被执行一次，以后就不会再次被出发执行了。如果你希望能够返回被触发执行可以用<code>*</code>来设置日期</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>OnClendar<span style="color:#f92672">=</span>*-*-* 03:00:00
+</span></span></code></pre></div><p>上面这个例子用<code>*-*-*</code>替代年月日了，也就意味着在每年每月每日的 03:00:00 任务都会被触发执行，下面这个例子来设置每年的特定执行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>OnClendar<span style="color:#f92672">=</span>*-12-25 03:00:00
+</span></span></code></pre></div><p>我们也可以在最后加上 UTC 来表示不要使用本地时间，使用 UTC 时间来代替</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>OnClendar<span style="color:#f92672">=</span>daily UTC
+</span></span></code></pre></div><p>上面说到了<code>RandomizeDelaySec</code>来设置一个任务延迟的最大时间，它的单位是：秒.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>RandomizedDelaySec<span style="color:#f92672">=</span><span style="color:#ae81ff">900</span>
+</span></span></code></pre></div><p>最多延迟 15 分钟</p>
+<p><code>Peristent</code>选项允许记录执行的历史，这样保证服务器宕机重启以后任务还能继续执行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Peristet<span style="color:#f92672">=</span>true
+</span></span></code></pre></div><p><code>OnBootSec</code>选项能设置任务在系统启动后面触发任务，它和<code>OnCalendar</code>不冲突，只要满足2者之一都能触发任务执行.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>OnBootSec<span style="color:#f92672">=</span><span style="color:#ae81ff">180</span>
+</span></span></code></pre></div><p>系统启动以后3分钟执行</p>
+<p>默认情况下，timer添加到系统是被禁止的，如果需要开始，则需要执行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo systemctl enable --noew  xxx.timer
+</span></span></code></pre></div><p>如果修改了 timer 或者 service 也需要通告 systemd 重新加载他们</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo systemctl daemon-reload
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

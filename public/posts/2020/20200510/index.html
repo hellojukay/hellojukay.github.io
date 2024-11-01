@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="我用的是台式机，并且没有网线，使用的是一款 tp-link 的 USB 无线网卡。我在正常的使用 wireshark 抓包的时候无法显示 USB 网卡(没有找到原因)，所以我曲线救国采用 WinDump.exe 来抓包。
+第一步：下载安装 WinDump.exe
+https://www.winpcap.org/windump/install/default.htm 加入到 windows 的 PATH 。
+第二步：查看所有网卡信息
+PS C:\Users\Administrator\Desktop&gt; WinDump.exe -D 1.\Device\NPF_{A00C4DD6-3EBA-4906-98A3-E5E2D9EFEC4F} (Microsoft) 2.\Device\NPF_{1E6AADC2-D4A0-46F3-A74F-E1DD3C5AA083} (MS NDIS 6.0 LoopBack Driver) 3.\Device\NPF_{D1D269B7-514E-4965-8CFC-7ED9CABCD082} (Realtek Ethernet Controller) 4.\Device\NPF_{CBE29DC7-059D-4AA7-B637-C2133E93C983} (Oracle) 5.\Device\NPF_{31D51A9D-8223-49A4-B874-55BD96814DD1} (Microsoft) 6.\Device\NPF_{FDBF2140-0D98-4EF0-86D5-C97E5EBA9121} (Gateway VNIC) 7.\Device\NPF_{AC92470D-66CB-4BDB-BAD1-25E57253E922} (Microsoft) 第三步： 开始抓包
+PS C:\Users\Administrator\Desktop&gt; WinDump.exe -i 5 -w dump.pcap -i 指定接口 -w 写入文件
+但是我还是遇到了一个问题，我抓到的包只有接收流量，没有发出流量。一番搜索找到了原因：
+https://www.winpcap.org/windump/misc/faq.htm
+如果本地开启了 vpn 服务，或者 socks 代理，可能会导致抓包的结果只有接收到的包，而没有发送出去的包。解决这个问题的方式是关闭 vpn 服务(windows 服务),比如我开启了公司的 vpn 服务">  
+
+  <title>
+    
+      windows 上 USB 网卡抓包
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-05-10 00:00:00 &#43;0000 UTC">
+            2020-05-10
+        </time>
+    </p>
+
+    <h1>windows 上 USB 网卡抓包</h1>
+
+    
+
+    <p>我用的是台式机，并且没有网线，使用的是一款 tp-link 的 USB 无线网卡。我在正常的使用 wireshark 抓包的时候无法显示 USB 网卡(没有找到原因)，所以我曲线救国采用 WinDump.exe 来抓包。</p>
+<p>第一步：下载安装 WinDump.exe</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>https://www.winpcap.org/windump/install/default.htm
+</span></span></code></pre></div><p>加入到 windows 的 PATH 。</p>
+<p>第二步：查看所有网卡信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>PS C:\Users\Administrator\Desktop&gt; WinDump.exe -D
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>.\Device\NPF_{A00C4DD6-3EBA-<span style="color:#ae81ff">4906</span>-98A3-E5E2D9EFEC4F} (Microsoft)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>.\Device\NPF_{1E6AADC2-D4A0-46F3-A74F-E1DD3C5AA083} (MS NDIS <span style="color:#ae81ff">6.0</span> LoopBack Driver)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>.\Device\NPF_{D1D269B7-514E-<span style="color:#ae81ff">4965</span>-8CFC-7ED9CABCD082} (Realtek Ethernet Controller)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>.\Device\NPF_{CBE29DC7-<span style="color:#ae81ff">059D</span>-4AA7-B637-C2133E93C983} (Oracle)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5</span>.\Device\NPF_{31D51A9D-<span style="color:#ae81ff">8223</span>-49A4-B874-55BD96814DD1} (Microsoft)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">6</span>.\Device\NPF_{FDBF2140-0D98-4EF0-86D5-C97E5EBA9121} (Gateway VNIC)
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">7</span>.\Device\NPF_{AC92470D-66CB-4BDB-BAD1-25E57253E922} (Microsoft)
+</span></span></code></pre></div><p>第三步： 开始抓包</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>PS C:\Users\Administrator\Desktop&gt; WinDump.exe -i <span style="color:#ae81ff">5</span> -w dump.pcap
+</span></span></code></pre></div><p>-i 指定接口
+-w 写入文件</p>
+<p>但是我还是遇到了一个问题，我抓到的包只有接收流量，没有发出流量。一番搜索找到了原因：</p>
+<p><a href="https://www.winpcap.org/windump/misc/faq.htm">https://www.winpcap.org/windump/misc/faq.htm</a></p>
+<p>如果本地开启了 vpn 服务，或者 socks 代理，可能会导致抓包的结果只有接收到的包，而没有发送出去的包。解决这个问题的方式是关闭 vpn 服务(windows 服务),比如我开启了公司的 vpn 服务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>PS C:\Users\Administrator\Desktop&gt; net start |grep Ga
+</span></span><span style="display:flex;"><span>   Gateway Session Service
+</span></span><span style="display:flex;"><span>   Gateway Updater Service
+</span></span></code></pre></div><p>关闭服务即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>net stop <span style="color:#e6db74">&#39;Gateway Session Service&#39;</span>
+</span></span><span style="display:flex;"><span>net stop <span style="color:#e6db74">&#39;Gateway Updater Service&#39;</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

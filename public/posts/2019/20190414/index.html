@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="使用 vagrant 创建三个虚拟机 安装我们即将用到的工具 yum install git vim java groovy net-tools -y 安装 docker-ce 我们使用阿里云的 docker-ce 源代来安装 # 安装最新版本 yum install docker-ce 我们安装 k8s 相关命令行工具 添加 k8s 的 aliyun 的 yum 源, 编译 vi /etc/yum.repos.d/kubernetes.repo # 加入如下内容 [kubernetes] name=Kubernetes baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/ enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg 安装相关命令行工具 yum install -y kubeadm kubectl kubelet 将 kubelet 加入到服务 systemctl enable kubelet 设置系统 关闭防火墙 systemctl stop firewalld systemctl disable firewalld 关闭交换分区 swapoff -a sudo sed -i &#39;/ swap / s/^\(.">  
+
+  <title>
+    
+      基于 vagrant 的 k8s 安装过程
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-04-14 00:00:00 &#43;0000 UTC">
+            2019-04-14
+        </time>
+    </p>
+
+    <h1>基于 vagrant 的 k8s 安装过程</h1>
+
+    
+
+    <h2 id="使用-vagrant-创建三个虚拟机">使用 vagrant 创建三个虚拟机</h2>
+<ol>
+<li>安装我们即将用到的工具</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install git vim java groovy net-tools -y
+</span></span></code></pre></div><h2 id="安装-docker-ce">安装 docker-ce</h2>
+<ol>
+<li>我们使用阿里云的 docker-ce 源代来安装</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 安装最新版本</span>
+</span></span><span style="display:flex;"><span>yum install docker-ce
+</span></span></code></pre></div><h2 id="我们安装-k8s-相关命令行工具">我们安装 k8s 相关命令行工具</h2>
+<ol>
+<li>添加 k8s 的 aliyun 的 yum 源, 编译</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vi /etc/yum.repos.d/kubernetes.repo
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 加入如下内容</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>kubernetes<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>name<span style="color:#f92672">=</span>Kubernetes
+</span></span><span style="display:flex;"><span>baseurl<span style="color:#f92672">=</span>https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+</span></span><span style="display:flex;"><span>enabled<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>gpgcheck<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>repo_gpgcheck<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>gpgkey<span style="color:#f92672">=</span>https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+</span></span></code></pre></div><ol start="2">
+<li>安装相关命令行工具</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install -y kubeadm kubectl kubelet
+</span></span></code></pre></div><ol start="3">
+<li>将 kubelet 加入到服务</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl enable kubelet
+</span></span></code></pre></div><h2 id="设置系统">设置系统</h2>
+<ol>
+<li>关闭防火墙</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl stop firewalld
+</span></span><span style="display:flex;"><span>systemctl disable firewalld
+</span></span></code></pre></div><ol start="2">
+<li>关闭交换分区</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>swapoff -a
+</span></span><span style="display:flex;"><span>sudo sed -i <span style="color:#e6db74">&#39;/ swap / s/^\(.*\)$/#\1/g&#39;</span> /etc/fstab
+</span></span></code></pre></div><ol start="3">
+<li>关闭 selinux</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>setenforce <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 编辑 /etc/selinux/config 加入一行</span>
+</span></span><span style="display:flex;"><span>SELINUX<span style="color:#f92672">=</span>disabled
+</span></span></code></pre></div><ol start="4">
+<li>禁止 iptables 对 bridge 数据进行处理</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF &gt;  /etc/sysctl.d/k8s.conf
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-ip6tables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-iptables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>sysctl -p /etc/sysctl.d/k8s.conf
+</span></span></code></pre></div><h2 id="安装-k8s-master">安装 k8s-master</h2>
+<ol>
+<li>获取镜像</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>git clone https://github.com/hellojukay/k8s-sync.git
+</span></span><span style="display:flex;"><span>cd k8s-sync
+</span></span><span style="display:flex;"><span>groovy pull.groovy
+</span></span></code></pre></div><ol start="2">
+<li>启动 kubelet</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl start kubelet
+</span></span></code></pre></div><ol start="3">
+<li>启动安装</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm init --kubernetes-version<span style="color:#f92672">=</span>v1.14.1 --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address<span style="color:#f92672">=</span>192.168.199.101
+</span></span></code></pre></div><ol start="4">
+<li>初始化成功</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Your Kubernetes control-plane has initialized successfully!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>To start using your cluster, you need to run the following as a regular user:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>  sudo chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>You should now deploy a pod network to the cluster.
+</span></span><span style="display:flex;"><span>Run <span style="color:#e6db74">&#34;kubectl apply -f [podnetwork].yaml&#34;</span> with one of the options listed at:
+</span></span><span style="display:flex;"><span>  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Then you can join any number of worker nodes by running the following on each as root:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kubeadm join 10.0.2.15:6443 --token 93rvon.wr2c96zgz0jbux4g <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --discovery-token-ca-cert-hash &lt;token&gt;
+</span></span></code></pre></div><blockquote>
+<p>如果这个 token 你忘记了，或者失效了， 可以通过 kubeadm token create 在创建一个新的.
+按照提示， 退出 root 账户</p>
+</blockquote>
+<h2 id="使用前初始化">使用前初始化</h2>
+<ol>
+<li>拷贝配置</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@node1 ~<span style="color:#f92672">]</span>$   mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@node1 ~<span style="color:#f92672">]</span>$   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@node1 ~<span style="color:#f92672">]</span>$   sudo chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@node1 ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><ol start="2">
+<li>添加一个网络 pod</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+</span></span><span style="display:flex;"><span>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml
+</span></span></code></pre></div><ol start="3">
+<li>查看一下</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@node1 ~<span style="color:#f92672">]</span>$ kubectl get node
+</span></span><span style="display:flex;"><span>NAME    STATUS     ROLES    AGE     VERSION
+</span></span><span style="display:flex;"><span>node1   NotReady   master   6m24s   v1.14.1
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>vagrant@node1 ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><ol start="4">
+<li>生成 join 命令</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm join 192.168.59.101:6443 --token x08flq.zkeyh91keapret3j     --discovery-token-ca-cert-hash &lt;token&gt;
+</span></span></code></pre></div><h2 id="一些坑">一些坑</h2>
+<p><code>k8s.gcr.io/pause</code> 和　<code>quay.io/coreos/flannel</code> 这两个镜像的服务都是 deamonSet , 所以在所有节点上都需要部署．</p>
+<h2 id="2020-12-14日添加">2020-12-14日添加</h2>
+<p>可以使用阿里云的公开仓库来加速 <code>kubeadm</code> 的下载镜像速度</p>
+<pre tabindex="0"><code> kubeadm init --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre>
+</article>
+
+            </div>
+        </main>
+    </body></html>

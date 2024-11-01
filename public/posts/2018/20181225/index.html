@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天介绍一个简单的端口转发工具:rinetd， 这个工具的安装和配置非常的简单。
+安装 使用源码安装的方式来安装这个工具
+[root@localhost rinetd]# cd ~/zhenyutest/ [root@localhost rinetd]# wget http://www.boutell.com/rinetd/http/rinetd.tar.gz [root@localhost rinetd]# tar -xvf ~/zhenyutest/rinetd.tar.gz [root@localhost rinetd]# cd ~/zhenyutest/rinetd/ [root@localhost rinetd]# sed -i &#39;s/65536/65535/g&#39; rinetd.c [root@localhost rinetd]# mkdir /usr/man/ [root@localhost rinetd]# make &amp;&amp; make install cc -DLINUX -g -c -o rinetd.o rinetd.c rinetd.c:176:6: 警告：与内建函数‘log’类型冲突 [默认启用] void log(int i, int coSe, int result); ^ cc -DLINUX -g -c -o match.o match.c gcc rinetd.o match.o -o rinetd install -m 700 rinetd /usr/sbin install -m 644 rinetd.">  
+
+  <title>
+    
+      一个简单的端口转发方式
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-12-25 00:00:00 &#43;0000 UTC">
+            2018-12-25
+        </time>
+    </p>
+
+    <h1>一个简单的端口转发方式</h1>
+
+    
+
+    <p>今天介绍一个简单的端口转发工具:<a href="https://www.boutell.com/rinetd/">rinetd</a>， 这个工具的安装和配置非常的简单。</p>
+<h2 id="安装">安装</h2>
+<p>使用源码安装的方式来安装这个工具</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># cd ~/zhenyutest/</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># wget http://www.boutell.com/rinetd/http/rinetd.tar.gz</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># tar -xvf ~/zhenyutest/rinetd.tar.gz</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># cd ~/zhenyutest/rinetd/</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># sed -i &#39;s/65536/65535/g&#39; rinetd.c</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># mkdir /usr/man/</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e"># make &amp;&amp; make install</span>
+</span></span><span style="display:flex;"><span>cc -DLINUX -g   -c -o rinetd.o rinetd.c
+</span></span><span style="display:flex;"><span>rinetd.c:176:6: 警告：与内建函数‘log’类型冲突 <span style="color:#f92672">[</span>默认启用<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>   void log<span style="color:#f92672">(</span>int i, int coSe, int result<span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span>           ^
+</span></span><span style="display:flex;"><span>cc -DLINUX -g   -c -o match.o match.c
+</span></span><span style="display:flex;"><span>gcc rinetd.o match.o -o rinetd
+</span></span><span style="display:flex;"><span>install -m <span style="color:#ae81ff">700</span> rinetd /usr/sbin
+</span></span><span style="display:flex;"><span>install -m <span style="color:#ae81ff">644</span> rinetd.8 /usr/man/man8
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@localhost rinetd<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><h2 id="配置">配置</h2>
+<p>配置文件的是<code>/etc/rinetd.conf</code>,配置的方式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[root@localhost rinetd]# vi /etc/rinetd.conf
+</span></span><span style="display:flex;"><span>0.0.0.0 8080 192.168.92.9 8080
+</span></span></code></pre></div><p>监听8080端口，转发到 192.168.92.8 服务器的8080端口。</p>
+<h2 id="运行">运行</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rinetd -c /etc/rinetd.conf
+</span></span></code></pre></div><p>就能启动程序，开启端口发转功能。</p>
+<p>最后，不要忘记了修改防火墙，开放端口🙂。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

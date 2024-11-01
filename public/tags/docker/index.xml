@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 润物细无声</title>
+    <link>http://localhost:1313/tags/docker/</link>
+    <description>Recent content in Docker on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 24 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>记一次 docker 路由冲突</title>
+      <link>http://localhost:1313/posts/2020/20201124/</link>
+      <pubDate>Tue, 24 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201124/</guid>
+      <description>有两位研发告诉我，他们无法访开发服务器了，过了一会儿我被拉到一个群聊中，群里都是在吐槽无法访问开发服务器的问题，我被有要求来排查这个问题。群里也有 OPS 的同学，他们发现 iptables 中有很多 docker 注入的策略。docker 的网络策略和宿主机的防火墙测试是不兼容的，如果修改了服务器的防火墙配置，会导致无法重启 docker 容器。这里的问题是大家无法访问服务器的 ssh 端口。这个问题最诡异的地方是，我登录服务器没有问题，但是其他的同学通过本地登录服务器都不行，但是其他人可以通过别的服务器跳转一次登录到服务器上。我开始怀疑是防火墙的策略的问题，没有技术的我看不懂防火墙输出的策略日志。于是关闭防火墙试试，还是不行，还是无法访问。我想到了是不是因为 ip 段的问题，我的 ip 和其他的同事的不一样，因为我在武汉，其他人在北京。我们不是一个网段的。我想到路由信息会收到网段的影响，我问了2个同事的 ip 地址&#xA;10.43.77.42 10.43.75.35 然后看了一样服务器上的路由配置&#xA;Destination Gateway Genmask Flags Metric Ref Use Iface 0.0.0.0 10.249.104.1 0.0.0.0 UG 0 0 0 eth0 10.32.0.0 0.0.0.0 255.240.0.0 U 0 0 0 weave 10.249.104.0 0.0.0.0 255.255.252.0 U 0 0 0 eth0 172.17.0.0 0.0.0.0 255.255.0.0 U 0 0 0 docker0 写段小代码可以发现，这个 10.43.77.42 地址能被路由到 weave 这个 docker 网卡中，所有导致数据丢失&#xA;package main import ( &amp;#34;net&amp;#34; ) func main() { ip := net.</description>
+    </item>
+    <item>
+      <title>docker 的 namespace</title>
+      <link>http://localhost:1313/posts/2020/20201120/</link>
+      <pubDate>Fri, 20 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201120/</guid>
+      <description>docker 容器最终还是运行在内核上的一个进程, 我们在容器中无法访问外部资源是因为 namespace 的隔离作用, 主要隔离的有:&#xA;pid # 进程 networkd # 网络 mount # 文件系统 pid 默认情况下在容器内部是无法访问外部的, 可以可以在运行容器的时候加上 &amp;ndash;pid=host 参数让容器中的进程和宿主机器上的进程相互可见&#xA;vagrant@archlinux ~ $ docker run -it --pid=host rust:latest bash root@bb8d7e679d1d:/# ps aux USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND root 1 0.0 0.1 29196 11860 ? Ss Nov19 0:04 /sbin/init root 2 0.0 0.0 0 0 ? S Nov19 0:00 [kthreadd] root 3 0.0 0.0 0 0 ?</description>
+    </item>
+    <item>
+      <title>解决 code = Unknown desc = filesystem layer verification failed for digest</title>
+      <link>http://localhost:1313/posts/2020/20200327/</link>
+      <pubDate>Fri, 27 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200327/</guid>
+      <description>有时候在 pull 一个 docker 镜像的时候，会出现:&#xA;code = Unknown desc = filesystem layer verification failed for digest 不管你是重装 docker , 或者重启服务器，或者在别的机器上 pull 这个镜像，还是无法成功。暂时找到一个种解决方案: 曲线救国，手动导入镜像。&#xA;第一步：在别的机器导出这个镜像（前提是这个镜像在别的服务器已经存在)&#xA;docker save {iamge} &amp;gt; xxx.tar 第二步：上传镜像文件到服务器&#xA;scrp xxx.tar user@host:/xxx 第三步：导入这个镜像文件&#xA;docker load -i xxx.tar </description>
+    </item>
+    <item>
+      <title>jenkins slave 清理过期镜像的方法</title>
+      <link>http://localhost:1313/posts/2019/20190522/</link>
+      <pubDate>Wed, 22 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190522/</guid>
+      <description>jenkins 上一直在不停的构建新的镜像，导致镜像越来越多，写满了 /var/lib/docekr 所在的分区，所以我们需要定期的清理多余的镜像。&#xA;一般的，我们在开发周期构建镜像的时候，没有修改过镜像的版本号码，一个进行不停的 retag , 这样老的镜像的 tag 就会被覆盖，tag　变成 none。&#xA;node 8 0bf36d7ccc1e 4 weeks ago 895MB maven 3-jdk-8 f44a5194086a 5 weeks ago 636MB &amp;lt;none&amp;gt; &amp;lt;none&amp;gt; 6752e2093697 5 weeks ago 12.9MB swaggerapi/swagger-ui latest 6f941e6fd913 5 weeks ago 51.7MB 这种 tag 为 none 的镜像就已经可以删除了。 jenkins 上可以创建如下任务来删除这些没有作用的镜像。&#xA;pipeline { agent { label &amp;#34;node1&amp;#34; } stages { stage(&amp;#34;clean images with tag none&amp;#34;){ steps { parallel( node1: { sh(&amp;#34;docker image ls | grep none | awk &amp;#39;{print \$3}&amp;#39; | xargs -I {} docker rmi {} || true&amp;#34;) }, node2:{ sh(&amp;#34;docker image ls | grep months | awk &amp;#39;{print \$3}&amp;#39; | xargs -I {} docker rmi {} || true&amp;#34;) }) } } } } </description>
+    </item>
+    <item>
+      <title>在 docker 中运行 shadowsocks 客户端</title>
+      <link>http://localhost:1313/posts/2019/20190429/</link>
+      <pubDate>Mon, 29 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190429/</guid>
+      <description>deepin 升级了以后, 不知道是哪个系统包被升级了, 我的 shadowsocks 客户端一直不能正常使用正常使用, 尝试和很多方法没有解决. 最后我终于开窍了: 此路不通, 我换条路走.&#xA;在 chrome 里面配置了插件 SwitchyOmega , 这个插件里面配置了代理服务器的地址和端口, 通常这个地址和端口是本机的 shadowsocks client, 好傻. 宿主机器上依赖有问题, 那我何不将 shadowsocks client 允许在 docker 中呢, 说这我就到 dockerhub 上找到了对于的镜像：&#xA;*　https://hub.docker.com/r/mritd/shadowsocks/&#xA;符合条件的镜像很多，　这个是使用最多的一个．　于是研究了一下这个镜像，Dockerfile 写的挺复杂的，启动参数也不够友好．　于是，参考他的 Dockerfile　删掉了一些功能和配置． 我从新打了一个新的镜像，　参数更加简单了，　对 docker-compose 支持也更加友好了．&#xA;docker pull hellojukay/shadowsocks:1.0.0 我也将这个镜像开源到 dockerhub 上了，　使用方式非常简单&#xA;https://hub.docker.com/r/hellojukay/shadowsocks&#xA;version: &amp;#39;2&amp;#39; services: ssclient: image: hellojukay/shadowsocks:1.0.0 container_name: &amp;#39;ssclient&amp;#39; restart: always ports: - 1080:1080 environment: SERVER: &amp;#39;xxx&amp;#39; PORT: xxx LISTEN: 1080 METHOD: &amp;#39;chacha20-ietf-poly1305&amp;#39; PASSWD: &amp;#39;q6Gsdfsdfx9sd&amp;#39; 使用 docker-compose 启动即可</description>
+    </item>
+    <item>
+      <title>k8s版本问题</title>
+      <link>http://localhost:1313/posts/2019/20190412/</link>
+      <pubDate>Fri, 12 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190412/</guid>
+      <description>对于镜像安装 k8s 而言, 所有版本的 k8s 都有一套配套的镜像, 通过&#xA;kubeadm config images list --kubernetes-version 1.13.0 看到对于的镜像, 1.13.0 版本所需要的镜像如下:&#xA;k8s.gcr.io/kube-apiserver:v1.13.0 k8s.gcr.io/kube-controller-manager:v1.13.0 k8s.gcr.io/kube-scheduler:v1.13.0 k8s.gcr.io/kube-proxy:v1.13.0 k8s.gcr.io/pause:3.1 k8s.gcr.io/etcd:3.2.24 k8s.gcr.io/coredns:1.3 </description>
+    </item>
+    <item>
+      <title>【翻译】docker run手册</title>
+      <link>http://localhost:1313/posts/2019/20190304/</link>
+      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190304/</guid>
+      <description>docker运行的进程是相互隔离的，一个容器在宿主机器上也就是一个普通的进程。当执行docker run的时候，一个容器进程会被启动，他有自己的文件系统，有自己的网络，有自己的进程树。这篇文章将会详细额介绍docker run的每个命令行参数，来通知容器的运行时状态。&#xA;基本的docker run看起来像这样:&#xA;$ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...] docker run命令必须给定一个明确的镜像。容器执行能够指定如下参数：&#xA;前台运行还是后台运行 容器的唯一标示 网络设置 运行是时的CPU和内存相关设置 使用docker run命令行选项能够覆盖镜像的一些默认参数。因为docker版本的设置，你运行docker命令的时候，也许需要sudo，为了避免在执行docker命令的时候使用sudo,你可以创建一个docker的用户组，将当前用户加入到docker这个用户分组中来。&#xA;前台运行还是后台运行 默认情况下，启动容器后容器是前台运行的，如果你需要容器在后台运行，那么你需要使用 -d选项来指定运行模式。&#xA;-d=false: Detached mode: Run container in the background, print new container id 启动容器的时候，使用-d=true或者直接-d选项，容器会在后台启动。docker容器设计的是，当容器中的进程退出，那么容器就会自动退出。除非你使用了--rm选项。如果你同时使用-d和--rm选项，容器中进程退出偶，容器首先就会被删除掉。&#xA;不要使用service x start来启动一个后台的容器，例如，这里尝试启动nginx服务：&#xA;$ docker run -d -p 80:80 my_image service nginx start 这里成功的启动了nginx服务，然而这样nginx经常退出，容器是没有感知的，最后导致以为服务存在，其实是服务是不可用的。正确的启动nginx的方式如下:&#xA;$ docker run -d -p 80:80 my_image nginx -g &amp;#39;daemon off;&amp;#39; 在前台运行的模式(默认-d选项是不激活的)，docker容器是在前台运行的，能够在当前的终端输入输入信息，以及错误输出。&#xA;容器的唯一标示 唯一标示一个容器有三种方式&#xA;标示类型 例子 UUID &amp;ldquo;f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778&amp;rdquo; 短UUID &amp;ldquo;f78375b1c487&amp;rdquo; 容器名字 &amp;ldquo;evil_ptolemy&amp;rdquo; UUID产生自后台运行的容器，如果一个容器在启动的时候没有通过--name指定容器名字，那么就会产生一段随机的字符串作为容器的唯一标示。这段随机字符串一个一串uuid，它的长度很长，通常情况我们只需取前面几个字符就能唯一标示一个容器了。如果容器指定了名字，那么容器容器和使用容器ID一样的效果。 我们可以通过--cidfile选择来指定一个文件，容器的ID会被自动写入到这个文件中。</description>
+    </item>
+    <item>
+      <title>使用aliyun的yum仓库安装docker</title>
+      <link>http://localhost:1313/posts/2019/20190227/</link>
+      <pubDate>Wed, 27 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190227/</guid>
+      <description>默认情况下使用docker官方的yum源来安装docker,因为网络下载慢，所以非常耗时。还好阿里云提供了yum镜像功能，所以我们能使用阿里云的yum源来加速我们的docker安装。使用方式如下：&#xA;删除已经安装的docker工具 sudo yum remove docker \ docker-client \ docker-client-latest \ docker-common \ docker-latest \ docker-latest-logrotate \ docker-logrotate \ docker-selinux \ docker-engine-selinux \ docker-engine 安装部分依赖工具 sudo yum install -y yum-utils device-mapper-persistent-data lvm2 添加阿里云yum源 sudo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo 查看所有的docker包 bash-4.2$ yum list docker-ce --showduplicates Loaded plugins: fastestmirror Determining fastest mirrors elasticsearch-6.x 405/405 Installed Packages docker-ce.x86_64 18.06.0.ce-3.el7 @docker-ce-stable Available Packages docker-ce.x86_64 17.03.0.ce-1.el7.centos docker-ce-stable docker-ce.x86_64 17.03.1.ce-1.el7.centos docker-ce-stable docker-ce.x86_64 17.</description>
+    </item>
+    <item>
+      <title>在docker-compose中使用环境变量</title>
+      <link>http://localhost:1313/posts/2019/20190122-1/</link>
+      <pubDate>Tue, 22 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190122-1/</guid>
+      <description>和Makefile一样，docker compose中也是可以使用环境变量的，也是使用${var}这样的方式来使用&#xA;version: &amp;#39;3&amp;#39; services: app: build: context: ./docker/app dockerfile: Dockerfile image: shippingdocker/app:latest networks: - appnet volumes: - .:/var/www/html ports: - ${APP_PORT}:80 working_dir: /var/www/html cache: image: redis:alpine networks: - appnet volumes: - cachedata:/data db: image: mysql:5.7 environment: MYSQL_ROOT_PASSWORD: secret MYSQL_DATABASE: homestead MYSQL_USER: homestead MYSQL_PASSWORD: secret ports: - ${DB_PORT}:3306 networks: - appnet volumes: - dbdata:/var/lib/mysql node: build: context: ./docker/node dockerfile: Dockerfile image: shippingdocker/node:latest networks: - appnet volumes: - .:/opt working_dir: /opt command: echo hi networks: appnet: driver: bridge volumes: dbdata: driver: local cachedata: driver: local 这里面好几个端口都是使用的环境变了来指定的，我们可以在启动docker compose的时候，传递这个环境变量</description>
+    </item>
+    <item>
+      <title>docker删除镜像卡顿</title>
+      <link>http://localhost:1313/posts/2018/20181229/</link>
+      <pubDate>Sat, 29 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181229/</guid>
+      <description>线上编译卡主了，卡在执行 docker rmi {image}:{tag} 的地方，我知道执行 docker images 会很卡，但是没有想到删除镜像也会卡主。我的猜测是镜像太多的原因，所以我想删除一部分到的镜像，但是当我执行 docker rmi $(docker images -aq) 还是很卡。执行了一下 docker system df 果然，镜像存储已经快要占用了满了。&#xA;所以我想暴力解决问题，直接删除 /var/lib/docker 文件夹，因为所有的镜像和卷都是存储在这个文件夹中了。 systemctl stop docker 先关闭docker进程，然后删除文件夹，但是提示我文件夹被占用，其实是没有被占用的。所以我重启了机器 reboot ，让后再关闭docker,删除 /var/lib/docker 。大功告成.&#xA;2018年12月30日更新 /var/lib/docker 这个目录是docker的工作目录，里面存储了镜像，网络，volume，容器。所以说，如果删除这个文件，那么以上所有东西都会被删除, 当然登录仓库的信息也会被删除，也就是说你需要重新登录一次仓库.</description>
+    </item>
+    <item>
+      <title>Docker开发最佳实践</title>
+      <link>http://localhost:1313/posts/2018/20181129/</link>
+      <pubDate>Thu, 29 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181129/</guid>
+      <description>这里有一些关于在Docker使用中一些使用的小技巧,如果你还有其他技巧，欢迎你如我分享受。&#xA;控制镜像的体积 小的镜像能够加快Docker pull的速度也能够更快的被加载到内容中，容器服务器能够更快的启动起来。但是要保证容器体积小，你需要注意如下事项:&#xA;使用一个精简的基础镜像，比如：如果你要使用jdk，那么请你使用openjdk的镜像，而不是在ubuntu的镜像上安装jdk。 使用多步骤编译镜像。例如，你可以使用maven的镜像来编译你的java项目，让后讲java项目的jar包产物copy到tomcat镜像中，这也就以为你最终的镜像中不包含编译期间的以来，比如maven等。 如果你使用Docker版本没有多步骤编译功能，那么你请减少容器的层数，也就是RUN执行的数量，每一条RUN指令都会产生一个新的层。考虑如下指令: RUN apt-get -y update RUN apt-get install -y python 替换成如下指令，镜像体积会更小:&#xA;RUN apt-get -y update &amp;amp;&amp;amp; apt-get install -y python 如果你有多步骤编译，那么请可以使用一个基本的基础镜像，其他的镜像在加载的时候也会加载这些公共的层，并且会被换成起来，只加载一次，也就是说会提交加载的效率。 为了让你的镜像能够调试，请在镜像中加入一些必要的调试工具。 在镜像编译成功以后，一定要给镜像添加必要的tag，比如:prod,test等，务必不要使用自动生成的latest tag。 如何数据持久化 避免在容器的可写入层使用driver的方式来持久化文件，这会增加容器的大小，他比挂在目录和容器卷效率更加低。 使用容器卷来持久化数据。 使用service来保存敏感数据，使用配置来保存不敏感的数据。 Docker在开发环境和生成环境的差异 在开发环境使用文件挂在的方式，在生产环境使用容器卷挂在的方式 在开发环境使用Docker for mac 或者Docker for Windwows ,但是生产环境使用Docker EE </description>
+    </item>
+    <item>
+      <title>【翻译】理解容器中的uid和gid的工作方式</title>
+      <link>http://localhost:1313/posts/2018/20181116/</link>
+      <pubDate>Fri, 16 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181116/</guid>
+      <description>理解容器和宿主机之间的uid和gid是如何映射的，这对于容器安全运维非常重要。如果不加选项，容器中的进程是默认使用root用户运行，除非在Dockerfile中有指定为其他用户。这篇文章将会想你uid和gid在容器是如何工作的，并且会想你详细展示过程。&#xA;一步一步分析uid和gid 首先，我们来回顾下uid和gid在内核中是如何被实现的，内核通过uid和gui来判断当前系统调用是否有权限。例如：当一个试图向某个文件中写入文件的时候，内行会检查当程序的uid和gid，并且判断是否权限修改这个文件，检查权限的时候是不区分用户名的。&#xA;当一个容器运行在服务器上的时候，事实上这个容器中的进程和宿主机器共用一个系统内核。容器化带来的巨大好处是，在分割了进程的同时公用一个内核。这也就意味着，运行在容器中的进程，他们进程的uid和gid被同一个内核管理。&#xA;你不能在不同的容器中使用不同的用户名但是用着相同的uid。因为系统中显示用户名和组名的工具不属于系统内核，他们被外部的/etc/passwd,LDAP等工具管理者，所以你能看到不同的用户名和组名，但是他们不会有相同的uid和gid，在不同的容器中。接下来让我用一些小例子来解释。&#xA;简单的Docker run 接下我将使用marc这个用户名，这个用户名已经事先加入到了doker group中了,不需要使用sudo就能启动一个容器了，在容器之外我们能看到如下信息:&#xA;marc@server:~$ docker run -d ubuntu:latest sleep infinity 92c57a8a4eda60678f049b906f99053cbe3bf68a7261f118e411dee173484d10 marc@server:~$ ps aux | grep sleep root 15638 0.1 0.0 4380 808 ? Ss 19:49 0:00 sleep infinity 非要有意思，虽然我没有使用sudo，我当前用户也不是root用户，但是sleepe这个进程却拥有root权限。我是如何如何发现他有root权限的能？容器内的root和容器外的root是等价的吗？是的，因为他们是允许在同一系统内核上的，sleep在容器外展示的用户名是root，所以能断定容器的uid=0。&#xA;Dockerfile定义一个用户 当我在Dockerfile中设置一个用户，并且使用这个用户启动容器，会发生什么呢？为了简化这个例子，我当前也不是一个特殊的gid，我使用marc这个用户来运行命令，当前的uid=1001。&#xA;marc@server:~$ echo $UID 1001 编写Dockerfile&#xA;FROM ubuntu:latest RUN useradd -r -u 1001 -g appuser appuser USER appuser ENTRYPOINT [“sleep”, “infinity”] 接下来构建运行这个容器:&#xA;marc@server:~$ docker build -t test . Sending build context to Docker daemon 14.</description>
+    </item>
+    <item>
+      <title>docker容器健康状态检查</title>
+      <link>http://localhost:1313/posts/2018/20181115/</link>
+      <pubDate>Thu, 15 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181115/</guid>
+      <description>为什么要监控容器的健康状态 在docker早期，要检查容器的健康状态，只能通过容器内的进程的退出状态，如果进程退出了并且返回了非0的状态，那么docker就认为这个容器是不健康的。但是某些容器，虽然已经退出，但是内部已经死锁了，程序阻塞，已经无法完整正常的功能了，这个时候程序实际上已经是不正常的状态了。但是，这种情况在早期是无法被检查出来的，所以请求还是会分配给这个容器。在1.12版本以后加入了HEALTHCHECK指令，允许在编写Dockerfile的时候设置一个检查将康状态的指令，如果指令返回0，则说说明容器是监看的，反之，容器连续返回非0，则说明容器不监看。&#xA;怎么监控容器的健康状态 监控容器的健康状态,有三种设置方式：&#xA;在Dockerfile中用HEALTHCHECK指令设置检查方式 在docker run命令使用--health-cmd等选项 在docker compose的配置文件中使用healthcheck指令 我们大部分时候都是在Dockerfile中指定HEALTHCHECK [option] CMD [command],当然，如果想要取消基础镜像中的health check，使用HEALTHCHECK NONE配置即可。 对于web服务，我们通常使用curl来检查容器的健康，例如：&#xA;FROM alpine:3.7 ADD web /bin/ RUN echo &amp;#34;http://mirrors.aliyun.com/alpine/v3.7/main/&amp;#34; &amp;gt; /etc/apk/repositories RUN apk update &amp;amp;&amp;amp; apk add curl HEALTHCHECK --interval=5s --timeout=3s CMD curl --fail http://localhost:8080/ping || exit 1 CMD /bin/web version: &amp;#39;3&amp;#39; services: web: image: web container_name: web ports: - 8080:8080 healthcheck: test: [&amp;#34;CMD&amp;#34;,&amp;#34;curl&amp;#34;,&amp;#34;--fail&amp;#34;,&amp;#34; http://localhost:8080/ping&amp;#34;] interval: 5s timeout: 4s retries: 60 当然,docker compose中的健康检查配置会负责dockerfile中的默认配置。&#xA;有什么需要注意的地方 看着上面的配置，有一个需要注意的地方，比如：你是使用curl检查容器的时候，需要考虑该容器中是否安装了curl依赖，如果没有，需要自己手动安装。有一个更加复杂的容器可能还需你自己编写检查工具来检查容器的监控状态。</description>
+    </item>
+    <item>
+      <title>【翻译】docker容器资源限制最佳</title>
+      <link>http://localhost:1313/posts/2018/20181110-1/</link>
+      <pubDate>Sat, 10 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181110-1/</guid>
+      <description>原文地址: https://docs.docker.com/config/containers/resource_constraints/&#xA;docker容器启动默认对容器资源占用没有做任何限制，只要宿主机器允许，容器是可以无限的占用系统资源。docker提供了一种限制容器占用内存，CPUd等资源的途径，通过在docker run启动容器的时候传递特定的限制参数。建议你在使用容器的时候，尽可能的配置这些参数来限制容器资源占用。&#xA;docker限制资源的功能需要系统内核的支持，使用docker info来检查你的内核版本时候支持这些特性，命令行输出了警告信息，那么说明当前内核不支持此项特性，例如:&#xA;WARNING: No swap limit support 查来系统配置来激活这些特性，文档地址。&#xA;内存 待填坑 </description>
+    </item>
+    <item>
+      <title>【翻译】Docker应用数据存储</title>
+      <link>http://localhost:1313/posts/2018/20181107/</link>
+      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181107/</guid>
+      <description>容器内应用创建的数据默认在是容器内部的临时可写入层，这意味着一下问题：&#xA;当成容器不在不在运行状态时候，这部分数据不会持久化，数据会被丢失。也不方便和其他容器共享数据。 数据被写入到容器的临时可写入层，这导致数据迁移困难。 数据写入容器临时读写层，这需要操作系统内核提供数据写入驱动，这个额外的抽象，会牺牲一部分写入的性能。 数据保存在宿主机上，意味着你不需要担心容器生命周期结束以后数据会丢失，他会一直保存在宿主的磁盘上。对于在宿主机上存储文件，Docker提供能了两种方式。这两种方式分别是，挂载文件夹和挂载数据卷，当然你在Linux上运行Docker的时候，你也可以使用tmpfs挂载节点。&#xA;选择正确的挂载方式 无论你使用哪种挂载方式，被挂载的文件在容器中表现形式就好像他们正在存在容器中一样，在容器表现出来的形式为文件夹或者是文件。&#xA;用一张图来说说明上面介绍到的三种挂载方式之间的区别 容器卷: 数据存在宿主机上的一个特定目录(在Linux上: /var/lib/docker/volumes/),除了Docker自身进程，其他的进程不应该修改这个目录。挂载数据卷也是目前容器存储数据的最佳方式。 挂载目录: 能够保存在宿主机的任何目录，可能保存在一个非常重要的目录中，任何时候这个目录能够其他任何进程读写和修改。 tmpfs： 只会讲数据保存在宿主机的内存中,永远不会将数据保存宿主的磁盘上。 几种挂载方式的详细说明 容器卷：由Docker创建并且管理，你也可以手动使用docker volume create命令创建一个容器卷,或者是在服务启动的时候自动创建。 当你创建好了容器卷以后，就会在宿主机上创建某个目录，这个目录有Docker进程来管理，你可以将这个容器卷挂载到容器中，这有点类似于文件挂载的方式，只不过这个目录是由Docker管理，并且与宿主机器上的其他服务隔绝开来。&#xA;当你挂载一个容器的时候，这个容器可能是有名字的，也可能是匿名的，匿名的容器被分配了一个随机的以为的名字，匿名容器和有名字的容器在使用方式和表现形式上是一样的。 一个容器卷能够被挂载在躲着容器的内部，当应用容器都停止以后，容器卷还是存在，它不会自动删除，除非你使用docker volume prune命令来删除它。&#xA;容器卷支持给定一个容器卷驱动，他支持将数据保存在远程主机或者是云服务上。&#xA;文件挂载: 在Docker早期，文件挂载非常有用，所有宿主机上的进程都能读取这个文件。相比于挂载容器卷，文件挂载以后有一些功能上的限制。当你在使用一个被从宿主机器上挂载进来的文件以后，这个文件都是直接引用的在宿主机器上文件的绝对地址。如果文件宿主机中不存在，Docker进程会自动的创建它，文件挂载的性能不错，但是它依赖宿主上的特定文件系统以及目录存储结构。如果你正在开发一个Docker的应用，请考虑使用容器卷来替代挂载文件的方式。 文件挂载后的隐私问题，这有利有弊，它给了你更大的权利，容器中的应用能够删除，修改，读取被挂载进来的目录，这只能会影响其他的进程服务。你必须权衡利弊。&#xA;对于挂载容器卷或者挂载文件，他们的命令行都是一样的，使用--volume或者-v选项，对于tmpfs挂载稍有不同，它使用--tmpfs选项。然而在17.06 以及更新的版本里面，我们推荐使用--mount来挂载容器卷或者文件。&#xA;容器卷最佳实践 容器卷是我们推荐的容器持久化方式，在使用过程中你需要注意如下事项：&#xA;多个容器之间可以共享一个容器卷。如果在第一次挂载容器卷的时候，容器卷不存在，那么这个容器就会被自动创建，无论应用容器是否在运行或者停止，容器卷都不会被自动删除，除非你明确的手动删除他。 当时宿主机器无法提供存储空间的时候，容器卷配置会失效。 当你想存储文件在远程服务器或者云盘上时候，使用容器卷是非常好的选择。 当你需要备份，转存，迁移数据的时候，容器卷也是非常好的选择。先关闭使用这个容器卷的容器，然后在再备份容器卷的文件加，类似于（/var/lib/docker/volumes/）。 文件挂载最佳实践 如果你真的需要挂载文件，你需要注意如下事项：&#xA;容器与宿主机之间共享文件，挂载/etc/resolv.conf能够让宿主机和容器有相同的DNS配置。 挂载源代码到编译的容器中，例如，你可以挂载源码和maven的target目录到容器，这样编译后的文件其他程序也能访问到。 tmpfs最佳实践 你当你不需要持久化文件的时候你才能选择这个方案，可能是应为安全原因，你需要写入机密数据到宿主机的内存中，你可以使用这个选项。&#xA;使用容器卷和文件挂载的技巧 如果你挂载了一个空的容器卷到某个有文件的目录，那么这个目录中的文件会被拷贝中容器卷中。如果你如果你挂载某个不存在的容器卷，那么这个容器卷会被自动创建。初始化数据和容器卷的时候能够使用这样的方法。 如果你挂载了某个有数据的容器卷到某个空目录，那么容器卷的文件也会被映射到目录中。你甚至可以将/mnt挂载到容器中，容器就能读取到usb存储器上的数据。 原文地址: https://docs.docker.com/storage/</description>
+    </item>
+    <item>
+      <title>【翻译】对docker镜像latest的误解</title>
+      <link>http://localhost:1313/posts/2018/20181106/</link>
+      <pubDate>Tue, 06 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181106/</guid>
+      <description>docker有一个名字叫做latest的tag，某些时候，他的工作方式可能是你想象的不一样。我也听到了很多再误解的宣传这个tag的作用。因为镜像的tag在部署的时候会经常用到，所以你必须理解tag的工作方式。&#xA;实验 为了能够说明问题，我们创建一个非常简单的Dockerfile文件&#xA;FROM busybox:ubuntu-14.04 RUN echo “#!/bin/sh\n” &amp;gt; /test.sh RUN echo “echo \”this is version 1\”” &amp;gt;&amp;gt; /test.sh ENTRYPOINT [“sh”, “/test.sh”] 为了保持简单，我们只是用一个简单的shell脚本，他输出当前的镜像版本。我们编译这个镜像&#xA;sudo docker build -t marc/test . 我们运行他&#xA;sudo docker run marc/test this is version 1 输出符合预期。接下来，我们给这个镜像打上tag&#xA;sudo docker tag marc/test marc/test:1 现在我们将这个镜像推送到DockerHub上&#xA;sudo docker push marc/test 推送成功，现在看下DockerHub上展示的图像 我们现在再编辑一下Dockerfile,这是第二个版本&#xA;FROM busybox:ubuntu-14.04 RUN echo “#!/bin/sh\n” &amp;gt; /test.sh RUN echo “echo \”this is version 2\”” &amp;gt;&amp;gt; /test.sh ENTRYPOINT [“sh”, “/test.sh”] 重复之前的过程，我们构建这个镜像，并且将它推送到DockerHub上</description>
+    </item>
+    <item>
+      <title>前端容器化</title>
+      <link>http://localhost:1313/posts/2018/20181027/</link>
+      <pubDate>Sat, 27 Oct 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181027/</guid>
+      <description>这篇文章将会演示前端容器化的过程，将一个vue项目部署再docker容器中。&#xA;创建vue项目 使用vue的cli工具来创建项目&#xA;vue create vue-docker [hellojukay@localhost vue-docker]$ ls -al 总用量 480 drwxrwxr-x. 7 hellojukay hellojukay 196 10月 27 13:54 . drwxrwxr-x. 3 hellojukay hellojukay 24 10月 27 13:48 .. -rw-rw-r--. 1 hellojukay hellojukay 53 10月 27 13:48 babel.config.js drwxrwxr-x. 5 hellojukay hellojukay 75 10月 27 13:53 dist drwxrwxr-x. 8 hellojukay hellojukay 166 10月 27 13:49 .git -rw-rw-r--. 1 hellojukay hellojukay 214 10月 27 13:48 .gitignore drwxrwxr-x. 803 hellojukay hellojukay 24576 10月 27 13:50 node_modules -rw-rw-r--.</description>
+    </item>
+    <item>
+      <title>【翻译】dockerfile最佳实践</title>
+      <link>http://localhost:1313/posts/2018/20181016/</link>
+      <pubDate>Tue, 16 Oct 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181016/</guid>
+      <description>此文包含官方推荐的docker镜像编译方式。dockerfile是一个包含一些列有序指令的文件，docker编译镜像的时候会自动读取dockerfile文件中的指令。docker镜像中包含一些只读的层，每一层都是对上一层的覆盖。请看如下的dockerfile&#xA;FROM ubuntu:15.04 COPY . /app RUN make /app CMD python /app/app.py 每个指令都会在原来的镜像的基础上添加一层：&#xA;FROM 在ubuntu:15.04的基础上创建一层 COPY 拷贝当前目录的文件到镜像中 RUN 使用make命令执行命令 CMD 在容器中执行的特殊程序 当启动镜像时候，会在原来的镜像上添加一个新的可以读写的层，并且生成一个容器，在容器中能对该层镜像读写，删除等。 常规指导建议 创建临时容器 dockerfile能够产生临时的容器，并且Dokerfile能够被反复编译成镜像.&#xA;理解编译的上下文 当你在执行docker build命令的时候，当我目录就是编译的上下文件，默认情况下dockerfile应该就在当前目录下，当然也可以在别的目录，通过docker build -f指定Dockefile的文件地址即可。 当执行docker build的时候，上下文(当前目录)所有文件都会被递归的发送给docker daemon进程，在dockerfile中能够使用上下文件中的文件,所以上文的大小也会影响编译时间.&#xA;创建一个空目录当前编译的上下文目录，在上下文中创建名字为hello的文件，创建dockerfile，并且在dockerfile中cat这个hello文件，然后指定编译的上下文目录为当前文件 .。&#xA;mkdir myproject &amp;amp;&amp;amp; cd myproject echo &amp;#34;hello&amp;#34; &amp;gt; hello echo -e &amp;#34;FROM busybox\nCOPY /hello /\nRUN cat /hello&amp;#34; &amp;gt; dockerfile docker build -t helloapp:v1 . 将hello文件和dockerfile分离，我们编译第二个版本的镜像，我们使用 -f来指定dockerfile文件，使用特殊的文件作为编译的上下文目录，而不是使用当前目录。&#xA;mkdir -p dockerfiles context mv dockerfile dockerfiles &amp;amp;&amp;amp; mv hello context docker build --no-cache -t helloapp:v2 -f dockerfiles/dockerfile context 不要讲不必要的文件加入到镜像，他会是增加镜像的体积，进行会增加push镜像和pull镜像的时间，同事也会增加容器运行的大小。当我们在编译dockerfile的时候，我们能够看到当前上下文件的大小:</description>
+    </item>
+    <item>
+      <title>docker指定用户运行容器</title>
+      <link>http://localhost:1313/posts/2018/20180821/</link>
+      <pubDate>Tue, 21 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180821/</guid>
+      <description>在使用prometheus的时候，prometheus产生的文件的用户名总是nobody,并且给prometheus挂在的文件都没有读写权限，让我意识到，容器内部的权限也是一个不可忽视的问题。所以你不想容器打印出来日志，运维同事没有读取的权限，那么你就应该至容器运行的时候指定用户的运行用户。&#xA;docker和docker-compose都提供了指定容器运行用近乎的方法。docker指定运行用户:&#xA;docker run -u user iamge 具体说明如下&#xA;[hellojukay@localhost ~]$ docker run --help | grep user -u, --user string Username or UID (format: &amp;lt;name|uid&amp;gt;[:&amp;lt;group|gid&amp;gt;]) --userns string User namespace to use [hellojukay@localhost ~]$ 这里可以使用username也可以使用uid，但是有一点区别的是，如果是用username,那么容器里面也必须存在这个同样名字的user，如果是使用uid，那么就没有这个要求。所以大部分情况下，我们使用uid来指定用户和用户组。 docker-compose指定某个容器运行时用户方法如下：&#xA;# This is an abbreviated example docker-compose.yml version: &amp;#39;3.3&amp;#39; services: rspec: image: my-docker/my-build-environment:latest environment: - RAILS_ENV=test command: [&amp;#34;make&amp;#34;, &amp;#34;assets&amp;#34;] # THIS BIT!!!1! user: ${CURRENT_UID} volumes: - .:/app 那么我们启动的这个docker-compose的时候：&#xA;CURRENT_UID=$(id -u):$(id -g) docker-compose up 这是使用当前shell用户运行容器，也可以是别的用户&#xA;CURRENT_UID=$(id -ujukay):$(id -g jukay) docker-compose up 2018年10月15日更新 让容器用指定用户的运行的前提是：容器中有这个用户，不然容器中的程序还是会使用root运行。</description>
+    </item>
+    <item>
+      <title>docker打包镜像的注意事项</title>
+      <link>http://localhost:1313/posts/2018/20180806/</link>
+      <pubDate>Mon, 06 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180806/</guid>
+      <description>在docker打包镜像的时候，我一般是使用 alpine 作为底包，而不是 ubuntu 更加不是 centos ，因为这个两个基础镜像的文件大小已经非常大了，不利于分发和快速部署。我们在为 alpine 安装工具的时候经常会遇到安装过程中卡主的情况，这是因为从 http://dl-cdn.alpinelinux.org/alpine/ 这个仓库下载包会非常缓慢。使用阿里云提供的镜像加速服务可以绕过这个坑。如下：&#xA;FROM fluent/fluentd:v0.12-onbuild # backup the orign repo and use aliyun mirror instead RUN { \ echo &amp;#34;http://mirrors.aliyun.com/alpine/v3.7/main&amp;#34;; \ echo &amp;#34;http://mirrors.aliyun.com/alpine/v3.7/community&amp;#34;; \ } &amp;gt; /etc/apk/repositories RUN apk add --update --virtual .build-deps \ sudo build-base ruby-dev \ &amp;amp;&amp;amp; sudo gem install \ fluent-plugin-elasticsearch \ &amp;amp;&amp;amp; sudo gem sources --clear-all \ &amp;amp;&amp;amp; apk del .build-deps \ &amp;amp;&amp;amp; rm -rf /var/cache/apk/* \ /home/fluent/.gem/ruby/2.3.0/cache/*.gem 以上是我编译 fluentd 的镜像时候用的 Dockerfile 文件。这行代码就是添加镜像加入的作用</description>
+    </item>
+    <item>
+      <title>docker访问外部局域网</title>
+      <link>http://localhost:1313/posts/2018/20180428/</link>
+      <pubDate>Sat, 28 Apr 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180428/</guid>
+      <description>从gitlab的runner界面来看，跑在docker里面的runner从来没有连接过gitlab服务，所以我怀疑他们之间的网络是不通的 在k8s上找到对应的runner容器&#xA;[root@shawujing ~]# docker ps | grep runner fd3e106f36d5 docker.io/gitlab/gitlab-runner@sha256:9b1e53a91fc8914c934b9eacf93365c7af97d97514c71b1825f677c8ee2a2369 &amp;#34;/bin/bash /script...&amp;#34; About an hour ago Up About an hour k8s_runner-gitlab-runner_runner-gitlab-runner-fddfc9d7c-fxtbl_gitlab-managed-apps_73a2f2a4-4a88-11e8-9128-782bcb57680f_0 a1c5b8f86d7c k8s.gcr.io/pause-amd64:3.1 &amp;#34;/pause&amp;#34; About an hour ago Up About an hour k8s_POD_runner-gitlab-runner-fddfc9d7c-fxtbl_gitlab-managed-apps_73a2f2a4-4a88-11e8-9128-782bcb57680f_0 [root@shawujing ~]# 进入容器里面看一下，是否能够ping我们的gitlab服务器&#xA;docker exec -it fd3e106f36d5 /bin/bash bash-4.4# ping baochai ping: bad address &amp;#39;baochai&amp;#39; bash-4.4# 这里他不认识baochai这个域名，我们手动改一下这个容器的/etc/hosts文件，加入baochai的域名解析&#xA;bash-4.4# cat /etc/hosts # Kubernetes-managed hosts file. 127.0.0.1&#x9;localhost ::1&#x9;localhost ip6-localhost ip6-loopback fe00::0&#x9;ip6-localnet fe00::0&#x9;ip6-mcastprefix fe00::1&#x9;ip6-allnodes fe00::2&#x9;ip6-allrouters 192.</description>
+    </item>
+  </channel>
+</rss>

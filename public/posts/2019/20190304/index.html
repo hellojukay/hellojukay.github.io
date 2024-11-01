@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="docker运行的进程是相互隔离的，一个容器在宿主机器上也就是一个普通的进程。当执行docker run的时候，一个容器进程会被启动，他有自己的文件系统，有自己的网络，有自己的进程树。这篇文章将会详细额介绍docker run的每个命令行参数，来通知容器的运行时状态。
+基本的docker run看起来像这样:
+$ docker run [OPTIONS] IMAGE[:TAG|@DIGEST] [COMMAND] [ARG...] docker run命令必须给定一个明确的镜像。容器执行能够指定如下参数：
+前台运行还是后台运行 容器的唯一标示 网络设置 运行是时的CPU和内存相关设置 使用docker run命令行选项能够覆盖镜像的一些默认参数。因为docker版本的设置，你运行docker命令的时候，也许需要sudo，为了避免在执行docker命令的时候使用sudo,你可以创建一个docker的用户组，将当前用户加入到docker这个用户分组中来。
+前台运行还是后台运行 默认情况下，启动容器后容器是前台运行的，如果你需要容器在后台运行，那么你需要使用 -d选项来指定运行模式。
+-d=false: Detached mode: Run container in the background, print new container id 启动容器的时候，使用-d=true或者直接-d选项，容器会在后台启动。docker容器设计的是，当容器中的进程退出，那么容器就会自动退出。除非你使用了--rm选项。如果你同时使用-d和--rm选项，容器中进程退出偶，容器首先就会被删除掉。
+不要使用service x start来启动一个后台的容器，例如，这里尝试启动nginx服务：
+$ docker run -d -p 80:80 my_image service nginx start 这里成功的启动了nginx服务，然而这样nginx经常退出，容器是没有感知的，最后导致以为服务存在，其实是服务是不可用的。正确的启动nginx的方式如下:
+$ docker run -d -p 80:80 my_image nginx -g &#39;daemon off;&#39; 在前台运行的模式(默认-d选项是不激活的)，docker容器是在前台运行的，能够在当前的终端输入输入信息，以及错误输出。
+容器的唯一标示 唯一标示一个容器有三种方式
+标示类型 例子 UUID &ldquo;f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778&rdquo; 短UUID &ldquo;f78375b1c487&rdquo; 容器名字 &ldquo;evil_ptolemy&rdquo; UUID产生自后台运行的容器，如果一个容器在启动的时候没有通过--name指定容器名字，那么就会产生一段随机的字符串作为容器的唯一标示。这段随机字符串一个一串uuid，它的长度很长，通常情况我们只需取前面几个字符就能唯一标示一个容器了。如果容器指定了名字，那么容器容器和使用容器ID一样的效果。 我们可以通过--cidfile选择来指定一个文件，容器的ID会被自动写入到这个文件中。">  
+
+  <title>
+    
+      【翻译】docker run手册
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-03-04 00:00:00 &#43;0000 UTC">
+            2019-03-04
+        </time>
+    </p>
+
+    <h1>【翻译】docker run手册</h1>
+
+    
+
+    <p>docker运行的进程是相互隔离的，一个容器在宿主机器上也就是一个普通的进程。当执行<code>docker run</code>的时候，一个容器进程会被启动，他有自己的文件系统，有自己的网络，有自己的进程树。这篇文章将会详细额介绍<code>docker run</code>的每个命令行参数，来通知容器的运行时状态。</p>
+<p>基本的<code>docker run</code>看起来像这样:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker run <span style="color:#f92672">[</span>OPTIONS<span style="color:#f92672">]</span> IMAGE<span style="color:#f92672">[</span>:TAG|@DIGEST<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>COMMAND<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>ARG...<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p><code>docker run</code>命令必须给定一个明确的镜像。容器执行能够指定如下参数：</p>
+<ul>
+<li>前台运行还是后台运行</li>
+<li>容器的唯一标示</li>
+<li>网络设置</li>
+<li>运行是时的CPU和内存相关设置</li>
+</ul>
+<p>使用<code>docker run</code>命令行选项能够覆盖镜像的一些默认参数。因为docker版本的设置，你运行docker命令的时候，也许需要<code>sudo</code>，为了避免在执行docker命令的时候使用<code>sudo</code>,你可以创建一个<code>docker</code>的用户组，将当前用户加入到<code>docker</code>这个用户分组中来。</p>
+<h2 id="前台运行还是后台运行">前台运行还是后台运行</h2>
+<p>默认情况下，启动容器后容器是前台运行的，如果你需要容器在后台运行，那么你需要使用 <code>-d</code>选项来指定运行模式。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-d<span style="color:#f92672">=</span>false: Detached mode: Run container in the background, print new container id
+</span></span></code></pre></div><p>启动容器的时候，使用<code>-d=true</code>或者直接<code>-d</code>选项，容器会在后台启动。docker容器设计的是，当容器中的进程退出，那么容器就会自动退出。除非你使用了<code>--rm</code>选项。如果你同时使用<code>-d</code>和<code>--rm</code>选项，容器中进程退出偶，容器首先就会被删除掉。</p>
+<p>不要使用<code>service x start</code>来启动一个后台的容器，例如，这里尝试启动<code>nginx</code>服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker run -d -p 80:80 my_image service nginx start
+</span></span></code></pre></div><p>这里成功的启动了nginx服务，然而这样nginx经常退出，容器是没有感知的，最后导致以为服务存在，其实是服务是不可用的。正确的启动nginx的方式如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker run -d -p 80:80 my_image nginx -g <span style="color:#e6db74">&#39;daemon off;&#39;</span>
+</span></span></code></pre></div><p>在前台运行的模式(默认<code>-d</code>选项是不激活的)，docker容器是在前台运行的，能够在当前的终端输入输入信息，以及错误输出。</p>
+<h2 id="容器的唯一标示">容器的唯一标示</h2>
+<p>唯一标示一个容器有三种方式</p>
+<table>
+<thead>
+<tr>
+<th>标示类型</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UUID</td>
+<td>&ldquo;f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778&rdquo;</td>
+</tr>
+<tr>
+<td>短UUID</td>
+<td>&ldquo;f78375b1c487&rdquo;</td>
+</tr>
+<tr>
+<td>容器名字</td>
+<td>&ldquo;evil_ptolemy&rdquo;</td>
+</tr>
+<tr>
+<td>UUID产生自后台运行的容器，如果一个容器在启动的时候没有通过<code>--name</code>指定容器名字，那么就会产生一段随机的字符串作为容器的唯一标示。这段随机字符串一个一串uuid，它的长度很长，通常情况我们只需取前面几个字符就能唯一标示一个容器了。如果容器指定了名字，那么容器容器和使用容器ID一样的效果。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>我们可以通过<code>--cidfile</code>选择来指定一个文件，容器的ID会被自动写入到这个文件中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>--cidfile<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>: Write the container ID to the file
+</span></span></code></pre></div><p>和容器一样，进行也是有唯一标示的可以通过<code>image[:tag]</code>来指定一个镜像，例如:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker run ubuntu:14.04.
+</span></span></code></pre></div><p>镜像也是有id的，我们也可以通过<code>Image[@digest]</code>的方式来指定一个镜像.</p>
+<p>每一个容器启动，默认情况下进程都是相互隔离，当然也通过指定pid namespace来指定命令空间，例如，在容器执行<code>htop</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Dockerfile" data-lang="Dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> alpine:latest</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apk add --update htop <span style="color:#f92672">&amp;&amp;</span> rm -rf /var/cache/apk/*<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">CMD</span> [<span style="color:#e6db74">&#34;htop&#34;</span>]<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>编译镜像</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker build -t myhtop .
+</span></span></code></pre></div><p>运行如下命令执行htop:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker run -it --rm --pid<span style="color:#f92672">=</span>host myhtop
+</span></span></code></pre></div><p>也可以加入到另一个容器的命令空间</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker run --name my-redis -d redis
+</span></span></code></pre></div><p>通过如下命令来调试这个redis进程</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>$ docker run -it --pid<span style="color:#f92672">=</span>container:my-redis my_strace_docker_image bash
+</span></span><span style="display:flex;"><span>$ strace -p <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>原文地址: <a href="https://docs.docker.com/engine/reference/run/">https://docs.docker.com/engine/reference/run/</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

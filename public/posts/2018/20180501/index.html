@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="复习一下linux c编程，写了个hello world,发现linux c的api已经被我忘记的差不多了，平时都在用golang写代码，只是知道后面有系统调用这回事情，但是自己操作起linux C的编程api起来好像不是那么回事了，这里写一片博客记录一下。
+#include &lt;unistd.h&gt; #include &lt;stdio.h&gt; int main(){ int fd = dup(1); char* buffer = &#34;Hello World\n&#34;; write(fd,buffer,sizeof(buffer)); return 0; } hellojukay@deepin:~/Data/Code/Linux/dup$ gcc dup.c hellojukay@deepin:~/Data/Code/Linux/dup$ ./a.out Hello Wohellojukay@deepin:~/Data/Code/Linux/dup$ 这里并没有完整的输出Hello World这个字符串。我们来看在write这个系统调用返回的是什么。
+#include &lt;unistd.h&gt; #include &lt;stdio.h&gt; int main(){ int fd = dup(1); char* buffer = &#34;Hello World\n&#34;; int len = sizeof(buffer); int count = write(fd,buffer,sizeof(buffer)); printf(&#34;%d chars wirte %d to stdout&#34;,len,count); return 0; } hellojukay@deepin:~/Data/Code/Linux/dup$ gcc dup.c hellojukay@deepin:~/Data/Code/Linux/dup$ ./a.out Hello Wo8 chars wirte 8 to stdouthellojukay@deepin:~/Data/Code/Linux/dup$ 这里打印出来了，8个字符全部都被写入了,等等，&ldquo;Hello World&quot;这个字符串怎么会只有8个字符，好像不对,是我蠢了，这个sizeof是编译器编译器期间决定的，他返回的&quot;Hello World&quot;这个字符串指针变量占用的内存的大小，而不是指代字符串本身所用的内存，所以这里应该使用strlen函数来获取字符串的长度，蠢了蠢了。">  
+
+  <title>
+    
+      C语言的sizeof操作符
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-01 10:08:10 &#43;0000 UTC">
+            2018-05-01
+        </time>
+    </p>
+
+    <h1>C语言的sizeof操作符</h1>
+
+    
+
+    <p>复习一下linux c编程，写了个hello world,发现linux c的api已经被我忘记的差不多了，平时都在用golang写代码，只是知道后面有系统调用这回事情，但是自己操作起linux C的编程api起来好像不是那么回事了，这里写一片博客记录一下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> <span style="color:#a6e22e">dup</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> buffer <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">write</span>(fd,buffer,<span style="color:#66d9ef">sizeof</span>(buffer));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:~/Data/Code/Linux/dup$ gcc dup.c
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~/Data/Code/Linux/dup$ ./a.out
+</span></span><span style="display:flex;"><span>Hello Wohellojukay@deepin:~/Data/Code/Linux/dup$
+</span></span></code></pre></div><p>这里并没有完整的输出Hello World这个字符串。我们来看在write这个系统调用返回的是什么。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> <span style="color:#a6e22e">dup</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> buffer <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> len <span style="color:#f92672">=</span> <span style="color:#66d9ef">sizeof</span>(buffer);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#a6e22e">write</span>(fd,buffer,<span style="color:#66d9ef">sizeof</span>(buffer));
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%d chars wirte %d to stdout&#34;</span>,len,count);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:~/Data/Code/Linux/dup$ gcc dup.c
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~/Data/Code/Linux/dup$ ./a.out
+</span></span><span style="display:flex;"><span>Hello Wo8 chars wirte <span style="color:#ae81ff">8</span> to stdouthellojukay@deepin:~/Data/Code/Linux/dup$
+</span></span></code></pre></div><p>这里打印出来了，8个字符全部都被写入了,等等，&ldquo;Hello World&quot;这个字符串怎么会只有8个字符，好像不对,是我蠢了，这个sizeof是编译器编译器期间决定的，他返回的&quot;Hello World&quot;这个字符串指针变量占用的内存的大小，而不是指代字符串本身所用的内存，所以这里应该使用strlen函数来获取字符串的长度，蠢了蠢了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> fd <span style="color:#f92672">=</span> <span style="color:#a6e22e">dup</span>(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> buffer <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> len <span style="color:#f92672">=</span> <span style="color:#a6e22e">strlen</span>(buffer);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> count <span style="color:#f92672">=</span> <span style="color:#a6e22e">write</span>(fd,buffer,len);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">printf</span>(<span style="color:#e6db74">&#34;%d chars wirte %d to stdout&#34;</span>,len,count);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#include &lt;unistd.h&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include &lt;stdio.h&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include &lt;string.h&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>int main<span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>    int fd <span style="color:#f92672">=</span> dup<span style="color:#f92672">(</span>1<span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span>    char* buffer <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World\n&#34;</span>;
+</span></span><span style="display:flex;"><span>    int len <span style="color:#f92672">=</span> strlen<span style="color:#f92672">(</span>buffer<span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span>    int count <span style="color:#f92672">=</span> write<span style="color:#f92672">(</span>fd,buffer,len<span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span>    printf<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;%d chars wirte %d to stdout&#34;</span>,len,count<span style="color:#f92672">)</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> 0;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这样就对了。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

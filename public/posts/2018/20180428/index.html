@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="从gitlab的runner界面来看，跑在docker里面的runner从来没有连接过gitlab服务，所以我怀疑他们之间的网络是不通的 在k8s上找到对应的runner容器
+[root@shawujing ~]# docker ps | grep runner fd3e106f36d5 docker.io/gitlab/gitlab-runner@sha256:9b1e53a91fc8914c934b9eacf93365c7af97d97514c71b1825f677c8ee2a2369 &#34;/bin/bash /script...&#34; About an hour ago Up About an hour k8s_runner-gitlab-runner_runner-gitlab-runner-fddfc9d7c-fxtbl_gitlab-managed-apps_73a2f2a4-4a88-11e8-9128-782bcb57680f_0 a1c5b8f86d7c k8s.gcr.io/pause-amd64:3.1 &#34;/pause&#34; About an hour ago Up About an hour k8s_POD_runner-gitlab-runner-fddfc9d7c-fxtbl_gitlab-managed-apps_73a2f2a4-4a88-11e8-9128-782bcb57680f_0 [root@shawujing ~]# 进入容器里面看一下，是否能够ping我们的gitlab服务器
+docker exec -it fd3e106f36d5 /bin/bash bash-4.4# ping baochai ping: bad address &#39;baochai&#39; bash-4.4# 这里他不认识baochai这个域名，我们手动改一下这个容器的/etc/hosts文件，加入baochai的域名解析
+bash-4.4# cat /etc/hosts # Kubernetes-managed hosts file. 127.0.0.1	localhost ::1	localhost ip6-localhost ip6-loopback fe00::0	ip6-localnet fe00::0	ip6-mcastprefix fe00::1	ip6-allnodes fe00::2	ip6-allrouters 192.">  
+
+  <title>
+    
+      docker访问外部局域网
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-04-28 00:00:00 &#43;0000 UTC">
+            2018-04-28
+        </time>
+    </p>
+
+    <h1>docker访问外部局域网</h1>
+
+    
+
+    <p>从gitlab的runner界面来看，跑在docker里面的runner从来没有连接过gitlab服务，所以我怀疑他们之间的网络是不通的
+<img src="/20180428/gitlab_runner.png" alt="gitlab">
+在k8s上找到对应的runner容器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@shawujing ~<span style="color:#f92672">]</span><span style="color:#75715e"># docker ps | grep runner</span>
+</span></span><span style="display:flex;"><span>fd3e106f36d5        docker.io/gitlab/gitlab-runner@sha256:9b1e53a91fc8914c934b9eacf93365c7af97d97514c71b1825f677c8ee2a2369                                   <span style="color:#e6db74">&#34;/bin/bash /script...&#34;</span>   About an hour ago   Up About an hour                        k8s_runner-gitlab-runner_runner-gitlab-runner-fddfc9d7c-fxtbl_gitlab-managed-apps_73a2f2a4-4a88-11e8-9128-782bcb57680f_0
+</span></span><span style="display:flex;"><span>a1c5b8f86d7c        k8s.gcr.io/pause-amd64:3.1                                                                                                               <span style="color:#e6db74">&#34;/pause&#34;</span>                 About an hour ago   Up About an hour                        k8s_POD_runner-gitlab-runner-fddfc9d7c-fxtbl_gitlab-managed-apps_73a2f2a4-4a88-11e8-9128-782bcb57680f_0
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@shawujing ~<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><p>进入容器里面看一下，是否能够ping我们的gitlab服务器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker exec -it fd3e106f36d5 /bin/bash
+</span></span></code></pre></div><pre tabindex="0"><code class="language-shelll" data-lang="shelll">bash-4.4# ping baochai
+ping: bad address &#39;baochai&#39;
+bash-4.4#
+</code></pre><p>这里他不认识baochai这个域名，我们手动改一下这个容器的/etc/hosts文件，加入baochai的域名解析</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>bash-4.4# cat /etc/hosts
+</span></span><span style="display:flex;"><span># Kubernetes-managed hosts file.
+</span></span><span style="display:flex;"><span>127.0.0.1	localhost
+</span></span><span style="display:flex;"><span>::1	localhost ip6-localhost ip6-loopback
+</span></span><span style="display:flex;"><span>fe00::0	ip6-localnet
+</span></span><span style="display:flex;"><span>fe00::0	ip6-mcastprefix
+</span></span><span style="display:flex;"><span>fe00::1	ip6-allnodes
+</span></span><span style="display:flex;"><span>fe00::2	ip6-allrouters
+</span></span><span style="display:flex;"><span>192.168.14.156	runner-gitlab-runner-fddfc9d7c-fxtbl
+</span></span><span style="display:flex;"><span>192.168.1.191 baochai
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bash-4.4# ping baochai
+</span></span><span style="display:flex;"><span>PING baochai <span style="color:#f92672">(</span>192.168.1.191<span style="color:#f92672">)</span>: <span style="color:#ae81ff">56</span> data bytes
+</span></span></code></pre></div><p>这回他认识baochai这个内部域名了，可是网络是不通的。但是ping一下baidu.com是能通的。我试了试看看baochai还有没有的网卡</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai ~<span style="color:#f92672">]</span>$ ifconfig
+</span></span><span style="display:flex;"><span>em1       Link encap:Ethernet  HWaddr 78:2B:CB:4C:F8:D8
+</span></span><span style="display:flex;"><span>          inet addr:103.255.228.227  Bcast:103.255.228.231  Mask:255.255.255.248
+</span></span><span style="display:flex;"><span>          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+</span></span><span style="display:flex;"><span>          RX packets:3036356 errors:0 dropped:0 overruns:0 frame:0
+</span></span><span style="display:flex;"><span>          TX packets:4247244 errors:0 dropped:0 overruns:0 carrier:0
+</span></span><span style="display:flex;"><span>          collisions:0 txqueuelen:1000
+</span></span><span style="display:flex;"><span>          RX bytes:882668461 <span style="color:#f92672">(</span>841.7 MiB<span style="color:#f92672">)</span>  TX bytes:3399642815 <span style="color:#f92672">(</span>3.1 GiB<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>em2       Link encap:Ethernet  HWaddr 78:2B:CB:4C:F8:D9
+</span></span><span style="display:flex;"><span>          inet addr:192.168.1.191  Bcast:192.168.1.255  Mask:255.255.255.0
+</span></span><span style="display:flex;"><span>          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+</span></span><span style="display:flex;"><span>          RX packets:241106256 errors:0 dropped:0 overruns:0 frame:0
+</span></span><span style="display:flex;"><span>          TX packets:344429519 errors:0 dropped:0 overruns:0 carrier:0
+</span></span><span style="display:flex;"><span>          collisions:0 txqueuelen:1000
+</span></span><span style="display:flex;"><span>          RX bytes:28959033776 <span style="color:#f92672">(</span>26.9 GiB<span style="color:#f92672">)</span>  TX bytes:370057597884 <span style="color:#f92672">(</span>344.6 GiB<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>lo        Link encap:Local Loopback
+</span></span><span style="display:flex;"><span>          inet addr:127.0.0.1  Mask:255.0.0.0
+</span></span><span style="display:flex;"><span>          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+</span></span><span style="display:flex;"><span>          RX packets:63474153 errors:0 dropped:0 overruns:0 frame:0
+</span></span><span style="display:flex;"><span>          TX packets:63474153 errors:0 dropped:0 overruns:0 carrier:0
+</span></span><span style="display:flex;"><span>          collisions:0 txqueuelen:0
+</span></span><span style="display:flex;"><span>          RX bytes:282919508744 <span style="color:#f92672">(</span>263.4 GiB<span style="color:#f92672">)</span>  TX bytes:282919508744 <span style="color:#f92672">(</span>263.4 GiB<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>用em1的ip试试看,到容器里面ping一下这个地址试试看，居然是通的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>bash-4.4# ping 103.255.228.227
+</span></span><span style="display:flex;"><span>PING 103.255.228.227 <span style="color:#f92672">(</span>103.255.228.227<span style="color:#f92672">)</span>: <span style="color:#ae81ff">56</span> data bytes
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">64</span> bytes from 103.255.228.227: seq<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> ttl<span style="color:#f92672">=</span><span style="color:#ae81ff">62</span> time<span style="color:#f92672">=</span>0.303 ms
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">64</span> bytes from 103.255.228.227: seq<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> ttl<span style="color:#f92672">=</span><span style="color:#ae81ff">62</span> time<span style="color:#f92672">=</span>0.315 ms
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">64</span> bytes from 103.255.228.227: seq<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> ttl<span style="color:#f92672">=</span><span style="color:#ae81ff">62</span> time<span style="color:#f92672">=</span>0.306 ms
+</span></span><span style="display:flex;"><span>^C
+</span></span><span style="display:flex;"><span>--- 103.255.228.227 ping statistics ---
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span> packets transmitted, <span style="color:#ae81ff">3</span> packets received, 0% packet loss
+</span></span><span style="display:flex;"><span>round-trip min/avg/max <span style="color:#f92672">=</span> 0.303/0.308/0.315 ms
+</span></span><span style="display:flex;"><span>bash-4.4#
+</span></span></code></pre></div><p>把em1的ip配置到容器的的hosts文件,然后再到gitlab的runner面板看看,连接上来了。虽然原理还不清楚，但是问题解决了，心里有点不靠谱的感觉。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

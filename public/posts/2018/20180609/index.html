@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="原文地址: http://www.linux-sxs.org/programming/bashcheat.html 本文不会教你如何使用bash，但是他会让你快速的知道bash是什么，让你知道什么是bash脚本。
+基础 bash脚本都需要告诉操作系统，当前使用哪一种解释器来执行这个脚本。写在脚本的第一行,如下：
+#!/bin/bash //或者 #!/usr/bin/env bash #!/bin/node 你必须让脚本拥有可执行权限
+#所有人都拥有执行权 chmod &#43;x filname # 当前用户拥有执行权限 chmod u&#43;x filename 变量 bash的变量没有类型，定义方法如下：
+varname=value n=10 在变量名字前面使用 $ 来使用这个变量，例如：
+n=10 echo $n 命令行参数中的变量通常使用$N来访问，$#表示命令行参数的个数(不包括命令本身)
+command var1 var2 var3 &hellip;. varX
+$# 表示参数个数 $@ 表示所有参数(不包括命令本身) $0 表示 command 命令本身 $1 表示var1 $2 表示var2 依次类推。。。 引用符号 双引号：&ldquo;var&quot;被shell理解为是一个普通的字符串参数，你需要特别注意其中的转义字符。 单引号： &lsquo;var&rsquo;被shell理解为一个单纯的字符，shell会忽略其中的转义字符，不会转义他们。 反引号： var被shell理解为一条需要执行的bash命令，通过会用在子名字中，例如：
+echo `pwd` 逻辑判断 数字比较 test expression 或者 [ expression ]
+int1 -eq int2	如果int1等于int2,返回true int1 -ge int2	如果int1大于或者等于int2，返回true int1 -gt int2	如果int1大于int2，返回true int1 -le int2	如果int1小于或者等于int2，返回true int1 -lt int2	如果int1小于int2, 返回true int1 -ne int2	如果int1不等于int2, 返回true">  
+
+  <title>
+    
+      【翻译】bash备忘录
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-06-09 23:29:00 &#43;0000 UTC">
+            2018-06-09
+        </time>
+    </p>
+
+    <h1>【翻译】bash备忘录</h1>
+
+    
+
+    <h2 id="原文地址-httpwwwlinux-sxsorgprogrammingbashcheathtmlhttpwwwlinux-sxsorgprogrammingbashcheathtml">原文地址: <a href="http://www.linux-sxs.org/programming/bashcheat.html">http://www.linux-sxs.org/programming/bashcheat.html</a></h2>
+<p>本文不会教你如何使用bash，但是他会让你快速的知道bash是什么，让你知道什么是bash脚本。</p>
+<h1 id="基础">基础</h1>
+<p>bash脚本都需要告诉操作系统，当前使用哪一种解释器来执行这个脚本。写在脚本的第一行,如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>//或者
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env bash</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/node</span>
+</span></span></code></pre></div><p>你必须让脚本拥有可执行权限</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#所有人都拥有执行权</span>
+</span></span><span style="display:flex;"><span>chmod +x filname
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 当前用户拥有执行权限</span>
+</span></span><span style="display:flex;"><span>chmod u+x filename
+</span></span></code></pre></div><h1 id="变量">变量</h1>
+<p>bash的变量没有类型，定义方法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>varname<span style="color:#f92672">=</span>value
+</span></span><span style="display:flex;"><span>n<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><p>在变量名字前面使用 $ 来使用这个变量，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>n<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>echo $n
+</span></span></code></pre></div><p>命令行参数中的变量通常使用$N来访问，$#表示命令行参数的个数(不包括命令本身)</p>
+<p>command var1 var2 var3 &hellip;. varX</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>$# 表示参数个数
+</span></span><span style="display:flex;"><span>$@ 表示所有参数(不包括命令本身)
+</span></span><span style="display:flex;"><span>$0 表示 command 命令本身
+</span></span><span style="display:flex;"><span>$1 表示var1
+</span></span><span style="display:flex;"><span>$2 表示var2
+</span></span><span style="display:flex;"><span>依次类推。。。
+</span></span></code></pre></div><h1 id="引用符号">引用符号</h1>
+<p>双引号：&ldquo;var&quot;被shell理解为是一个普通的字符串参数，你需要特别注意其中的转义字符。
+单引号： &lsquo;var&rsquo;被shell理解为一个单纯的字符，shell会忽略其中的转义字符，不会转义他们。
+反引号： <code>var</code>被shell理解为一条需要执行的bash命令，通过会用在子名字中，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#e6db74">`</span>pwd<span style="color:#e6db74">`</span>
+</span></span></code></pre></div><h1 id="逻辑判断">逻辑判断</h1>
+<h2 id="数字比较">数字比较</h2>
+<p>test expression 或者 [ expression ]</p>
+<p>int1 -eq int2	如果int1等于int2,返回true
+int1 -ge int2	如果int1大于或者等于int2，返回true
+int1 -gt int2	如果int1大于int2，返回true
+int1 -le int2	如果int1小于或者等于int2，返回true
+int1 -lt int2	如果int1小于int2, 返回true
+int1 -ne int2	如果int1不等于int2, 返回true</p>
+<h2 id="字符串比较">字符串比较</h2>
+<p>str1 = str2	如果str1等于str2， 返回true
+str1 != str2	如果str1不等于str2， 返回true
+str 如果str不为null， 返回true
+-n str	如果str不为空，并且长度大于0, 返回true
+-z str	如果str是一个空字符串，返回true</p>
+<h2 id="文件比较">文件比较</h2>
+<p>-d filename	如果filename是一个文件夹，返回true
+-f filename	如果filename是一个文件或者文件夹，返回true
+-r filename	如果filename是一个可读额文件，返回true
+-s filename	如果filename是一个有内容的文件，返回true
+-w filename	如果filename是一个可写的文件，返回true
+-x filename	如果filename是一个可执行的文件，返回true</p>
+<h2 id="表达式比较">表达式比较</h2>
+<p>!expression 如果表达式expression是false, 返回true</p>
+<p>expr1 -a expr2 如果expr1和expr2都是true, 返回true</p>
+<p>expr1 -o expr2 如果expr1和expr2有一个是true, 返回true</p>
+<p>If&hellip;then</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> expression <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>If..then&hellip;else</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> expression <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span>f
+</span></span></code></pre></div><p>If..then&hellip;else If&hellip;else</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> expression <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">elif</span> <span style="color:#f92672">[</span> expression2 <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>Case select</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">case</span> string1 in
+</span></span><span style="display:flex;"><span>str1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>commands;;
+</span></span><span style="display:flex;"><span>str2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>commands;;
+</span></span><span style="display:flex;"><span>*<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>commands;;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">esac</span>
+</span></span></code></pre></div><p>string1 依次和str1,str2比较，如果满足条，那么执行对应的shell命令，知道遇到两个分号 ;; 为止，如果不满足任何条件，那么执行*对应的shell命令。</p>
+<p>迭代 (Loops)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> var1 in list
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#66d9ef">until</span> <span style="color:#f92672">[</span> expression <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>commands
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h1 id="函数">函数</h1>
+<p>创建函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>fx<span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#39;hello world&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>函数调用不要使用括号包裹参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#错误</span>
+</span></span><span style="display:flex;"><span>fx<span style="color:#f92672">(</span>arg1,arg2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#正确</span>
+</span></span><span style="display:flex;"><span>fx arg1 arg2
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

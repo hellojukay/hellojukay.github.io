@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在使用 k8s 或者 docker 作为 jenkins 的 slave 的时候，会出现一个问题：两个 stage 可能不再同一个机器，或者不再同一个目录上，stage A 中编译的 dist 文件， stage B 中部署需要用到的时候当前目录无法找到 dist 文件。解决方式是使用 stash 和 unstash
+stage(&#34;npm build&#34;) { when { branch &#34;dev&#34; } steps { sh &#34;&#34;&#34; npm run deploy &#34;&#34;&#34; stash includes: &#39;dist/**/*&#39;, name:&#39;npm_dist&#39; } } stage(&#34;ansible deploy&#34;) { when { branch &#34;dev&#34; } agent { docker { image &#34;ansible:1.2.11&#34; } } steps { unstash &#39;npm_dist&#39; script { if (fileExists(&#39;dist.zip&#39;)) { sh(&#39;rm -f dist.">  
+
+  <title>
+    
+      jenkins 在不同的 stage 之间共享文件
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-11-13 00:00:00 &#43;0000 UTC">
+            2019-11-13
+        </time>
+    </p>
+
+    <h1>jenkins 在不同的 stage 之间共享文件</h1>
+
+    
+
+    <p>在使用 k8s 或者 docker 作为 jenkins 的 slave 的时候，会出现一个问题：两个 stage 可能不再同一个机器，或者不再同一个目录上，stage A 中编译的 dist 文件， stage B 中部署需要用到的时候当前目录无法找到 dist 文件。解决方式是使用 stash 和 unstash</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;npm build&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    when <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        branch <span style="color:#e6db74">&#34;dev&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        sh  <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            npm run deploy
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        stash includes: <span style="color:#e6db74">&#39;dist/**/*&#39;</span><span style="color:#f92672">,</span> name:<span style="color:#e6db74">&#39;npm_dist&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;ansible deploy&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    when <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        branch <span style="color:#e6db74">&#34;dev&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    agent  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        docker <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            image <span style="color:#e6db74">&#34;ansible:1.2.11&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>       unstash <span style="color:#e6db74">&#39;npm_dist&#39;</span>
+</span></span><span style="display:flex;"><span>       script  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>fileExists<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;dist.zip&#39;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>               sh<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;rm -f  dist.zip&#39;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>       zip zipFile: <span style="color:#e6db74">&#39;dist.zip&#39;</span><span style="color:#f92672">,</span>archive: <span style="color:#66d9ef">false</span><span style="color:#f92672">,</span>dir: <span style="color:#e6db74">&#39;dist&#39;</span>
+</span></span><span style="display:flex;"><span>       sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">           ansible-playbook ansible-deploy.yml --inventory-file=hosts  -e target=dev --timeout=120
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>使用 stash 将目标文件归档，使用 unstash 文件在被归档的文件下载到当前目录。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

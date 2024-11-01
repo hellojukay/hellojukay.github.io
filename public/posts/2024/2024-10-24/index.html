@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="背景需求： 项目的编译和部署是分离的，每次编译完成以后把镜像推送到镜像仓库，然后由部署人员拉取镜像进行部署。部署人员需要再 Jenkins 上选择需要部署的版本，然后点击确认进行部署。难点是，在 Jenkins 上如何获取指定镜像的所有版本，然后样用户选择？
+解决方案： 每次编译完成以后把镜像推送到镜像仓库以后，同步触发一个 webhook 事件，将镜像的版本信息推送到一个第三方系统，让后下次部署的时候，从第三方系统的接口查询镜像的版本信息，然后用户选择。
+这里的第三方系统代码我已经实现好了，代码在 github 上 aq，每次 webhook 发送 POST 请求
+curl -X POST http://localhost:9090/image/{name}:{tag} 服务器会记录版本信息，然后下次部署的时候查询接口
+curl -X GET http://localhost:9090/image/{name} 就能返回一个版本列表
+[{ &#34;name&#34;: &#34;xxx&#34;, &#34;tag&#34;:&#34;xxx&#34;&#34; }] 创建自由风格软件项目 我们在添加参数，选择 choice 类型 然后写 groovy 脚本获取镜像的版本信息, 下面的脚本就会动态获取版本列表了(Jenkins 上注意开放一下执行权限)，这个脚本还能优化一下，传递一个 limit 参数，限制返回的版本数量，这样下拉框的选项会少很多。 代码如下：
+import groovy.json.JsonSlurper try { List&lt;String&gt; artifacts = new ArrayList&lt;String&gt;() def artifactsUrl = &#34;http://localhost:9999/image/{name}&#34; def artifactsObjectRaw = [&#34;curl&#34;, &#34;-s&#34;,&#39;-X&#39;,&#39;GET&#39;, &#34;-H&#34;, &#34;accept: application/json&#34;, &#34;-k&#34;, &#34;--url&#34;, &#34;${artifactsUrl}&#34;].execute().text def jsonSlurper = new JsonSlurper() def artifactsJsonObject = jsonSlurper.">  
+
+  <title>
+    
+      Jenkins 选择指定镜像部署
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2024-10-24 00:00:00 &#43;0000 UTC">
+            2024-10-24
+        </time>
+    </p>
+
+    <h1>Jenkins 选择指定镜像部署</h1>
+
+    
+
+    <p>背景需求： 项目的编译和部署是分离的，每次编译完成以后把镜像推送到镜像仓库，然后由部署人员拉取镜像进行部署。部署人员需要再 Jenkins 上选择需要部署的版本，然后点击确认进行部署。难点是，在 Jenkins 上如何获取指定镜像的所有版本，然后样用户选择？</p>
+<p>解决方案： 每次编译完成以后把镜像推送到镜像仓库以后，同步触发一个 webhook 事件，将镜像的版本信息推送到一个第三方系统，让后下次部署的时候，从第三方系统的接口查询镜像的版本信息，然后用户选择。</p>
+<p>这里的第三方系统代码我已经实现好了，代码在 github 上 <a href="https://github.com/hellojukay/aq">aq</a>，每次 webhook 发送 POST 请求</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -X POST http://localhost:9090/image/<span style="color:#f92672">{</span>name<span style="color:#f92672">}</span>:<span style="color:#f92672">{</span>tag<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>服务器会记录版本信息，然后下次部署的时候查询接口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -X GET http://localhost:9090/image/<span style="color:#f92672">{</span>name<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>就能返回一个版本列表</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>[{
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;xxx&#34;</span>,
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&#34;tag&#34;</span>:<span style="color:#e6db74">&#34;xxx&#34;</span><span style="color:#960050;background-color:#1e0010">&#34;</span>
+</span></span><span style="display:flex;"><span>}]
+</span></span></code></pre></div><p>创建自由风格软件项目
+<img src="/20241031/p1.png" alt="p1"></p>
+<p>我们在添加参数，选择 choice 类型
+<img src="/20241031/p2.png" alt="p1">
+然后写 groovy 脚本获取镜像的版本信息, 下面的脚本就会动态获取版本列表了(Jenkins 上注意开放一下执行权限)，这个脚本还能优化一下，传递一个 limit 参数，限制返回的版本数量，这样下拉框的选项会少很多。
+<img src="/20241031/p3.png" alt="p1">
+代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#f92672">import</span> groovy.json.JsonSlurper
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> artifacts <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> artifactsUrl <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://localhost:9999/image/{name}&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> artifactsObjectRaw <span style="color:#f92672">=</span> <span style="color:#f92672">[</span><span style="color:#e6db74">&#34;curl&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;-s&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#39;-X&#39;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#39;GET&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;-H&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;accept: application/json&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;-k&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;--url&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;${artifactsUrl}&#34;</span><span style="color:#f92672">].</span><span style="color:#a6e22e">execute</span><span style="color:#f92672">().</span><span style="color:#a6e22e">text</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> jsonSlurper <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JsonSlurper<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> artifactsJsonObject <span style="color:#f92672">=</span> jsonSlurper<span style="color:#f92672">.</span><span style="color:#a6e22e">parseText</span><span style="color:#f92672">(</span>artifactsObjectRaw<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> dataArray <span style="color:#f92672">=</span> artifactsJsonObject
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span><span style="color:#f92672">(</span>item <span style="color:#66d9ef">in</span> dataArray<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>        artifacts<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span> item<span style="color:#f92672">.</span><span style="color:#a6e22e">tag</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    print artifacts<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> artifacts
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    print e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    print <span style="color:#e6db74">&#34;There was a problem fetching the artifacts&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

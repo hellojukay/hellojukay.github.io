@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="第一步：更新证书
+kubeadm init phase upload-certs --upload-certs 得到证书信息
+W0702 16:30:29.817135 10814 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io] [upload-certs] Storing the certificates in Secret &#34;kubeadm-certs&#34; in the &#34;kube-system&#34; Namespace [upload-certs] Using certificate key: 65d0e16cb416c38254f1cb544beec8e47c11d1655b515a26b4939d843629d736 第二步：创建 token 并且打印 join 命令
+[root@master01v runner]# kubeadm token create --print-join-command --certificate-key=&lt;token&gt; 这里会用到上面的证书字符串,生成命令如下
+W0702 16:30:47.775943 10980 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io] kubeadm join 192.168.0.100:443 --token tn0lnq.">  
+
+  <title>
+    
+      kubeadm 忘记了 token 的情况添加新节点
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-07-02 00:00:00 &#43;0000 UTC">
+            2020-07-02
+        </time>
+    </p>
+
+    <h1>kubeadm 忘记了 token 的情况添加新节点</h1>
+
+    
+
+    <p>第一步：更新证书</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm init phase upload-certs --upload-certs
+</span></span></code></pre></div><p>得到证书信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>W0702 16:30:29.817135   <span style="color:#ae81ff">10814</span> configset.go:202<span style="color:#f92672">]</span> WARNING: kubeadm cannot validate component configs <span style="color:#66d9ef">for</span> API groups <span style="color:#f92672">[</span>kubelet.config.k8s.io kubeproxy.config.k8s.io<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>upload-certs<span style="color:#f92672">]</span> Storing the certificates in Secret <span style="color:#e6db74">&#34;kubeadm-certs&#34;</span> in the <span style="color:#e6db74">&#34;kube-system&#34;</span> Namespace
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>upload-certs<span style="color:#f92672">]</span> Using certificate key:
+</span></span><span style="display:flex;"><span>65d0e16cb416c38254f1cb544beec8e47c11d1655b515a26b4939d843629d736
+</span></span></code></pre></div><p>第二步：创建 token 并且打印 join 命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@master01v runner<span style="color:#f92672">]</span><span style="color:#75715e"># kubeadm token create --print-join-command  --certificate-key=&lt;token&gt;</span>
+</span></span></code></pre></div><p>这里会用到上面的证书字符串,生成命令如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>W0702 16:30:47.775943   <span style="color:#ae81ff">10980</span> configset.go:202<span style="color:#f92672">]</span> WARNING: kubeadm cannot validate component configs <span style="color:#66d9ef">for</span> API groups <span style="color:#f92672">[</span>kubelet.config.k8s.io kubeproxy.config.k8s.io<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>kubeadm join 192.168.0.100:443 --token tn0lnq.55w9g7xf45g4jxxn     --discovery-token-ca-cert-hash &lt;token&gt;     --control-plane --certificate-key &lt;key&gt;
+</span></span></code></pre></div><p>第三步：执行上面打印的命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm join 192.168.0.100:443 --token tn0lnq.55w9g7xf45g4jxxn     --discovery-token-ca-cert-hash &lt;token&gt;     --control-plane --certificate-key &lt;key&gt;
+</span></span></code></pre></div><p>如果是加入 woker ，　则不需要后面的 &ndash;control-plane &ndash;certificate-key <!-- raw HTML omitted --></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm join 192.168.0.100:443 --token tn0lnq.55w9g7xf45g4jxxn     --discovery-token-ca-cert-hash &lt;token&gt;
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

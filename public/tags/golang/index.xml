@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on 润物细无声</title>
+    <link>http://localhost:1313/tags/golang/</link>
+    <description>Recent content in Golang on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 30 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>命令行参数与配置文件优缺点</title>
+      <link>http://localhost:1313/posts/2019/20191030/</link>
+      <pubDate>Wed, 30 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191030/</guid>
+      <description>在 Linux 上很多的程序都支持设置命令行启动参数的方式来控制程序的行为，必须使用 -x 输出 debug 的日志信息，使用 -p 来配置端口，也有一些程序支持使用配置文件来控制程序的行为，比如 mysql 使用一个 ini 格式的文件来配置 mysql 的信息。使用命令行和使用配置文件都有那些有点和缺点呢？&#xA;使用配置文件 使用配置文件的好处是，即使程序配置很复杂 ，在配置文件配置好了以后，每次启动都很简单，配置能够被之久话保存下来。·配置文件能够被备份，复制，版本控制。&#xA;使用启动参数 命令行参数具有很好的灵活性，方便自动化脚本来控制程序,但是如果启动命令行很长，很复杂的情况下，每次启动程序都需要输入或者复制很长的启动参数，容易出错，也比较麻烦，甚至有可能忘记上次是怎么设置的启动惨。&#xA;总结 综合上述，全部使用启动参数或者全部使用配置文件，都是不合适的。我认为比较和的方式同时支持配置文件和启动参数，能够写在配置文件里面的配置，也应该能通过命令行参数设置，反过来也是。这一点，prometheus 做的非常好，值得借鉴。这里写了一个例子来说明 golang 在同时支持配置文件和启动方式的处理方式，见代码</description>
+    </item>
+    <item>
+      <title>golang  TestMain 方法</title>
+      <link>http://localhost:1313/posts/2019/20191028/</link>
+      <pubDate>Mon, 28 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191028/</guid>
+      <description>今天在执行 golang 的时候报了一个错误&#xA;flag provided but not defined: -test.testlogfile Usage of /var/folders/lb/j0gz8jln36z4frqkrzmkdb0c0000gp/T/go-build200454244/b001/cc.test: FAIL&#x9;github.com/bla/cc&#x9;0.007s 这个的意思是，我没有定义 -test.testlogfile 但是参数解析参数的时候确有这个参数。这里报这个错的原因是测试代码写在main 包中，而 main 包中有一个 init 函数调用了 flag.Parse() 方法&#xA;flag.Parse() 在 testing 框架中也定义了 flag.StringXxxx 等方法，所以也会调用 flag.Prase() 来解析参数&#xA;if !flag.Prase() { flag.Parse() } 这样就导致 testing 框架定义的 flag.StringXxxx 没有被解析。这个这个问题的方式，是在 go test 的用例执行之前，flag.StringXxxx 定义之后调用 flag.Parse() , 这需要用到 TestMain 机制，当一个 golang test file 中包含有&#xA;func TestMain(t *testing.M){ } 函数时，其他的测试用例不会自动执行，而会触发执行 TestMain 参数， 所以我们可以编写 TestMain 参数如下:&#xA;func TestMain(m *testing.M) { flag.</description>
+    </item>
+    <item>
+      <title>SpaceVim 配置 golang IDE</title>
+      <link>http://localhost:1313/posts/2019/20190821/</link>
+      <pubDate>Wed, 21 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190821/</guid>
+      <description> 安装SpaceVim curl -sLf https://spacevim.org/install.sh | bash -s -- -h 配置 golang 模块 go get -u github.com/jstemmer/gotags vim ~/.SpaceVim.d/init.toml [[layers]] 安装 golang 插件 # 这个安装过程可能会遇到 golang/x/tools 的问题 vim :GoInstallBinaries </description>
+    </item>
+    <item>
+      <title>监控 golang 程序的运行状态</title>
+      <link>http://localhost:1313/posts/2019/20190122/</link>
+      <pubDate>Sat, 12 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190122/</guid>
+      <description>prometheus是一个非常棒的工具，结合grafana能够让我在不写代码，或者少写代码的情况下搭建一套有效的监控体系。这里介绍一下prometheus监控golang程序的方式。&#xA;要想你的程序能够被监控，你就必须要将程序运行中的各项目指标暴露出来，提供给promtheus采集信息。我们可以使用promethues提供的golang客户端暴露自身的运行时信息。代码例子如下:&#xA;package main import ( &amp;#34;log&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;github.com/prometheus/client_golang/prometheus/promhttp&amp;#34; ) func main() { http.Handle(&amp;#34;/metrics&amp;#34;, promhttp.Handler()) log.Fatal(http.ListenAndServe(&amp;#34;:8080&amp;#34;, nil)) } go run main.go 访问本地的8080端口就能看到监控的指标,这里监控的都是默认指标，当然你可以可以自定义你需要的量化的指标，然后暴露出来，具体做法我不介绍了。 现在我们要配置promtheus，让他采集我们的监控指标&#xA;- job_name: &amp;#39;golang&amp;#39; scrape_interval: 20s metrics_path: /metrics static_configs: - targets: [&amp;#39;localhost:8080&amp;#39;] 启动promethues，我们golang指标就被采集到了时序数据库中，接下来就是把这些指标在grafana图形化展示出来，最后展示出来的效果如下: 如果服务数量较多，可以考虑将服务注册到consul中去，promethues通过服务发现来采集需要监控的服务。</description>
+    </item>
+    <item>
+      <title>一个golang的goroutine pool的简单实现</title>
+      <link>http://localhost:1313/posts/2019/20190106/</link>
+      <pubDate>Sun, 06 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190106/</guid>
+      <description>宗旨就是使用单个goroutine持续消费channel中的function对象。&#xA;package main import ( &amp;#34;time&amp;#34; ) const BufferSize = 16 type Pool struct { ch chan func() size int } func NewPool(size int)*Pool{ p := new(Pool) p.ch = make(chan func(),BufferSize) p.size = size return p } func (p *Pool)Start(){ p.loop() } func (p *Pool)loop(){ for i := 0; i &amp;lt; p.size ; i++{ go func(ch chan func()){ for{ select { case f := &amp;lt;- ch: f() default: continue } } }(p.</description>
+    </item>
+    <item>
+      <title>使用Docker来管理golang的编译依赖</title>
+      <link>http://localhost:1313/posts/2018/20181201/</link>
+      <pubDate>Sat, 01 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181201/</guid>
+      <description>golang开发在依赖管理一直不太方便，主要有一下问题：&#xA;golang.org包下载不方便 如果不提前下载好所有依赖，glide install速度慢 golang.org被墙的问题可以通过设置glide 的mirror来解决，glide install下载慢的问题也可以通过提前下的来解决。但是,但是服务器上进行CI就不方便，如果需要每次都重新下载依赖，显然编译速度慢，导致集成速度慢，这不是我想要的。&#xA;我们的所有的golang项目都是在golang的容器里面编译，所以，我们可以通过这里来下手，尽可能的降我们会用到的依赖安装在容器的GOPATH中，这样glide在安装依赖的不需要从github重新下载代码了，国内网络连接github还是挺慢的，这样做能节约不少构建时间, 还有一个好处就是如果是用的github上的某个包，被作者删除了，也不会影响你的正常编译。&#xA;FROM golang RUN apt-get update &amp;amp;&amp;amp; apt-get -y upgrade RUN apt-get install -y ca-certificates git build-essential &amp;amp;&amp;amp; rm -rf /var/lib/apt/lists/* RUN go get -u github.com/Masterminds/glide RUN go get -u github.com/jstemmer/go-junit-report RUN go get -u github.com/go-bindata/go-bindata/... RUN go get -u github.com/golang/dep/cmd/dep RUN go get -u golang.org/x/crypto RUN go get -u golang.org/x/net RUN go get -u golang.org/x/tools RUN go get -u golang.org/x/text RUN go get -u golang.</description>
+    </item>
+    <item>
+      <title>golang添加编译版本信息</title>
+      <link>http://localhost:1313/posts/2018/20180921/</link>
+      <pubDate>Fri, 21 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180921/</guid>
+      <description>在很多程序中，我们都能看到编译的版本信息&#xA;[jukay@mac-pro]~/Code/Go/src/github.com/hellojukay/test$ java -version java version &amp;#34;1.8.0_151&amp;#34; Java(TM) SE Runtime Environment (build 1.8.0_151-b12) Java HotSpot(TM) 64-Bit Server VM (build 25.151-b12, mixed mode) 这里的版本信息应该不是在代码里面写死的，而是在编译过程中动态生成。这里介绍一下golang怎么在编译时候加上版本信息,我们的代码如下：&#xA;package main import ( &amp;#34;flag&amp;#34; ) var version string func init() { var printVersion bool flag.BoolVar(&amp;amp;printVersion, &amp;#34;version&amp;#34;, false, &amp;#34;print program build version&amp;#34;) if !flag.Parsed() { flag.Parse() } if printVersion { println(version) } } func main() { } 编译时期注入main包的version变量的值&#xA;mac-pro:test jukay$ go build -ldflags &amp;#34;-X main.version=v1.0&amp;#34; main.go mac-pro:test jukay$ .</description>
+    </item>
+    <item>
+      <title>使用 go modules功能</title>
+      <link>http://localhost:1313/posts/2018/20180919/</link>
+      <pubDate>Tue, 18 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180919/</guid>
+      <description>使用go modules功能的前提条件,二选一&#xA;安装golang 1.11以上版本 源码安装golang master分支源码 安装完以上组件以后，你就能够激活go modules功能了，激活方法有两种： go在$GOPATH/src目录之外执行go命令，创建go.mod文件 设置环境变量GO111MODULE=on，执行go命令 概念介绍 这本主要讲一个写go modules引入的新概念，你尅话四十分钟了解一下官方文档,或者花40分钟看下这个视频,或者看下更加详细的博客 。&#xA;Modules Modules是一组功能相关的golang包，他们被统一的版本管理起来。大部分情况下，我们是一个仓库一个版本管理，但是现在我们希望一个仓库能够同时版本管理多个Module。 Modules record precise dependency requirements and create reproducible builds.&#xA;Modules 精准的记录了依赖关系，保证了项目可重复编译。Modules同时也是语义化的版本管理，例如：v0.1.0, v1.2.3, or v3.0.1。这个前置 v字符是必须要求有的，如果是使用git来管理版本，那么这应该就是git tag 。&#xA;go.mod Modules使用 go.mod 文件记录了源码的代码结构，并且他不要求你的代码必须在GOPATH中。在 go.mod 中所有的Module都有一个前缀：模块的路径。使用module字段来定义一个新的Module,例如：里面包含两个 package,example.com/my/thing/foo 和 example.com/my/thing/bar ，那么 go.mod 文件里面第一行因该是 module example.com/my/thing 。 就是golang代码一样，Modules文件里面也可以加入一些注释。下面是一个 go.mod 文件的例子：&#xA;module github.com/my/module/v3 require ( github.com/some/dependency v1.2.3 github.com/another/dependency v0.1.0 github.com/additional/dependency/v4 v4.0.0 ) Module定义文件一共有四个指令: module, require, exclude, replace 。 exclude 和 replace一般只用在主Module里面，exclude 和 replace 使用在非主Modules里面的时候会被忽略。在源码中，我们通过完整的路径来导入导入一个 Module,例如：</description>
+    </item>
+    <item>
+      <title>几个golang的面试编程题目</title>
+      <link>http://localhost:1313/posts/2018/20180603/</link>
+      <pubDate>Sun, 03 Jun 2018 12:30:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180603/</guid>
+      <description>前几天出去面试了，有几个编程现场编程题目，我这里记录一下:&#xA;字符串翻转 方法1 // 非常低的效率 func reverse(s string)string{ var buffer = []rune(s) var arr []rune for index := range buffer{ arr = append([]rune{buffer[index]},arr ...) } return string(arr) } 方法2 func reverse(s string)string{ var n string for _,v := range s{ n = string(v)+n } return n } 10个goroutine分别打印 1, 2, 3 &amp;hellip; 10 方法1 package main import &amp;#34;sync&amp;#34; var wg sync.WaitGroup func fx(n int){ defer wg.Done() println(n) } func main(){ for i := 1 ;i &amp;lt;=10;i++{ wg.</description>
+    </item>
+    <item>
+      <title>记一次抓包经历</title>
+      <link>http://localhost:1313/posts/2018/20180425/</link>
+      <pubDate>Wed, 25 Apr 2018 21:58:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180425/</guid>
+      <description>这是昨天发生的事情，我本机在使用仿真环境部署的时候，浏览器会概率性的卡死。同事部署仿真环境百分百的卡死。top命令查看进程的情况，Chrome疯狂吃内存。同样的代码，测试环境和仿真环境都没有问题，就偏偏仿真环境有问题。因为在部署的时候，服务端会通过浏览器实时传输文件日志到浏览器，偏偏卡死的时候在Chrome终端是看不到传输数据的，之打印了一条日志，然后卡死。于是我怀疑是不是仿真环境机器的网络有问题，因为之前就是机器问题才迁移项目到当前这台机器的。所以我想通过抓包来看到到底发生额生么。 看到很多个tcp的zerowindow信号，zerowindow异味着通知tcp连接通知对方暂时不要发送数据了，本机因为某些原因无法接手更多的数据。本机内存耗尽，tcp无法接受更多的数据，发送了我zerowindow信号。继续抓包 这里发送了很多同样的数据，如果我不终止当前的chrome,chrome会继续接受这些数据，然后连接字符串渲染在div中，连接字符过程中会产生许多的临时对象，占用大量的内存，并且占用内存中连续的内存地址，当cpu无法分配连续分配大块连续内存的时候，他清理内存碎片，攒出大块的内存，分配给程序。这个过程往往会很久，这里就会导致Chrome无响应，卡死。&#xA;为什么只有仿真环境会卡死呢，原因是迁移部署的仿真环境地址，从wuyong迁移到lvfang，而lvfang这台的机器运维并没有给他安装Ansible，这就导致Ansible执行报错. 追根到底，找到了这几行代码，这里没处理ReadLine失败的情况，所以Ansible执行失败了，读取日志ReadLine失败，但是错误并不是EOF,而是其他的错误，就会导致死循环向前端写数据，导致前端卡死。&#xA;这里为什么我是概率性的卡死，我的同事100%的卡死呢，原因是前端js文件有缓存，我在清空Chrome浏览器缓存的时候没有清空干净 这里也要勾选上，不然可能会存在js文件缓存的情况。说道这里，我真的想把服务器的nginx设置为禁止前端缓存，已经不是第一次了，只是之前的问题没有这么绕。</description>
+    </item>
+    <item>
+      <title>golang项目的构建</title>
+      <link>http://localhost:1313/posts/2018/20180403/</link>
+      <pubDate>Mon, 02 Apr 2018 15:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180403/</guid>
+      <description>现在用golang开发项目,项目结构一般都是这样&#xA;. ├── README.md ├── ansible ├── app.yaml ├── conf ├── deploy ├── glide.lock ├── glide.yaml ├── main.go ├── models ├── operate ├── plat_deploy ├── restart ├── rollback ├── router ├── utils └── vendor 10 directories, 6 files 最外面一个main文件，这程序的入口，要执行构建操作都是直接到当前的目录下面直接运行go install，但是这样做有个缺陷，就是你的golang项目必须放在GOPATH下面的正确的位置，直接导致构建不成功的例子，目前较好的方法还是是用make结合go install的方法来执行你的构建，在Makefile里面设置好的你的构建需要好的条件，然后直接Make install就能构建成功，或者Make test完成测试。这样也更加有利于自动化。</description>
+    </item>
+    <item>
+      <title>记一次&#34;hack&#34;公司ssh</title>
+      <link>http://localhost:1313/posts/2018/20180310/</link>
+      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180310/</guid>
+      <description>今天总算解决了在家无法登录公司测试服务器的问题。因为不知道的什么原因，公司是不允许在外部网络登录测试服务，虽然有vpn，但是运维禁止了vpn登录ssh,要登录测试服务，必须要申请权限，而且每次登录最长只能保持15分钟，过期了有要再次登录。所以我想能不能自己想办法绕过这个坑，我试了下，到跳板机的连接是ping的同的，说明网络是没有问题。我要的做的只是监听一个端口，把这个端口的输入和输出都同步到跳板机的ssh端口就可以了，代码如下&#xA;https://github.com/hellojukay/ssh_proxy 登录到jenkins，部署，然后登录到部署系统，部署，本地连接完美登录成功。&#xA;jukay@MP ~/.ssh(18.9)&amp;gt; ssh -p 7013 -i licong_testing.rsa licong@huanggai 六 3/10 10:26:42 2018 key_load_public: invalid format Last login: Sat Mar 10 09:44:48 2018 from 192.168.1.197 [licong@xiangyun ~]$ 这行命令太长了，写在一个文件里面吧&#xA;jukay@MP ~/.ssh(18.9)&amp;gt; cat huanggai 六 3/10 10:28:07 2018 #!/bin/bash cd /Users/jukay/.ssh ssh -p 7013 -i licong_testing.rsa licong@huanggai jukay@MP ~/.ssh(18.9)&amp;gt; 每次登录都要~/.ssh目录下执行huanggai，太麻烦了，取一个全局额别名吧,我用的shell是fish，直接在fish的配置里面加上&#xA;alias huanggai=&amp;#34;sh /Users/jukay/.ssh/huanggai&amp;#34; 以后就可以在本地的任何目录执行huanggai，就能登录测试环境，以后要加班就不要去公司了。</description>
+    </item>
+    <item>
+      <title>golang defer的&#34;坑&#34;</title>
+      <link>http://localhost:1313/posts/2018/20180227/</link>
+      <pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180227/</guid>
+      <description>今天同事在计算程序耗时的时候遇到了一个问题：命名一个耗时非常长的函数，计算出来的耗时总是0ms，于是顺藤摸瓜，我们发现了golang中defer关键字的一个需要特别注意的地方，如果你不明白这个特性，下次也可能犯同样的错误，这里记录下这个问题。他的代码是这样的:&#xA;package main import ( &amp;#34;log&amp;#34; &amp;#34;time&amp;#34; ) func f() { var start = time.Now() defer log.Printf(&amp;#34;use %f seconds&amp;#34;, time.Now().Sub(start).Seconds()) time.Sleep(time.Second * 3) } func main() { f() } // 2018/02/27 22:37:53 use 0.000001 seconds 这里代码中已经sleep了3秒了，但是计算出来的耗时却几乎为0。原因是defer关键字后面接一个方法的调用，程序在执行到defer的时候会创建一个defer栈，方法以及参数都会入栈，这里就需要计算出方法的参数的具体值，将这个值保存在栈中，所以这里的日志虽然没有直接打印出来，但是log.Printf的方法的每个参数都已经计算出来了，也就是说time.Now().Sub(start).Seconds()这行代码其实是已经执行了的。这也就不难解释为什么计算出来的耗时总是接近于0.我写个代码验证一下这个问题。&#xA;import ( &amp;#34;log&amp;#34; ) func p() string { log.Println(&amp;#34;hello&amp;#34;) return &amp;#34;hello&amp;#34; } func f(str string) { } func main() { defer f(p()) log.Print(&amp;#34;world&amp;#34;) } //2018/02/27 22:48:55 hello //2018/02/27 22:48:55 world 输出与我们预期的一致。</description>
+    </item>
+    <item>
+      <title>golang中map的&#34;坑&#34;</title>
+      <link>http://localhost:1313/posts/2017/20171122/</link>
+      <pubDate>Sun, 17 Sep 2017 21:28:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2017/20171122/</guid>
+      <description>package main import ( &amp;#34;fmt&amp;#34; ) type User struct{ Name string } func main(){ var m = make(map[int]User) var u = User{ Name: &amp;#34;Hello World&amp;#34;, } m[1] = u fmt.Println(m[1].Name) var u2 =m[1] u2.Name=&amp;#34;Hello Golang&amp;#34; fmt.Println(m[1].Name) } // Hello World // Hello World 这段golang代码会输出两行Hello World，并不会输出Hello Golang，原因是golang中的map返回的是一个copy，而不是一个refrence。&#xA;如果要想返回一个refrence，那么应该怎么改呢&#xA;package main import ( &amp;#34;fmt&amp;#34; ) type User struct{ Name string } func main(){ var m = make(map[int]*User) var u = User{ Name: &amp;#34;Hello World&amp;#34;, } m[1] = &amp;amp;u fmt.</description>
+    </item>
+  </channel>
+</rss>

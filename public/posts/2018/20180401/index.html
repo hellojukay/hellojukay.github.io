@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="我的这台archlinux的主板上接了一个2TB的硬盘，每次开机启动他斗没有自动挂载上来，我总是在自己需要使用这硬盘的时候来手动挂载他，这样太不方便了，我想能不能在开机的时候自动来挂载这个块硬盘。解决这个问题的方法是有的，往/etc/fstab这个文件的后面加入的分区信息和挂载点
+[hellojukay@archlinux ~]$ cat /etc/fstab # Static information about the filesystems. # See fstab(5) for details. # &lt;file system&gt; &lt;dir&gt; &lt;type&gt; &lt;options&gt; &lt;dump&gt; &lt;pass&gt; # /dev/sda3 UUID=e3a426e2-4713-4b33-ad6c-773bf144081c	/ ext4 rw,relatime,data=ordered	0 1 # /dev/sda1 UUID=1b43aa57-22fc-4af2-8a84-cd8f6e27e8f2	/boot ext4 rw,relatime,data=ordered	0 2 # /dev/sda5 UUID=2d6bde7f-b18c-44e1-8036-8ecdd93c13c1	/home ext4 rw,relatime,data=ordered	0 2 # /dev/sda2 UUID=6bbfba42-07ec-479a-b9fa-d3e89e94af9f	none swap defaults,pri=-2	0 0 这个需要知道的分区的UUID,使用blkid命令能看到分区的id，一下是我的挂载的情况
+[hellojukay@archlinux ~]$ sudo lsblk NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT sda 8:0 0 111.">  
+
+  <title>
+    
+      archlinux开机自动挂载磁盘
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-03-28 11:43:00 &#43;0000 UTC">
+            2018-03-28
+        </time>
+    </p>
+
+    <h1>archlinux开机自动挂载磁盘</h1>
+
+    
+
+    <p>我的这台archlinux的主板上接了一个2TB的硬盘，每次开机启动他斗没有自动挂载上来，我总是在自己需要使用这硬盘的时候来手动挂载他，这样太不方便了，我想能不能在开机的时候自动来挂载这个块硬盘。解决这个问题的方法是有的，往/etc/fstab这个文件的后面加入的分区信息和挂载点</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux ~<span style="color:#f92672">]</span>$ cat /etc/fstab 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Static information about the filesystems.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See fstab(5) for details.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;file system&gt; &lt;dir&gt; &lt;type&gt; &lt;options&gt; &lt;dump&gt; &lt;pass&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda3</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>e3a426e2-4713-4b33-ad6c-773bf144081c	/         	ext4      	rw,relatime,data<span style="color:#f92672">=</span>ordered	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda1</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>1b43aa57-22fc-4af2-8a84-cd8f6e27e8f2	/boot     	ext4      	rw,relatime,data<span style="color:#f92672">=</span>ordered	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda5</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>2d6bde7f-b18c-44e1-8036-8ecdd93c13c1	/home     	ext4      	rw,relatime,data<span style="color:#f92672">=</span>ordered	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda2</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>6bbfba42-07ec-479a-b9fa-d3e89e94af9f	none      	swap      	defaults,pri<span style="color:#f92672">=</span>-2	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>这个需要知道的分区的UUID,使用blkid命令能看到分区的id，一下是我的挂载的情况</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux ~<span style="color:#f92672">]</span>$ sudo lsblk
+</span></span><span style="display:flex;"><span>NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+</span></span><span style="display:flex;"><span>sda      8:0    <span style="color:#ae81ff">0</span> 111.8G  <span style="color:#ae81ff">0</span> disk 
+</span></span><span style="display:flex;"><span>├─sda1   8:1    <span style="color:#ae81ff">0</span>   100M  <span style="color:#ae81ff">0</span> part /boot
+</span></span><span style="display:flex;"><span>├─sda2   8:2    <span style="color:#ae81ff">0</span>    20G  <span style="color:#ae81ff">0</span> part <span style="color:#f92672">[</span>SWAP<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>├─sda3   8:3    <span style="color:#ae81ff">0</span>    50G  <span style="color:#ae81ff">0</span> part /
+</span></span><span style="display:flex;"><span>├─sda4   8:4    <span style="color:#ae81ff">0</span>     1K  <span style="color:#ae81ff">0</span> part 
+</span></span><span style="display:flex;"><span>└─sda5   8:5    <span style="color:#ae81ff">0</span>    10G  <span style="color:#ae81ff">0</span> part /home
+</span></span><span style="display:flex;"><span>sdb      8:16   <span style="color:#ae81ff">0</span>   1.8T  <span style="color:#ae81ff">0</span> disk 
+</span></span><span style="display:flex;"><span>└─sdb1   8:17   <span style="color:#ae81ff">0</span>   1.8T  <span style="color:#ae81ff">0</span> part /data
+</span></span><span style="display:flex;"><span>sr0     11:0    <span style="color:#ae81ff">1</span> 127.5M  <span style="color:#ae81ff">0</span> rom  /run/media/hellojukay/TP-LINK
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux ~<span style="color:#f92672">]</span>$ 
+</span></span></code></pre></div><p>这个的磁盘sdb就是我的那个2TB的磁盘，他没有被挂载在任何目录下，我们来看下/dev/sdb1的UUID.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux ~<span style="color:#f92672">]</span>$ sudo blkid  /dev/sdb1
+</span></span><span style="display:flex;"><span>/dev/sdb1: PARTUUID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0cfc53f7-01&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux ~<span style="color:#f92672">]</span>$ 
+</span></span></code></pre></div><p>这里的sdb就是我需要挂载的外置因盘，我们来看一下他的分区的UUID,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux blog<span style="color:#f92672">]</span>$ sudo blkid /dev/sdb1
+</span></span><span style="display:flex;"><span>/dev/sdb1: UUID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;7d546d07-1049-4a4a-92a4-152d1c7ba854&#34;</span> TYPE<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ext4&#34;</span> PARTUUID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0cfc53f7-01&#34;</span>
+</span></span></code></pre></div><p>这里看到了，sdb1的UUID了，只需要他他写入到/etc/fstab重，开启启动就会自动挂载的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>hellojukay@archlinux blog<span style="color:#f92672">]</span>$ cat /etc/fstab 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Static information about the filesystems.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See fstab(5) for details.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &lt;file system&gt; &lt;dir&gt; &lt;type&gt; &lt;options&gt; &lt;dump&gt; &lt;pass&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda3</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>e3a426e2-4713-4b33-ad6c-773bf144081c	/         	ext4      	rw,relatime,data<span style="color:#f92672">=</span>ordered	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda1</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>1b43aa57-22fc-4af2-8a84-cd8f6e27e8f2	/boot     	ext4      	rw,relatime,data<span style="color:#f92672">=</span>ordered	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda5</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>2d6bde7f-b18c-44e1-8036-8ecdd93c13c1	/home     	ext4      	rw,relatime,data<span style="color:#f92672">=</span>ordered	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sda2</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>6bbfba42-07ec-479a-b9fa-d3e89e94af9f	none      	swap      	defaults,pri<span style="color:#f92672">=</span>-2	<span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># /dev/sdb1</span>
+</span></span><span style="display:flex;"><span>UUID<span style="color:#f92672">=</span>7d546d07-1049-4a4a-92a4-152d1c7ba854       /data           ext4            defaults                         <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>我们已经把这块硬盘挂载到了/data目录下了。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

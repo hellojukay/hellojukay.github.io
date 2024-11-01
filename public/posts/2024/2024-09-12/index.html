@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天某个网友遇到了一个古怪的问题，在 Jenkins Pipeline 中判断 slave 上是否存在文件，但是无论怎么判断都是返回 false。下面是他的核心代码:
+def fh = new File(filePath) if(fh.exists()){ echo &#34;文件存在&#34; } else { echo &#34;文件不存在&#34; } 最后不管他怎么调试，上面的脚本总是输出“文件不存在”。
+后来经过一番研究，终于找到了原因。在 pipeline 中， java 代码的 context 是运行在 master 节点上的，所以上面的代码中的 filePath 是 master 节点的路径。而 master 节点上没有这个文件，所以返回 false。正确的判断文件是否存在，应该使用 pipeline utils 库中的 fileExists 方法，代码如下：
+def filePath = &#34;xxx&#34; if(fileExists(filePath)){ echo &#34;文件存在&#34; } else { echo &#34;文件不存在&#34; } 读取文件也是同样的问题，需要使用 readFile 方法。不要 new File 对象来读取文件。">  
+
+  <title>
+    
+      Jenkins Pipeline 判断 slave 上是否存在文件，注意避坑！
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2024-09-12 00:00:00 &#43;0000 UTC">
+            2024-09-12
+        </time>
+    </p>
+
+    <h1>Jenkins Pipeline 判断 slave 上是否存在文件，注意避坑！</h1>
+
+    
+
+    <p>今天某个网友遇到了一个古怪的问题，在 Jenkins Pipeline 中判断 slave 上是否存在文件，但是无论怎么判断都是返回 false。下面是他的核心代码:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> fh <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span>filePath<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>fh<span style="color:#f92672">.</span><span style="color:#a6e22e">exists</span><span style="color:#f92672">()){</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;文件存在&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;文件不存在&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>最后不管他怎么调试，上面的脚本总是输出“文件不存在”。</p>
+<p>后来经过一番研究，终于找到了原因。在 pipeline 中， java 代码的 context 是运行在 master 节点上的，所以上面的代码中的 filePath 是 master 节点的路径。而 master 节点上没有这个文件，所以返回 false。正确的判断文件是否存在，应该使用 pipeline utils 库中的 fileExists 方法，代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> filePath <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;xxx&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>fileExists<span style="color:#f92672">(</span>filePath<span style="color:#f92672">)){</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;文件存在&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;文件不存在&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>读取文件也是同样的问题，需要使用 readFile 方法。不要 new File 对象来读取文件。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

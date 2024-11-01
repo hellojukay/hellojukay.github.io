@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="有一些开源项目在make构建的时候会调用一些shell脚本，我发现这些shell脚本的shebang有一些微妙之处：
+/usr/bin/env bash /usr/bin/bash /bin/bash 第一种我就不讨论了，主要是后面两种，我老是傻傻的分不清，今天找了个时间，到服务器上一看,傻眼了。 阿里云机器的centos 7
+[root@iz2zefvnzjphkalt990sg0z /]# uname -a Linux iz2zefvnzjphkalt990sg0z 3.10.0-693.2.2.el7.x86_64 #1 SMP Tue Sep 12 22:26:13 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux [root@iz2zefvnzjphkalt990sg0z /]# ll / 总用量 72 lrwxrwxrwx. 1 root root 7 10月 15 2017 bin -&gt; usr/bin dr-xr-xr-x. 5 root root 4096 10月 15 2017 boot drwxr-xr-x 20 root root 3040 5月 14 18:09 dev drwxr-xr-x. 88 root root 12288 5月 21 12:46 etc drwxr-xr-x.">  
+
+  <title>
+    
+      linux中的/bin与/usr/bin
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-21 00:00:00 &#43;0000 UTC">
+            2018-05-21
+        </time>
+    </p>
+
+    <h1>linux中的/bin与/usr/bin</h1>
+
+    
+
+    <p>有一些开源项目在make构建的时候会调用一些shell脚本，我发现这些shell脚本的shebang有一些微妙之处：</p>
+<ul>
+<li>/usr/bin/env bash</li>
+<li>/usr/bin/bash</li>
+<li>/bin/bash</li>
+</ul>
+<p>第一种我就不讨论了，主要是后面两种，我老是傻傻的分不清，今天找了个时间，到服务器上一看,傻眼了。
+阿里云机器的centos 7</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@iz2zefvnzjphkalt990sg0z /<span style="color:#f92672">]</span><span style="color:#75715e"># uname -a</span>
+</span></span><span style="display:flex;"><span>Linux iz2zefvnzjphkalt990sg0z 3.10.0-693.2.2.el7.x86_64 <span style="color:#75715e">#1 SMP Tue Sep 12 22:26:13 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@iz2zefvnzjphkalt990sg0z /<span style="color:#f92672">]</span><span style="color:#75715e"># ll /</span>
+</span></span><span style="display:flex;"><span>总用量 <span style="color:#ae81ff">72</span>
+</span></span><span style="display:flex;"><span>lrwxrwxrwx.  <span style="color:#ae81ff">1</span> root root     <span style="color:#ae81ff">7</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> bin -&gt; usr/bin
+</span></span><span style="display:flex;"><span>dr-xr-xr-x.  <span style="color:#ae81ff">5</span> root root  <span style="color:#ae81ff">4096</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> boot
+</span></span><span style="display:flex;"><span>drwxr-xr-x  <span style="color:#ae81ff">20</span> root root  <span style="color:#ae81ff">3040</span> 5月  <span style="color:#ae81ff">14</span> 18:09 dev
+</span></span><span style="display:flex;"><span>drwxr-xr-x. <span style="color:#ae81ff">88</span> root root <span style="color:#ae81ff">12288</span> 5月  <span style="color:#ae81ff">21</span> 12:46 etc
+</span></span><span style="display:flex;"><span>drwxr-xr-x.  <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> 11月  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">2016</span> home
+</span></span><span style="display:flex;"><span>lrwxrwxrwx.  <span style="color:#ae81ff">1</span> root root     <span style="color:#ae81ff">7</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> lib -&gt; usr/lib
+</span></span><span style="display:flex;"><span>lrwxrwxrwx.  <span style="color:#ae81ff">1</span> root root     <span style="color:#ae81ff">9</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> lib64 -&gt; usr/lib64
+</span></span><span style="display:flex;"><span>drwx------.  <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">16384</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> lost+found
+</span></span><span style="display:flex;"><span>drwxr-xr-x.  <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> 11月  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">2016</span> media
+</span></span><span style="display:flex;"><span>drwxr-xr-x.  <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> 11月  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">2016</span> mnt
+</span></span><span style="display:flex;"><span>drwxr-xr-x.  <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> 11月  <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">2016</span> opt
+</span></span><span style="display:flex;"><span>dr-xr-xr-x  <span style="color:#ae81ff">73</span> root root     <span style="color:#ae81ff">0</span> 5月  <span style="color:#ae81ff">14</span> 18:09 proc
+</span></span><span style="display:flex;"><span>dr-xr-x---. <span style="color:#ae81ff">14</span> root root  <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">21</span> 12:45 root
+</span></span><span style="display:flex;"><span>drwxr-xr-x  <span style="color:#ae81ff">24</span> root root   <span style="color:#ae81ff">740</span> 5月  <span style="color:#ae81ff">21</span> 12:54 run
+</span></span><span style="display:flex;"><span>lrwxrwxrwx.  <span style="color:#ae81ff">1</span> root root     <span style="color:#ae81ff">8</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> sbin -&gt; usr/sbin
+</span></span><span style="display:flex;"><span>drwxr-xr-x   <span style="color:#ae81ff">3</span> root root  <span style="color:#ae81ff">4096</span> 12月  <span style="color:#ae81ff">9</span> 16:30 soft
+</span></span><span style="display:flex;"><span>drwxr-xr-x.  <span style="color:#ae81ff">3</span> root root  <span style="color:#ae81ff">4096</span> 12月 <span style="color:#ae81ff">21</span> 18:03 srv
+</span></span><span style="display:flex;"><span>dr-xr-xr-x  <span style="color:#ae81ff">13</span> root root     <span style="color:#ae81ff">0</span> 5月  <span style="color:#ae81ff">15</span> 02:09 sys
+</span></span><span style="display:flex;"><span>drwxrwxrwt.  <span style="color:#ae81ff">9</span> root root  <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">21</span> 12:52 tmp
+</span></span><span style="display:flex;"><span>drwxr-xr-x. <span style="color:#ae81ff">13</span> root root  <span style="color:#ae81ff">4096</span> 10月 <span style="color:#ae81ff">15</span> <span style="color:#ae81ff">2017</span> usr
+</span></span><span style="display:flex;"><span>drwxr-xr-x. <span style="color:#ae81ff">21</span> root root  <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 16:40 var
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@iz2zefvnzjphkalt990sg0z /<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><p>公司的测试环境centos 5.5</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai /usr<span style="color:#f92672">]</span>$ uname -a
+</span></span><span style="display:flex;"><span>Linux baochai 2.6.32-431.el6.x86_64 <span style="color:#75715e">#1 SMP Fri Nov 22 03:15:09 UTC 2013 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai /usr<span style="color:#f92672">]</span>$ ll /
+</span></span><span style="display:flex;"><span>total <span style="color:#ae81ff">158</span>
+</span></span><span style="display:flex;"><span>lrwxrwxrwx     <span style="color:#ae81ff">1</span> root root    <span style="color:#ae81ff">14</span> Jul <span style="color:#ae81ff">31</span>  <span style="color:#ae81ff">2015</span> appdata -&gt; /data/appdata/
+</span></span><span style="display:flex;"><span>lrwxrwxrwx     <span style="color:#ae81ff">1</span> root root    <span style="color:#ae81ff">17</span> Jul <span style="color:#ae81ff">24</span>  <span style="color:#ae81ff">2015</span> applogs -&gt; /data/log/applogs
+</span></span><span style="display:flex;"><span>dr-xr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Mar <span style="color:#ae81ff">14</span> 04:46 bin
+</span></span><span style="display:flex;"><span>dr-xr-xr-x.    <span style="color:#ae81ff">5</span> root root  <span style="color:#ae81ff">1024</span> Jul <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2015</span> boot
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Oct <span style="color:#ae81ff">18</span>  <span style="color:#ae81ff">2014</span> cgroup
+</span></span><span style="display:flex;"><span>drwxr-xr-x.   <span style="color:#ae81ff">16</span> root root  <span style="color:#ae81ff">4096</span> Mar  <span style="color:#ae81ff">6</span> 16:41 data
+</span></span><span style="display:flex;"><span>lrwxrwxrwx     <span style="color:#ae81ff">1</span> root root    <span style="color:#ae81ff">16</span> Jul <span style="color:#ae81ff">24</span>  <span style="color:#ae81ff">2015</span> deployment -&gt; /data/deployment
+</span></span><span style="display:flex;"><span>drwxr-xr-x    <span style="color:#ae81ff">17</span> root root  <span style="color:#ae81ff">3700</span> May  <span style="color:#ae81ff">8</span> 11:08 dev
+</span></span><span style="display:flex;"><span>drwxr-xr-x.  <span style="color:#ae81ff">118</span> root root <span style="color:#ae81ff">12288</span> May <span style="color:#ae81ff">20</span> 03:37 etc
+</span></span><span style="display:flex;"><span>drwxr-xr-x.   <span style="color:#ae81ff">46</span> root root  <span style="color:#ae81ff">4096</span> May <span style="color:#ae81ff">15</span> 18:00 home
+</span></span><span style="display:flex;"><span>dr-xr-xr-x.   <span style="color:#ae81ff">11</span> root root  <span style="color:#ae81ff">4096</span> Jun <span style="color:#ae81ff">14</span>  <span style="color:#ae81ff">2017</span> lib
+</span></span><span style="display:flex;"><span>dr-xr-xr-x.    <span style="color:#ae81ff">9</span> root root <span style="color:#ae81ff">12288</span> Mar  <span style="color:#ae81ff">7</span> 03:27 lib64
+</span></span><span style="display:flex;"><span>drwx------.    <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">16384</span> Jul <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2015</span> lost+found
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Sep <span style="color:#ae81ff">23</span>  <span style="color:#ae81ff">2011</span> media
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Nov <span style="color:#ae81ff">23</span>  <span style="color:#ae81ff">2013</span> misc
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Sep <span style="color:#ae81ff">23</span>  <span style="color:#ae81ff">2011</span> mnt
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Nov <span style="color:#ae81ff">23</span>  <span style="color:#ae81ff">2013</span> net
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">6</span> root root  <span style="color:#ae81ff">4096</span> Mar <span style="color:#ae81ff">28</span> 15:59 opt
+</span></span><span style="display:flex;"><span>dr-xr-xr-x  <span style="color:#ae81ff">1418</span> root root     <span style="color:#ae81ff">0</span> Apr <span style="color:#ae81ff">29</span> 05:19 proc
+</span></span><span style="display:flex;"><span>dr-xr-x---.   <span style="color:#ae81ff">27</span> root root  <span style="color:#ae81ff">4096</span> May <span style="color:#ae81ff">17</span> 08:49 root
+</span></span><span style="display:flex;"><span>dr-xr-xr-x.    <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">12288</span> Dec <span style="color:#ae81ff">16</span> 03:45 sbin
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Jul <span style="color:#ae81ff">22</span>  <span style="color:#ae81ff">2015</span> selinux
+</span></span><span style="display:flex;"><span>drwxr-xr-x.    <span style="color:#ae81ff">2</span> root root  <span style="color:#ae81ff">4096</span> Sep <span style="color:#ae81ff">23</span>  <span style="color:#ae81ff">2011</span> srv
+</span></span><span style="display:flex;"><span>drwxr-xr-x    <span style="color:#ae81ff">13</span> root root     <span style="color:#ae81ff">0</span> Apr <span style="color:#ae81ff">29</span> 05:19 sys
+</span></span><span style="display:flex;"><span>drwxr-xr-x     <span style="color:#ae81ff">3</span> root root  <span style="color:#ae81ff">4096</span> Oct <span style="color:#ae81ff">11</span>  <span style="color:#ae81ff">2016</span> tep
+</span></span><span style="display:flex;"><span>drwsrwsrwt    <span style="color:#ae81ff">60</span> root root <span style="color:#ae81ff">36864</span> May <span style="color:#ae81ff">21</span> 14:20 tmp
+</span></span><span style="display:flex;"><span>drwxr-xr-x.   <span style="color:#ae81ff">14</span> root root  <span style="color:#ae81ff">4096</span> Jul <span style="color:#ae81ff">16</span>  <span style="color:#ae81ff">2016</span> usr
+</span></span><span style="display:flex;"><span>drwxr-xr-x.   <span style="color:#ae81ff">23</span> root root  <span style="color:#ae81ff">4096</span> Apr <span style="color:#ae81ff">28</span> 15:03 var
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@baochai /usr<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>WTF,在centos7下面，/bin其实就是/usr/bin，lib就是/usr/lib/,sbin就是/usr/sbin。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

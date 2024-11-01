@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="安全使用 jenkins
+在一个大型组织中，不要使用 master 构建
+日常备份 jenkins 的 home 目录
+限制项目的名字位大小写字母加下划线和数字(复杂的名字导致一些插件无法工作)
+使用文件指纹管理依赖
+最好的构建在清楚构建换粗以后从源代码能重新构建成功
+使用信息追踪信息来管理 jenkins changelog
+使用版本管理工具 git 或者 svn
+java 项目在构建应该生成自动测试的报告
+让 jenkins 运行在较大的磁盘上
+不要直接删除无用的构建，将他们移动到特定目录
+不同的分支处理不同的构建情况
+保证信息安全
+不要在同时开启所有构建
+将构建信息邮件通知给所有团队成员
+尽快的反馈失败信息
+构建之后清理工作空间，避免写满磁盘
+每次构建成功以后应该做个标记">  
+
+  <title>
+    
+      jenkins 最佳实践
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-09-18 00:00:00 &#43;0000 UTC">
+            2019-09-18
+        </time>
+    </p>
+
+    <h1>jenkins 最佳实践</h1>
+
+    
+
+    <ol>
+<li>
+<p>安全使用 jenkins</p>
+</li>
+<li>
+<p>在一个大型组织中，不要使用 master 构建</p>
+</li>
+<li>
+<p>日常备份 jenkins 的 home 目录</p>
+</li>
+<li>
+<p>限制项目的名字位大小写字母加下划线和数字(复杂的名字导致一些插件无法工作)</p>
+</li>
+<li>
+<p>使用文件指纹管理依赖</p>
+</li>
+<li>
+<p>最好的构建在清楚构建换粗以后从源代码能重新构建成功</p>
+</li>
+<li>
+<p>使用信息追踪信息来管理 jenkins changelog</p>
+</li>
+<li>
+<p>使用版本管理工具 git 或者 svn</p>
+</li>
+<li>
+<p>java 项目在构建应该生成自动测试的报告</p>
+</li>
+<li>
+<p>让 jenkins 运行在较大的磁盘上</p>
+</li>
+<li>
+<p>不要直接删除无用的构建，将他们移动到特定目录</p>
+</li>
+<li>
+<p>不同的分支处理不同的构建情况</p>
+</li>
+<li>
+<p>保证信息安全</p>
+</li>
+<li>
+<p>不要在同时开启所有构建</p>
+</li>
+<li>
+<p>将构建信息邮件通知给所有团队成员</p>
+</li>
+<li>
+<p>尽快的反馈失败信息</p>
+</li>
+<li>
+<p>构建之后清理工作空间，避免写满磁盘</p>
+</li>
+<li>
+<p>每次构建成功以后应该做个标记</p>
+</li>
+</ol>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

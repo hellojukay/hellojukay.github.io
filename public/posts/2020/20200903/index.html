@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="sshpass 是一个命令行 ssh 客户端，能够用非交互的方式使用账号密码登陆 ssh 服务.
+安装 Centos
+sudo yum install sshpass Archlinux
+sudo pacman -S sshpass 使用 命令行选项
+Usage: sshpass [-f|-d|-p|-e] [-hV] command parameters -f filename 从文件读取密码 -d number 从已经打开的文件描述符种读取密码 -p password 密码 -e 从环境变量 SSHPASS 种读取密码 如果不提供上面参数，将会从标准输入种读取密码 -P prompt Which string should sshpass search for to detect a password prompt -v 打印连接详情 -h 打印帮助信息 -V 打印版本信息 At most one of -f, -d, -p or -e should be used 常规的用法通过 -p 提供参数">  
+
+  <title>
+    
+      sshpass 介绍
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-09-03 00:00:00 &#43;0000 UTC">
+            2020-09-03
+        </time>
+    </p>
+
+    <h1>sshpass 介绍</h1>
+
+    
+
+    <p>sshpass 是一个命令行 ssh 客户端，能够用非交互的方式使用账号密码登陆 ssh 服务.</p>
+<h1 id="安装">安装</h1>
+<p>Centos</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo yum install sshpass
+</span></span></code></pre></div><p>Archlinux</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo pacman -S sshpass
+</span></span></code></pre></div><h1 id="使用">使用</h1>
+<p>命令行选项</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Usage: sshpass <span style="color:#f92672">[</span>-f|-d|-p|-e<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>-hV<span style="color:#f92672">]</span> command parameters
+</span></span><span style="display:flex;"><span>   -f filename   从文件读取密码
+</span></span><span style="display:flex;"><span>   -d number     从已经打开的文件描述符种读取密码
+</span></span><span style="display:flex;"><span>   -p password   密码
+</span></span><span style="display:flex;"><span>   -e            从环境变量 SSHPASS 种读取密码
+</span></span><span style="display:flex;"><span>   如果不提供上面参数，将会从标准输入种读取密码
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>   -P prompt     Which string should sshpass search <span style="color:#66d9ef">for</span> to detect a password prompt
+</span></span><span style="display:flex;"><span>   -v            打印连接详情
+</span></span><span style="display:flex;"><span>   -h            打印帮助信息
+</span></span><span style="display:flex;"><span>   -V            打印版本信息
+</span></span><span style="display:flex;"><span>At most one of -f, -d, -p or -e should be used
+</span></span></code></pre></div><p>常规的用法通过 -p 提供参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sshpass -p <span style="color:#e6db74">&#39;t@uyM59bQ&#39;</span> ssh username@server.example.com
+</span></span></code></pre></div><p>从环境变量读取密码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>SSHPASS<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;t@uyM59bQ&#39;</span> sshpass -e ssh -o StrictHostKeyChecking<span style="color:#f92672">=</span>no vivek@server42.cyberciti.biz
+</span></span></code></pre></div><p>从文件读取密码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sshpass -f fileNameHere ssh user@server
+</span></span></code></pre></div><p>通过 rsync 来传输文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rsync --rsh<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sshpass -p myPassword ssh -l username&#34;</span> server.example.com:/var/www/html/ /backup/
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

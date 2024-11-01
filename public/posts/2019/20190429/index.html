@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="deepin 升级了以后, 不知道是哪个系统包被升级了, 我的 shadowsocks 客户端一直不能正常使用正常使用, 尝试和很多方法没有解决. 最后我终于开窍了: 此路不通, 我换条路走.
+在 chrome 里面配置了插件 SwitchyOmega , 这个插件里面配置了代理服务器的地址和端口, 通常这个地址和端口是本机的 shadowsocks client, 好傻. 宿主机器上依赖有问题, 那我何不将 shadowsocks client 允许在 docker 中呢, 说这我就到 dockerhub 上找到了对于的镜像：
+*　https://hub.docker.com/r/mritd/shadowsocks/
+符合条件的镜像很多，　这个是使用最多的一个．　于是研究了一下这个镜像，Dockerfile 写的挺复杂的，启动参数也不够友好．　于是，参考他的 Dockerfile　删掉了一些功能和配置． 我从新打了一个新的镜像，　参数更加简单了，　对 docker-compose 支持也更加友好了．
+docker pull hellojukay/shadowsocks:1.0.0 我也将这个镜像开源到 dockerhub 上了，　使用方式非常简单
+https://hub.docker.com/r/hellojukay/shadowsocks
+version: &#39;2&#39; services: ssclient: image: hellojukay/shadowsocks:1.0.0 container_name: &#39;ssclient&#39; restart: always ports: - 1080:1080 environment: SERVER: &#39;xxx&#39; PORT: xxx LISTEN: 1080 METHOD: &#39;chacha20-ietf-poly1305&#39; PASSWD: &#39;q6Gsdfsdfx9sd&#39; 使用 docker-compose 启动即可">  
+
+  <title>
+    
+      在 docker 中运行 shadowsocks 客户端
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-04-29 00:00:00 &#43;0000 UTC">
+            2019-04-29
+        </time>
+    </p>
+
+    <h1>在 docker 中运行 shadowsocks 客户端</h1>
+
+    
+
+    <p>deepin 升级了以后, 不知道是哪个系统包被升级了, 我的 shadowsocks 客户端一直不能正常使用正常使用, 尝试和很多方法没有解决. 最后我终于开窍了: 此路不通, 我换条路走.</p>
+<p>在 chrome 里面配置了插件 SwitchyOmega , 这个插件里面配置了代理服务器的地址和端口, 通常这个地址和端口是本机的 shadowsocks client, 好傻. 宿主机器上依赖有问题, 那我何不将 shadowsocks client 允许在 docker 中呢, 说这我就到 dockerhub 上找到了对于的镜像：</p>
+<p>*　https://hub.docker.com/r/mritd/shadowsocks/</p>
+<p>符合条件的镜像很多，　这个是使用最多的一个．　于是研究了一下这个镜像，Dockerfile 写的挺复杂的，启动参数也不够友好．　于是，参考他的 Dockerfile　删掉了一些功能和配置． 我从新打了一个新的镜像，　参数更加简单了，　对 docker-compose 支持也更加友好了．</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker pull hellojukay/shadowsocks:1.0.0
+</span></span></code></pre></div><p>我也将这个镜像开源到 dockerhub 上了，　使用方式非常简单</p>
+<p><a href="https://hub.docker.com/r/hellojukay/shadowsocks">https://hub.docker.com/r/hellojukay/shadowsocks</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span><span style="color:#f92672">version</span>: <span style="color:#e6db74">&#39;2&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">services</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ssclient</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">hellojukay/shadowsocks:1.0.0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">container_name</span>: <span style="color:#e6db74">&#39;ssclient&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restart</span>: <span style="color:#ae81ff">always</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">1080</span>:<span style="color:#ae81ff">1080</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">SERVER</span>: <span style="color:#e6db74">&#39;xxx&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">PORT</span>: <span style="color:#ae81ff">xxx</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">LISTEN</span>: <span style="color:#ae81ff">1080</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">METHOD</span>: <span style="color:#e6db74">&#39;chacha20-ietf-poly1305&#39;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">PASSWD</span>: <span style="color:#e6db74">&#39;q6Gsdfsdfx9sd&#39;</span>
+</span></span></code></pre></div><p>使用 docker-compose 启动即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker-compose up -d
+</span></span></code></pre></div><p>启动成功以后可以看到，shadowsocks 绑定了本地的 1080 端口了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local blog <span style="color:#f92672">(</span>master<span style="color:#f92672">)</span> $ docker ps -a
+</span></span><span style="display:flex;"><span>CONTAINER ID        IMAGE                          COMMAND                  CREATED             STATUS              PORTS                    NAMES
+</span></span><span style="display:flex;"><span>05ba33138b43        hellojukay/shadowsocks:1.0.0   <span style="color:#e6db74">&#34;/bin/sh -c /entrypo…&#34;</span>   <span style="color:#ae81ff">2</span> days ago          Up <span style="color:#ae81ff">23</span> minutes       0.0.0.0:1080-&gt;1080/tcp   ssclient
+</span></span><span style="display:flex;"><span>hellojukay@local blog <span style="color:#f92672">(</span>master<span style="color:#f92672">)</span> $ 
+</span></span></code></pre></div><p>又能开心的科学上网了．</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

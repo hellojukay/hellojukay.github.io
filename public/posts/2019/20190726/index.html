@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="ocaml 语言是 caml 语言的一种实现，读音：欧课摸。是一种能够编译成 native 代码的函数式编程语言，编写效率和运行效率都非常高。ocaml 也支持面向对象编程和过程式编程，同时 ocaml 是一门强类型编程语言，内置垃圾回收。
+ocaml 的包管理工具是 opam, 网址是: https://opam.ocaml.org/packages/ , 他是基于源码的包管理工具，安装一个模块的方式是:
+opam install &lt;module&gt; dune 是 ocaml 的标准的构建工具，类似于 gradle 之于 JAVA 的地位，网址是: https://dune.readthedocs.io/en/stable/quick-start.html 。dune 有一个标准配置文件,文件名字 dune, 里面定义了依赖和打包类型
+(executable (name main)) dune build main.exe 这边就在 _build/default/ 目录下生成了 main.exe 文件， 这个文件虽然是 exe 后缀的， 但是并不是标示他是 windows 下的可执行文件。">  
+
+  <title>
+    
+      ocaml 语言的基本介绍
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-26 00:00:00 &#43;0000 UTC">
+            2019-07-26
+        </time>
+    </p>
+
+    <h1>ocaml 语言的基本介绍</h1>
+
+    
+
+    <p>ocaml 语言是 caml 语言的一种实现，读音：欧课摸。是一种能够编译成 native 代码的函数式编程语言，编写效率和运行效率都非常高。ocaml 也支持面向对象编程和过程式编程，同时 ocaml 是一门强类型编程语言，内置垃圾回收。</p>
+<p>ocaml 的包管理工具是 opam, 网址是: <a href="https://opam.ocaml.org/packages/">https://opam.ocaml.org/packages/</a> , 他是基于源码的包管理工具，安装一个模块的方式是:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>opam install &lt;module&gt;
+</span></span></code></pre></div><p>dune 是 ocaml 的标准的构建工具，类似于 gradle 之于 JAVA 的地位，网址是: <a href="https://dune.readthedocs.io/en/stable/quick-start.html">https://dune.readthedocs.io/en/stable/quick-start.html</a> 。dune 有一个标准配置文件,文件名字 dune, 里面定义了依赖和打包类型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>(executable
+</span></span><span style="display:flex;"><span> (name main))
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>dune build main.exe
+</span></span></code></pre></div><p>这边就在 _build/default/ 目录下生成了 main.exe 文件， 这个文件虽然是 exe 后缀的， 但是并不是标示他是 windows 下的可执行文件。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

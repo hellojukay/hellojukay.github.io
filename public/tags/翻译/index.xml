@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>翻译 on 润物细无声</title>
+    <link>http://localhost:1313/tags/%E7%BF%BB%E8%AF%91/</link>
+    <description>Recent content in 翻译 on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 26 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E7%BF%BB%E8%AF%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>［翻译］下一代 cron - systemd</title>
+      <link>http://localhost:1313/posts/2020/20200826-1/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200826-1/</guid>
+      <description>原文地址: https://linuxhint.com/cron_systemd_timer/&#xA;cron 的问题 你是否在你的计算机上调度过任务，这似乎听起来很简单，当听到这个问题的时候第一反应想到的可能是cron,cron被设计来在特定时间执行特定的任务.cron的设计非常简单，所有有很多问题都没有考虑得到，下面介绍以下 cron存在的问题.&#xA;你使用cron添加了一个数据备份服务，每个月29日的凌晨执行数据远程备份，但是如果这一天系统正好被关闭(可能是停电或者其他问题),当系统恢复的时候以及错过了时间，那么你就错过了一次备份数据，存在数据丢失的风险．&#xA;你使用cron创建了一个任务，每隔10分钟执行一次，但是因为某些原因，你的任务需要15分钟才能执行完毕，这个时候cron 不会等待任务当前的任务执行完毕，而会重新创建一个新的任务，那么这个时候系统上存在２个任务同时运行，存在并发的问题.&#xA;system timer 怎么解决這些问题 cron能将运行记录在系统上，及时系统宕机了，下次启动后任务还能继续执行，虽然定时任务执行的最佳时间是制定的时间，但是在启动后执行总要好过不执行．要使用 timer 首先你要创建一个 service 文件加入到系统中，举例这里编写 backup.service如下&#xA;# 文件 /usr/lib/systemd/system/backup.service; [Unit] Description=clash After=network.target [Service] ExecStart=/usr/bin/date [Install] WantedBy=multi-user.target 然后再编写 timer 文件&#xA;# 文件 /usr/lib/systemd/system/backup.timer [Unit] Description= backup evey minute [Timer] OnCalendar=minutely Unit=backup.service [Install] WantedBy=timers.target 这里 OnCalendar 设置为每分钟执行依次，如果系统宕机了，下次重启服务了，还是会继续执行，因为执行单元是 service 所以不会存在被启动多个实例的情况.OnClendar还能设置很多其他的值&#xA;minutely hourly daily monthly weekly yearly quartly semiannually 这里会存在一哥问题，daily 是什么执行呢？实际上它总是在凌晨00:00的时候执行，也许这个时候是任务执行高峰期，这里建议如果有需要的话配置RandomizeDelaySec选项。如果想要更加精细的控制任务时间可以配置一个准确的日期如：2020-08-26 12:49:37,但是要明确一点，这个任务知会被执行一次，以后就不会再次被出发执行了。如果你希望能够返回被触发执行可以用*来设置日期&#xA;OnClendar=*-*-* 03:00:00 上面这个例子用*-*-*替代年月日了，也就意味着在每年每月每日的 03:00:00 任务都会被触发执行，下面这个例子来设置每年的特定执行&#xA;OnClendar=*-12-25 03:00:00 我们也可以在最后加上 UTC 来表示不要使用本地时间，使用 UTC 时间来代替</description>
+    </item>
+    <item>
+      <title>【翻译】Docker应用数据存储</title>
+      <link>http://localhost:1313/posts/2018/20181107/</link>
+      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181107/</guid>
+      <description>容器内应用创建的数据默认在是容器内部的临时可写入层，这意味着一下问题：&#xA;当成容器不在不在运行状态时候，这部分数据不会持久化，数据会被丢失。也不方便和其他容器共享数据。 数据被写入到容器的临时可写入层，这导致数据迁移困难。 数据写入容器临时读写层，这需要操作系统内核提供数据写入驱动，这个额外的抽象，会牺牲一部分写入的性能。 数据保存在宿主机上，意味着你不需要担心容器生命周期结束以后数据会丢失，他会一直保存在宿主的磁盘上。对于在宿主机上存储文件，Docker提供能了两种方式。这两种方式分别是，挂载文件夹和挂载数据卷，当然你在Linux上运行Docker的时候，你也可以使用tmpfs挂载节点。&#xA;选择正确的挂载方式 无论你使用哪种挂载方式，被挂载的文件在容器中表现形式就好像他们正在存在容器中一样，在容器表现出来的形式为文件夹或者是文件。&#xA;用一张图来说说明上面介绍到的三种挂载方式之间的区别 容器卷: 数据存在宿主机上的一个特定目录(在Linux上: /var/lib/docker/volumes/),除了Docker自身进程，其他的进程不应该修改这个目录。挂载数据卷也是目前容器存储数据的最佳方式。 挂载目录: 能够保存在宿主机的任何目录，可能保存在一个非常重要的目录中，任何时候这个目录能够其他任何进程读写和修改。 tmpfs： 只会讲数据保存在宿主机的内存中,永远不会将数据保存宿主的磁盘上。 几种挂载方式的详细说明 容器卷：由Docker创建并且管理，你也可以手动使用docker volume create命令创建一个容器卷,或者是在服务启动的时候自动创建。 当你创建好了容器卷以后，就会在宿主机上创建某个目录，这个目录有Docker进程来管理，你可以将这个容器卷挂载到容器中，这有点类似于文件挂载的方式，只不过这个目录是由Docker管理，并且与宿主机器上的其他服务隔绝开来。&#xA;当你挂载一个容器的时候，这个容器可能是有名字的，也可能是匿名的，匿名的容器被分配了一个随机的以为的名字，匿名容器和有名字的容器在使用方式和表现形式上是一样的。 一个容器卷能够被挂载在躲着容器的内部，当应用容器都停止以后，容器卷还是存在，它不会自动删除，除非你使用docker volume prune命令来删除它。&#xA;容器卷支持给定一个容器卷驱动，他支持将数据保存在远程主机或者是云服务上。&#xA;文件挂载: 在Docker早期，文件挂载非常有用，所有宿主机上的进程都能读取这个文件。相比于挂载容器卷，文件挂载以后有一些功能上的限制。当你在使用一个被从宿主机器上挂载进来的文件以后，这个文件都是直接引用的在宿主机器上文件的绝对地址。如果文件宿主机中不存在，Docker进程会自动的创建它，文件挂载的性能不错，但是它依赖宿主上的特定文件系统以及目录存储结构。如果你正在开发一个Docker的应用，请考虑使用容器卷来替代挂载文件的方式。 文件挂载后的隐私问题，这有利有弊，它给了你更大的权利，容器中的应用能够删除，修改，读取被挂载进来的目录，这只能会影响其他的进程服务。你必须权衡利弊。&#xA;对于挂载容器卷或者挂载文件，他们的命令行都是一样的，使用--volume或者-v选项，对于tmpfs挂载稍有不同，它使用--tmpfs选项。然而在17.06 以及更新的版本里面，我们推荐使用--mount来挂载容器卷或者文件。&#xA;容器卷最佳实践 容器卷是我们推荐的容器持久化方式，在使用过程中你需要注意如下事项：&#xA;多个容器之间可以共享一个容器卷。如果在第一次挂载容器卷的时候，容器卷不存在，那么这个容器就会被自动创建，无论应用容器是否在运行或者停止，容器卷都不会被自动删除，除非你明确的手动删除他。 当时宿主机器无法提供存储空间的时候，容器卷配置会失效。 当你想存储文件在远程服务器或者云盘上时候，使用容器卷是非常好的选择。 当你需要备份，转存，迁移数据的时候，容器卷也是非常好的选择。先关闭使用这个容器卷的容器，然后在再备份容器卷的文件加，类似于（/var/lib/docker/volumes/）。 文件挂载最佳实践 如果你真的需要挂载文件，你需要注意如下事项：&#xA;容器与宿主机之间共享文件，挂载/etc/resolv.conf能够让宿主机和容器有相同的DNS配置。 挂载源代码到编译的容器中，例如，你可以挂载源码和maven的target目录到容器，这样编译后的文件其他程序也能访问到。 tmpfs最佳实践 你当你不需要持久化文件的时候你才能选择这个方案，可能是应为安全原因，你需要写入机密数据到宿主机的内存中，你可以使用这个选项。&#xA;使用容器卷和文件挂载的技巧 如果你挂载了一个空的容器卷到某个有文件的目录，那么这个目录中的文件会被拷贝中容器卷中。如果你如果你挂载某个不存在的容器卷，那么这个容器卷会被自动创建。初始化数据和容器卷的时候能够使用这样的方法。 如果你挂载了某个有数据的容器卷到某个空目录，那么容器卷的文件也会被映射到目录中。你甚至可以将/mnt挂载到容器中，容器就能读取到usb存储器上的数据。 原文地址: https://docs.docker.com/storage/</description>
+    </item>
+    <item>
+      <title>【翻译】在jenkins流水线使用docker</title>
+      <link>http://localhost:1313/posts/2018/20180816/</link>
+      <pubDate>Sat, 16 Jun 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180816/</guid>
+      <description>许多团队和组织使用docker来跨平台的测试，构建，发布他们的项目, docker提供了非常好高效的部署效率。Jenkins 在2.5版本以后加入了pipeline功能,pipeline支持在Jenkinsfile里面执行docker相关的操作。本文将会介绍在Jenkinsfile中执行docker的相关操作。&#xA;自定义执行环境 pipeline能够使用一个docker image指定执行环境，既可以为整个pipeline指定指定环境，也可以为单个stage指定执行环境。&#xA;pipeline { agent { docker {image: &amp;#39;node:7-alpine&amp;#39;} } stages { stage(&amp;#39;test&amp;#39;){ steps{ sh &amp;#39;node --version&amp;#39; } } } } 当这个pipeline执行的时候，Jenkins会自动的启动一个容器来执行指定的steps&#xA;[Pipeline] stage [Pipeline] { (Test) [Pipeline] sh [guided-tour] Running shell script + node --version v7.4.0 [Pipeline] } [Pipeline] // stage [Pipeline] } 为容器缓存数据 许多的构建工具会下载一些外部的依赖并且缓存到本地，将来再次构建的时候会用到这些数据。pipeline支持传递自定义参数给docker命令，允许在docker执行的挂载本地的文件，这个能够缓存容器执行过程产生的数据.例如：maven构建过程中会缓存数据到~/.m2这个文件夹中。&#xA;pipeline { agent { docker { image: &amp;#39;maven:2-alpine&amp;#39; args: &amp;#39;-v $HOME/.m2:/root/.m2&amp;#39; } } stages { stage { steps { sh &amp;#39;mvn -B&amp;#39; } } } } 使用多种容器 一个项目可能使用java写后端，使用javascript写前端，我们要运行他，就需要在不同的stage中使用相应的容器。</description>
+    </item>
+  </channel>
+</rss>

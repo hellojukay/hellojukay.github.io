@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="如果是直接默认安装 virtualbox
+yay -S virtualbox 那么肯定无法启动成功，会提示错误
+WARNING: The vboxdrv kernel module is not loaded. Either there is no module available for the current kernel (5.7.15-1-MANJARO) or it failed to load. Please recompile the kernel module and install it by sudo /sbin/vboxconfig You will not be able to start VMs until this problem is fixed. 然后你按照提示执行命令，你会发现命令不存在
+hellojukay@local $ sudo /sbin/vboxconfig sudo: /sbin/vboxconfig：找不到命令 原因是还缺少安装一个依赖
+linux-virtualbox-host-modules 具体需要安装哪一个版本，可以通过
+hellojukay@local etcd (release/hyperion) $ uname -r 5.">  
+
+  <title>
+    
+      manjaro 安装 virtualbox 踩坑
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-08-24 00:00:00 &#43;0000 UTC">
+            2020-08-24
+        </time>
+    </p>
+
+    <h1>manjaro 安装 virtualbox 踩坑</h1>
+
+    
+
+    <p>如果是直接默认安装 virtualbox</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yay -S virtualbox
+</span></span></code></pre></div><p>那么肯定无法启动成功，会提示错误</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>WARNING: The vboxdrv kernel module is not loaded. Either there is no module
+</span></span><span style="display:flex;"><span>         available for the current kernel (5.7.15-1-MANJARO) or it failed to
+</span></span><span style="display:flex;"><span>         load. Please recompile the kernel module and install it by
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>           sudo /sbin/vboxconfig
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>         You will not be able to start VMs until this problem is fixed.
+</span></span></code></pre></div><p>然后你按照提示执行命令，你会发现命令不存在</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local $  sudo /sbin/vboxconfig
+</span></span><span style="display:flex;"><span>sudo: /sbin/vboxconfig：找不到命令
+</span></span></code></pre></div><p>原因是还缺少安装一个依赖</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>linux-virtualbox-host-modules
+</span></span></code></pre></div><p>具体需要安装哪一个版本，可以通过</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local etcd <span style="color:#f92672">(</span>release/hyperion<span style="color:#f92672">)</span> $ uname -r
+</span></span><span style="display:flex;"><span>5.7.15-1-MANJARO
+</span></span></code></pre></div><p>这里可以看到我的内核版本是5.7,那么我应该安装</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span> yay -S linux57-virtualbox-host-modules
+</span></span></code></pre></div><p>安装结束之后需要加载到内核</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo modprobe vboxdrv
+</span></span></code></pre></div><p>然后再次启动 virtualbox 就没有问题了.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

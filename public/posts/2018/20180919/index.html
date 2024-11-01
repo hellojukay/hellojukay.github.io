@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="使用go modules功能的前提条件,二选一
+安装golang 1.11以上版本 源码安装golang master分支源码 安装完以上组件以后，你就能够激活go modules功能了，激活方法有两种： go在$GOPATH/src目录之外执行go命令，创建go.mod文件 设置环境变量GO111MODULE=on，执行go命令 概念介绍 这本主要讲一个写go modules引入的新概念，你尅话四十分钟了解一下官方文档,或者花40分钟看下这个视频,或者看下更加详细的博客 。
+Modules Modules是一组功能相关的golang包，他们被统一的版本管理起来。大部分情况下，我们是一个仓库一个版本管理，但是现在我们希望一个仓库能够同时版本管理多个Module。 Modules record precise dependency requirements and create reproducible builds.
+Modules 精准的记录了依赖关系，保证了项目可重复编译。Modules同时也是语义化的版本管理，例如：v0.1.0, v1.2.3, or v3.0.1。这个前置 v字符是必须要求有的，如果是使用git来管理版本，那么这应该就是git tag 。
+go.mod Modules使用 go.mod 文件记录了源码的代码结构，并且他不要求你的代码必须在GOPATH中。在 go.mod 中所有的Module都有一个前缀：模块的路径。使用module字段来定义一个新的Module,例如：里面包含两个 package,example.com/my/thing/foo 和 example.com/my/thing/bar ，那么 go.mod 文件里面第一行因该是 module example.com/my/thing 。 就是golang代码一样，Modules文件里面也可以加入一些注释。下面是一个 go.mod 文件的例子：
+module github.com/my/module/v3 require ( github.com/some/dependency v1.2.3 github.com/another/dependency v0.1.0 github.com/additional/dependency/v4 v4.0.0 ) Module定义文件一共有四个指令: module, require, exclude, replace 。 exclude 和 replace一般只用在主Module里面，exclude 和 replace 使用在非主Modules里面的时候会被忽略。在源码中，我们通过完整的路径来导入导入一个 Module,例如：">  
+
+  <title>
+    
+      使用 go modules功能
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-09-18 00:00:00 &#43;0000 UTC">
+            2018-09-18
+        </time>
+    </p>
+
+    <h1>使用 go modules功能</h1>
+
+    
+
+    <p>使用go modules功能的前提条件,二选一</p>
+<ul>
+<li><a href="https://golang.org/dl/">安装golang 1.11以上版本</a></li>
+<li><a href="https://golang.org/doc/install/source">源码安装golang master分支源码</a>
+安装完以上组件以后，你就能够激活go modules功能了，激活方法有两种：</li>
+<li>go在$GOPATH/src目录之外执行go命令，创建go.mod文件</li>
+<li>设置环境变量GO111MODULE=on，执行go命令</li>
+</ul>
+<h1 id="概念介绍">概念介绍</h1>
+<p>这本主要讲一个写go modules引入的新概念，你尅话四十分钟了解一下<a href="https://golang.org/design/24301-versioned-go">官方文档</a>,或者花40分钟看下这个<a href="https://www.youtube.com/watch?v=F8nrpe0XWRg&amp;list=PLq2Nv-Sh8EbbIjQgDzapOFeVfv5bGOoPE&amp;index=3&amp;t=0s">视频</a>,或者看下更加详细的<a href="https://research.swtch.com/vgo">博客</a> 。</p>
+<h2 id="modules">Modules</h2>
+<p>Modules是一组功能相关的golang包，他们被统一的版本管理起来。大部分情况下，我们是一个仓库一个版本管理，但是现在我们希望一个仓库能够同时版本管理多个Module。
+Modules record precise dependency requirements and create reproducible builds.</p>
+<p>Modules 精准的记录了依赖关系，保证了项目可重复编译。Modules同时也是语义化的版本管理，例如：v0.1.0, v1.2.3, or v3.0.1。这个前置 <code>v</code>字符是必须要求有的，如果是使用git来管理版本，那么这应该就是git tag 。</p>
+<h2 id="gomod">go.mod</h2>
+<p>Modules使用 go.mod 文件记录了源码的代码结构，并且他不要求你的代码必须在GOPATH中。在 go.mod 中所有的Module都有一个前缀：模块的路径。使用<code>module</code>字段来定义一个新的Module,例如：里面包含两个 <code>package</code>,<code>example.com/my/thing/foo</code> 和 <code>example.com/my/thing/bar</code> ，那么 go.mod 文件里面第一行因该是 <code>module example.com/my/thing</code> 。
+就是golang代码一样，Modules文件里面也可以加入一些注释。下面是一个 go.mod 文件的例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>module github.com/my/module/v3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>require (
+</span></span><span style="display:flex;"><span>    github.com/some/dependency v1.2.3
+</span></span><span style="display:flex;"><span>    github.com/another/dependency v0.1.0
+</span></span><span style="display:flex;"><span>    github.com/additional/dependency/v4 v4.0.0
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>Module定义文件一共有四个指令: <code>module</code>, <code>require</code>, <code>exclude</code>, <code>replace</code> 。
+<code>exclude</code> 和 <code>replace</code>一般只用在主Module里面，<code>exclude</code> 和 <code>replace</code> 使用在非主Modules里面的时候会被忽略。在源码中，我们通过完整的路径来导入导入一个 Module,例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#f92672">import</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#a6e22e">example</span>.<span style="color:#a6e22e">com</span><span style="color:#f92672">/</span><span style="color:#a6e22e">my</span><span style="color:#f92672">/</span><span style="color:#a6e22e">module</span><span style="color:#f92672">/</span><span style="color:#a6e22e">v2</span><span style="color:#f92672">/</span><span style="color:#a6e22e">pkg</span><span style="color:#f92672">/</span><span style="color:#a6e22e">foo</span>
+</span></span></code></pre></div><p>我们从<code>example.com/my/module</code>这个<code>Module</code>中导入<code>foo</code>这个<code>package</code>，并且指定他的版本是<code>v2</code>版本。</p>
+<h1 id="版本选择">版本选择</h1>
+<p>如果你在你的代码中导入了一个的<code>package</code>，但是这个它还没有被加入到<code>go.mod</code>文件中，那么在当前目录下，任何<code>go</code>命令(go build)都会触发更新go.mod文件，会自动查找合适版本的<code>Module</code>到<code>go.mod</code>文件中，通过<code>require</code>指引来引用这个<code>Module</code></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

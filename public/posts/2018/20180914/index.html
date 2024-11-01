@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="查看U盘所在的分区
+[jukay@mac-pro]~$ diskutil list /dev/disk0 (internal, physical): #: TYPE NAME SIZE IDENTIFIER 0: GUID_partition_scheme *121.3 GB disk0 1: EFI EFI 209.7 MB disk0s1 2: Apple_CoreStorage Macintosh HD 120.5 GB disk0s2 3: Apple_Boot Recovery HD 650.0 MB disk0s3 /dev/disk1 (internal, virtual): #: TYPE NAME SIZE IDENTIFIER 0: Apple_HFS Macintosh HD &#43;120.1 GB disk1 Logical Volume on disk0s2 CDE1D658-8C57-40FD-AA38-46EFB615DE3C Unencrypted /dev/disk2 (external, physical): #: TYPE NAME SIZE IDENTIFIER 0: FDisk_partition_scheme *31.9 GB disk2 1: DOS_FAT_32 31.">  
+
+  <title>
+    
+      mac下格式化U盘
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-09-14 00:00:00 &#43;0000 UTC">
+            2018-09-14
+        </time>
+    </p>
+
+    <h1>mac下格式化U盘</h1>
+
+    
+
+    <p>查看U盘所在的分区</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~$ diskutil list
+</span></span><span style="display:flex;"><span>/dev/disk0 <span style="color:#f92672">(</span>internal, physical<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">#:                       TYPE NAME                    SIZE       IDENTIFIER</span>
+</span></span><span style="display:flex;"><span>   0:      GUID_partition_scheme                        *121.3 GB   disk0
+</span></span><span style="display:flex;"><span>   1:                        EFI EFI                     209.7 MB   disk0s1
+</span></span><span style="display:flex;"><span>   2:          Apple_CoreStorage Macintosh HD            120.5 GB   disk0s2
+</span></span><span style="display:flex;"><span>   3:                 Apple_Boot Recovery HD             650.0 MB   disk0s3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>/dev/disk1 <span style="color:#f92672">(</span>internal, virtual<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">#:                       TYPE NAME                    SIZE       IDENTIFIER</span>
+</span></span><span style="display:flex;"><span>   0:                  Apple_HFS Macintosh HD           +120.1 GB   disk1
+</span></span><span style="display:flex;"><span>                                 Logical Volume on disk0s2
+</span></span><span style="display:flex;"><span>                                 CDE1D658-8C57-40FD-AA38-46EFB615DE3C
+</span></span><span style="display:flex;"><span>                                 Unencrypted
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>/dev/disk2 <span style="color:#f92672">(</span>external, physical<span style="color:#f92672">)</span>:
+</span></span><span style="display:flex;"><span>   <span style="color:#75715e">#:                       TYPE NAME                    SIZE       IDENTIFIER</span>
+</span></span><span style="display:flex;"><span>   0:     FDisk_partition_scheme                        *31.9 GB    disk2
+</span></span><span style="display:flex;"><span>   1:                 DOS_FAT_32                         31.9 GB    disk2s1
+</span></span></code></pre></div><p>取消挂载改分区</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~$ sudo umount /dev/disk2
+</span></span><span style="display:flex;"><span>Password:
+</span></span><span style="display:flex;"><span>umount: /dev/disk2: not currently mounted
+</span></span></code></pre></div><p>mac下面没有mkfs.type这样的命令，但是有newfs_type这样的命令可以用格式化分区</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~$ sudo newfs_msdos /dev/disk2
+</span></span><span style="display:flex;"><span>newfs_msdos: warning: /dev/disk2 is not a character device
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">512</span> bytes per physical sector
+</span></span><span style="display:flex;"><span>/dev/disk2: <span style="color:#ae81ff">62186816</span> sectors in <span style="color:#ae81ff">1943338</span> FAT32 clusters <span style="color:#f92672">(</span><span style="color:#ae81ff">16384</span> bytes/cluster<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>bps<span style="color:#f92672">=</span><span style="color:#ae81ff">512</span> spc<span style="color:#f92672">=</span><span style="color:#ae81ff">32</span> res<span style="color:#f92672">=</span><span style="color:#ae81ff">32</span> nft<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> mid<span style="color:#f92672">=</span>0xf0 spt<span style="color:#f92672">=</span><span style="color:#ae81ff">32</span> hds<span style="color:#f92672">=</span><span style="color:#ae81ff">255</span> hid<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span> drv<span style="color:#f92672">=</span>0x00 bsec<span style="color:#f92672">=</span><span style="color:#ae81ff">62217216</span> bspf<span style="color:#f92672">=</span><span style="color:#ae81ff">15183</span> rdcl<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> infs<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> bkbs<span style="color:#f92672">=</span><span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~$
+</span></span></code></pre></div><p>大功告成！</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

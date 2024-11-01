@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="基础的 linux 发行版中都包含了一些强大的网络相关的命令，这些命令都来自 net-tools 包，在很长一段时间 net-tools 几乎在所有的 linux 发 行版中都很流行。它包含了一下命令:
+ifconfig route nameif iwconfig iptunnel netstat arp 这些命令能让 linux 新手和专家都能得心应手的配置 linux 网络， 但是随着 linux 内核的发展，这套工具的维护成了一个棘手的问题，需要有 新的工具来替代他们。
+iproute2 就是上面所有提到的替代 net-tools 的工具集合，iproute2 和 linux 内核紧密结合。iproute2 包含了一下命令行工具:
+ip ss bridge rtacct rtmon tc ctstat lnstat nstat routeef routel rtstat tpic arpd devlink net-tools 和 iproute2 的替换关系
+| net-tools 工具 | iproute2 工具 | 备注 | | --- | --- | --- | | ifconfig | ip addr , ip link , ip -s | 网络配置 | | route | ip route | 路由表 | | arg | ip neigh | arp 列表 | | iptunnel | ip tunnel | 网络代理 | | nameif | iprename , ip link set name | 重命名网卡 | | ipmaddr | ip maddr | 广播地址 | | netstat | ip -s ss , ip route | 显示网络状态 | 参考链接">  
+
+  <title>
+    
+      net-tools 和 iproute2
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-09-12 00:00:00 &#43;0000 UTC">
+            2019-09-12
+        </time>
+    </p>
+
+    <h1>net-tools 和 iproute2</h1>
+
+    
+
+    <p>基础的 linux 发行版中都包含了一些强大的网络相关的命令，这些命令都来自 net-tools 包，在很长一段时间 net-tools 几乎在所有的 linux 发
+行版中都很流行。它包含了一下命令:</p>
+<ul>
+<li>ifconfig</li>
+<li>route</li>
+<li>nameif</li>
+<li>iwconfig</li>
+<li>iptunnel</li>
+<li>netstat</li>
+<li>arp</li>
+</ul>
+<p>这些命令能让 linux 新手和专家都能得心应手的配置 linux 网络， 但是随着 linux 内核的发展，这套工具的维护成了一个棘手的问题，需要有
+新的工具来替代他们。</p>
+<p>iproute2 就是上面所有提到的替代 net-tools 的工具集合，iproute2 和 linux 内核紧密结合。iproute2 包含了一下命令行工具:</p>
+<ul>
+<li>ip</li>
+<li>ss</li>
+<li>bridge</li>
+<li>rtacct</li>
+<li>rtmon</li>
+<li>tc</li>
+<li>ctstat</li>
+<li>lnstat</li>
+<li>nstat</li>
+<li>routeef</li>
+<li>routel</li>
+<li>rtstat</li>
+<li>tpic</li>
+<li>arpd</li>
+<li>devlink</li>
+</ul>
+<p>net-tools 和 iproute2 的替换关系</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>| net-tools 工具 | iproute2 工具                             | 备注         |
+</span></span><span style="display:flex;"><span>| ---            | ---                                       | ---          |
+</span></span><span style="display:flex;"><span>| ifconfig       | ip addr , ip link , ip -s                 | 网络配置     |
+</span></span><span style="display:flex;"><span>| route          | ip route                                  | 路由表       |
+</span></span><span style="display:flex;"><span>| arg            | ip neigh                                  | arp 列表     |
+</span></span><span style="display:flex;"><span>| iptunnel       | ip tunnel                                 | 网络代理     |
+</span></span><span style="display:flex;"><span>| nameif         | iprename , ip link set name               | 重命名网卡   |
+</span></span><span style="display:flex;"><span>| ipmaddr        | ip maddr                                  | 广播地址     |
+</span></span><span style="display:flex;"><span>| netstat        | ip -s                       ss , ip route | 显示网络状态 |
+</span></span></code></pre></div><p>参考链接</p>
+<ul>
+<li><a href="https://wiki.linuxfoundation.org/networking/net-tools">https://wiki.linuxfoundation.org/networking/net-tools</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

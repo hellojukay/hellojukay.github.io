@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="以下是我的工作中可能会用到的工具，我尽量保持不要依赖太多的工具或者系统配置,以确保我在大部分环境下都能进入工作状态.
+操作系统 : Linux,最好是 archlinux 发行版 浏览器 : chrome 编辑器 : vim 版本管理工具 : git pdf阅读器 : zathura(配合zathura-pdf-mupdf 插件,sudo pacman -S zathura-pdf-mupdf) 搜索引擎 : google 脚本语言 : perl , python 截图，录屏 : deepin-screen-recoder 文档工具 : tldr（使用crates上的 tealdeer),zeal 也不错，是一个跨平台的 dash,网址是 : https : //zealdocs.org/ 科学上网 : go get -u -v github.com/Dreamacro/clash , 配合忍者云 renzhe.cloud clash 配置文件
+vim /usr/lib/systemd/system/clash.service # edit and save this file to /usr/lib/systemd/system/clash.service [Unit] Description=clash After=network.target [Service] WorkingDirectory=/home/hellojukay/.config/clash ExecStart=/home/hellojukay/go/bin/clash -f /home/hellojukay/.">  
+
+  <title>
+    
+      我的编程工具
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-07-21 00:00:00 &#43;0000 UTC">
+            2020-07-21
+        </time>
+    </p>
+
+    <h1>我的编程工具</h1>
+
+    
+
+    <p>以下是我的工作中可能会用到的工具，我尽量保持不要依赖太多的工具或者系统配置,以确保我在大部分环境下都能进入工作状态.</p>
+<ol>
+<li>操作系统     : Linux,最好是 archlinux 发行版</li>
+<li>浏览器       : chrome</li>
+<li>编辑器       : vim</li>
+<li>版本管理工具 : git</li>
+<li>pdf阅读器    : zathura(配合zathura-pdf-mupdf 插件,sudo pacman -S zathura-pdf-mupdf)</li>
+<li>搜索引擎     : google</li>
+<li>脚本语言     : perl , python</li>
+<li>截图，录屏   : deepin-screen-recoder</li>
+<li>文档工具     : tldr（使用crates上的 tealdeer),zeal 也不错，是一个跨平台的 dash,网址是   : https : //zealdocs.org/</li>
+<li>科学上网     : go get -u -v github.com/Dreamacro/clash , 配合忍者云 renzhe.cloud</li>
+</ol>
+<p>clash 配置文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>vim /usr/lib/systemd/system/clash.service
+</span></span><span style="display:flex;"><span># edit and save this file to /usr/lib/systemd/system/clash.service
+</span></span><span style="display:flex;"><span>[Unit]
+</span></span><span style="display:flex;"><span>Description=clash
+</span></span><span style="display:flex;"><span>After=network.target
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Service]
+</span></span><span style="display:flex;"><span>WorkingDirectory=/home/hellojukay/.config/clash
+</span></span><span style="display:flex;"><span>ExecStart=/home/hellojukay/go/bin/clash -f /home/hellojukay/.config/clash/config.yaml -secret=hellojukay
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Install]
+</span></span><span style="display:flex;"><span>WantedBy=multi-user.target
+</span></span></code></pre></div><p>笔记工具: <a href="https://github.com/schollz/offlinenotepad">https://github.com/schollz/offlinenotepad</a> 注册为 linux 服务也挺好用的 http://localhost:8251/</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span># edit and save this file to /usr/lib/systemd/system/offlinenotepad.service
+</span></span><span style="display:flex;"><span>[Unit]
+</span></span><span style="display:flex;"><span>Description=clash
+</span></span><span style="display:flex;"><span>After=network.target
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Service]
+</span></span><span style="display:flex;"><span>WorkingDirectory=/opt/offlinenotepad/
+</span></span><span style="display:flex;"><span>ExecStart=/bin/offlinenotepad  -db /opt/offlinenotepad/notepad.db
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[Install]
+</span></span></code></pre></div><h1 id="2020年09月10日更新">2020年09月10日更新</h1>
+<ul>
+<li>flameshot 截图更香 sudo pacman -S flameshot</li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

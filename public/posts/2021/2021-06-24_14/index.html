@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="静态编译一个 Ocaml 脚本文件 ocamlopt -ccopt -static -o hello hello.ml dune 项目静态编译可以参考 https://www.ocamlpro.com/2021/09/02/generating-static-and-portable-executables-with-ocaml/
+(executable (flags (:standard -cclib -static)) (name main)) 相同目录下的文件直接当成模块使用 hello.ml 在本目录的其他文件中，可以直接 Open hello
+Ocaml 发送 post 请求，并且设置 header 和 body
+open Lwt let body = let buffer = Cohttp_lwt.Body.of_string &#34;body string&#34; in let headers = Cohttp.Header.init () in Cohttp_lwt_unix.Client.post ~body:buffer ~headers:(Cohttp.Header.add headers &#34;Content-type&#34; &#34;application/json&#34;) (Uri.of_string &#34;http://.........&#34;) &gt;&gt;= fun (_, body) -&gt; Cohttp_lwt.Body.to_string body let () = let body = Lwt_main.">  
+
+  <title>
+    
+      Ocaml 技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-06-24 00:00:00 &#43;0000 UTC">
+            2021-06-24
+        </time>
+    </p>
+
+    <h1>Ocaml 技巧</h1>
+
+    
+
+    <ol>
+<li>静态编译一个 Ocaml 脚本文件</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ocamlopt -ccopt -static -o hello hello.ml
+</span></span></code></pre></div><p>dune 项目静态编译可以参考 <a href="https://www.ocamlpro.com/2021/09/02/generating-static-and-portable-executables-with-ocaml/">https://www.ocamlpro.com/2021/09/02/generating-static-and-portable-executables-with-ocaml/</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>(executable 
+</span></span><span style="display:flex;"><span>(flags (:standard -cclib -static))
+</span></span><span style="display:flex;"><span>(name main))
+</span></span></code></pre></div><ol start="2">
+<li>
+<p>相同目录下的文件直接当成模块使用
+hello.ml 在本目录的其他文件中，可以直接 Open hello</p>
+</li>
+<li>
+<p>Ocaml 发送 post 请求，并且设置 header 和 body</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">open</span> <span style="color:#a6e22e">Lwt</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> body <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> buffer <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    Cohttp_lwt.Body.of_string <span style="color:#e6db74">&#34;body string&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> headers <span style="color:#f92672">=</span> Cohttp.Header.init () <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>  Cohttp_lwt_unix.Client.post <span style="color:#f92672">~</span>body<span style="color:#f92672">:</span>buffer
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">~</span>headers<span style="color:#f92672">:(</span>Cohttp.Header.add headers <span style="color:#e6db74">&#34;Content-type&#34;</span> <span style="color:#e6db74">&#34;application/json&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>Uri.of_string
+</span></span><span style="display:flex;"><span>       <span style="color:#e6db74">&#34;http://.........&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#66d9ef">fun</span> <span style="color:#f92672">(_,</span> body<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> Cohttp_lwt.Body.to_string body
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> () <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> body <span style="color:#f92672">=</span> Lwt_main.run body <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>  print_endline <span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Received body</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">^</span> body<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>设置 dune 文件如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>(executable 
+</span></span><span style="display:flex;"><span>(name post)
+</span></span><span style="display:flex;"><span>(libraries core cohttp   cohttp-lwt-unix))
+</span></span></code></pre></div><p>参考文章:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>1. https://www.systutorials.com/how-to-statically-link-ocaml-programs/
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

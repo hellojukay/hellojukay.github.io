@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="第一次做mysql的数据导入导出工作，这里记录一下导入导出方法。标题中说mysql,实际上我使用的并不是mysql，而是mysql之父创作另一个数据库:MariaDB。MariaDB完全兼容mysql的操作。这里要说明的是，我的MariaDB是跑在docker容器里面的,那么它的登录方式应该是这样的:
+[infra@localhost]$ docker exec -it db mysql -uuser -ppasswd Welcome to the MariaDB monitor. Commands end with ; or \g. Your MariaDB connection id is 43 Server version: 10.3.8-MariaDB-1:10.3.8&#43;maria~bionic-log mariadb.org binary distribution Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others. Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the current input statement. MariaDB [(none)]&gt; 导出整个数据到sql文件
+[infra@localhost ~]$ docker exec -it snc_mysql mysqldump -uuser -ppasswd databasename &gt; data.">  
+
+  <title>
+    
+      mysql数据导入导出
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-08-20 00:00:00 &#43;0000 UTC">
+            2018-08-20
+        </time>
+    </p>
+
+    <h1>mysql数据导入导出</h1>
+
+    
+
+    <p>第一次做<code>mysql</code>的数据导入导出工作，这里记录一下导入导出方法。标题中说<code>mysql</code>,实际上我使用的并不是<code>mysql</code>，而是<code>mysql</code>之父创作另一个数据库:<code>MariaDB</code>。<code>MariaDB</code>完全兼容<code>mysql</code>的操作。这里要说明的是，我的<code>MariaDB</code>是跑在<code>docker</code>容器里面的,那么它的登录方式应该是这样的:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@localhost<span style="color:#f92672">]</span>$ docker exec -it db mysql -uuser -ppasswd
+</span></span><span style="display:flex;"><span>Welcome to the MariaDB monitor.  Commands end with ; or <span style="color:#ae81ff">\g</span>.
+</span></span><span style="display:flex;"><span>Your MariaDB connection id is <span style="color:#ae81ff">43</span>
+</span></span><span style="display:flex;"><span>Server version: 10.3.8-MariaDB-1:10.3.8+maria~bionic-log mariadb.org binary distribution
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Copyright <span style="color:#f92672">(</span>c<span style="color:#f92672">)</span> 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Type <span style="color:#e6db74">&#39;help;&#39;</span> or <span style="color:#e6db74">&#39;\h&#39;</span> <span style="color:#66d9ef">for</span> help. Type <span style="color:#e6db74">&#39;\c&#39;</span> to clear the current input statement.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>MariaDB <span style="color:#f92672">[(</span>none<span style="color:#f92672">)]</span>&gt;
+</span></span></code></pre></div><p>导出整个数据到sql文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@localhost ~<span style="color:#f92672">]</span>$ docker exec -it snc_mysql mysqldump -uuser -ppasswd databasename &gt; data.sql
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@localhost ~<span style="color:#f92672">]</span>$ ll
+</span></span><span style="display:flex;"><span>总用量 <span style="color:#ae81ff">15160</span>
+</span></span><span style="display:flex;"><span>-rw-rw-r-- <span style="color:#ae81ff">1</span> infra infra <span style="color:#ae81ff">15523218</span> 8月  <span style="color:#ae81ff">20</span> 18:43 data.sql
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@localhost ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>这样数据就被导入到了data.sql这个文本文件中了.</p>
+<p>导入数据库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@hotfix01 ~<span style="color:#f92672">]</span>$ cat data.sql | docker exec -it snc_mysql mysqldump -usnc -pcn.360.b.snc
+</span></span><span style="display:flex;"><span>the input device is not a TTY
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@hotfix01 ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>这应报错了，原因是我们使用<code>docker exec -it</code>选项，去掉<code>-t</code>就好了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat data.sql | docker exec -i snc_mysql mysqldump -usnc -pcn.360.b.snc
+</span></span></code></pre></div><p>或者</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker exec -i snc_mysql mysqldump -usnc -pcn.360.b.snc databasename &lt; data.sql
+</span></span></code></pre></div><p>这里要说明的是：导出的sql文件是没有数据库名字的，所以在导入数据的时候，需要提前保证数据库是存在的。</p>
+<p>由上面的命令行可以看出，<code>mysql</code>在登录的时候，如果登录成功，那么就会读取标准输入的的命令来执行，所以我们还可以进行如下的操作：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;use SNC;show tables;select * from t_manager&#39;</span> | docker exec -i db mysql -uuser -ppasswd;
+</span></span></code></pre></div><p>这里进行了查表操作，当然你可以进行其他的任何操作。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

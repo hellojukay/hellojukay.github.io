@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="代理一：
+[source.crates-io] replace-with = &#34;rustcc&#34; [source.rustcc] registry = &#34;https://code.aliyun.com/rustcc/crates.io-index.git&#34; 代理二:
+[source.crates-io] replace-with = &#39;ustc&#39; [source.ustc] registry = &#34;git://mirrors.ustc.edu.cn/crates.io-index&#34; 代理三:
+# Put the content into ${HOME}/.cargo/config [source.crates-io] registry = &#34;https://github.com/rust-lang/crates.io-index&#34; # replace with your favourite mirror replace-with = &#39;sjtu&#39; [source.ustc] registry = &#34;git://mirrors.ustc.edu.cn/crates.io-index&#34; [source.sjtu] registry = &#34;https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index&#34; [source.rustcc] registry = &#34;https://code.aliyun.com/rustcc/crates.io-index.git&#34; 代理四:
+[source.crates-io] replace-with = &#39;tuna&#39; [source.tuna] registry = &#34;https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git&#34; 参考链接:
+https://github.com/rustcc/RustFAQ#%E5%9C%A8%E4%B8%AD%E5%9B%BD%E5%A4%A7%E9%99%86cargo%E5%91%BD%E4%BB%A4%E9%80%9F%E5%BA%A6%E5%BE%88%E6%85%A2%E6%80%8E%E4%B9%88%E5%8A%9E ">  
+
+  <title>
+    
+      几个国内的crates代理
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-03-07 00:00:00 &#43;0000 UTC">
+            2020-03-07
+        </time>
+    </p>
+
+    <h1>几个国内的crates代理</h1>
+
+    
+
+    <p>代理一：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[source.crates-io]
+</span></span><span style="display:flex;"><span>replace-with = &#34;rustcc&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[source.rustcc]
+</span></span><span style="display:flex;"><span>registry = &#34;https://code.aliyun.com/rustcc/crates.io-index.git&#34;
+</span></span></code></pre></div><p>代理二:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[source.crates-io]
+</span></span><span style="display:flex;"><span>replace-with = &#39;ustc&#39;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[source.ustc]
+</span></span><span style="display:flex;"><span>registry = &#34;git://mirrors.ustc.edu.cn/crates.io-index&#34;
+</span></span></code></pre></div><p>代理三:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span># Put the content into ${HOME}/.cargo/config
+</span></span><span style="display:flex;"><span>[source.crates-io]
+</span></span><span style="display:flex;"><span>registry = &#34;https://github.com/rust-lang/crates.io-index&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span># replace with your favourite mirror
+</span></span><span style="display:flex;"><span>replace-with = &#39;sjtu&#39;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[source.ustc]
+</span></span><span style="display:flex;"><span>registry = &#34;git://mirrors.ustc.edu.cn/crates.io-index&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[source.sjtu]
+</span></span><span style="display:flex;"><span>registry = &#34;https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[source.rustcc]
+</span></span><span style="display:flex;"><span>registry = &#34;https://code.aliyun.com/rustcc/crates.io-index.git&#34;
+</span></span></code></pre></div><p>代理四:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[source.crates-io]
+</span></span><span style="display:flex;"><span>replace-with = &#39;tuna&#39;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[source.tuna]
+</span></span><span style="display:flex;"><span>registry = &#34;https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git&#34;
+</span></span></code></pre></div><p>参考链接:</p>
+<ul>
+<li><a href="https://github.com/rustcc/RustFAQ#%E5%9C%A8%E4%B8%AD%E5%9B%BD%E5%A4%A7%E9%99%86cargo%E5%91%BD%E4%BB%A4%E9%80%9F%E5%BA%A6%E5%BE%88%E6%85%A2%E6%80%8E%E4%B9%88%E5%8A%9E">https://github.com/rustcc/RustFAQ#%E5%9C%A8%E4%B8%AD%E5%9B%BD%E5%A4%A7%E9%99%86cargo%E5%91%BD%E4%BB%A4%E9%80%9F%E5%BA%A6%E5%BE%88%E6%85%A2%E6%80%8E%E4%B9%88%E5%8A%9E</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

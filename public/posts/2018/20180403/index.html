@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="现在用golang开发项目,项目结构一般都是这样
+. ├── README.md ├── ansible ├── app.yaml ├── conf ├── deploy ├── glide.lock ├── glide.yaml ├── main.go ├── models ├── operate ├── plat_deploy ├── restart ├── rollback ├── router ├── utils └── vendor 10 directories, 6 files 最外面一个main文件，这程序的入口，要执行构建操作都是直接到当前的目录下面直接运行go install，但是这样做有个缺陷，就是你的golang项目必须放在GOPATH下面的正确的位置，直接导致构建不成功的例子，目前较好的方法还是是用make结合go install的方法来执行你的构建，在Makefile里面设置好的你的构建需要好的条件，然后直接Make install就能构建成功，或者Make test完成测试。这样也更加有利于自动化。">  
+
+  <title>
+    
+      golang项目的构建
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-04-02 15:43:00 &#43;0000 UTC">
+            2018-04-02
+        </time>
+    </p>
+
+    <h1>golang项目的构建</h1>
+
+    
+
+    <p>现在用golang开发项目,项目结构一般都是这样</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>.
+</span></span><span style="display:flex;"><span>├── README.md
+</span></span><span style="display:flex;"><span>├── ansible
+</span></span><span style="display:flex;"><span>├── app.yaml
+</span></span><span style="display:flex;"><span>├── conf
+</span></span><span style="display:flex;"><span>├── deploy
+</span></span><span style="display:flex;"><span>├── glide.lock
+</span></span><span style="display:flex;"><span>├── glide.yaml
+</span></span><span style="display:flex;"><span>├── main.go
+</span></span><span style="display:flex;"><span>├── models
+</span></span><span style="display:flex;"><span>├── operate
+</span></span><span style="display:flex;"><span>├── plat_deploy
+</span></span><span style="display:flex;"><span>├── restart
+</span></span><span style="display:flex;"><span>├── rollback
+</span></span><span style="display:flex;"><span>├── router
+</span></span><span style="display:flex;"><span>├── utils
+</span></span><span style="display:flex;"><span>└── vendor
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span> directories, <span style="color:#ae81ff">6</span> files
+</span></span></code></pre></div><p>最外面一个main文件，这程序的入口，要执行构建操作都是直接到当前的目录下面直接运行go install，但是这样做有个缺陷，就是你的golang项目必须放在GOPATH下面的正确的位置，直接导致构建不成功的例子，目前较好的方法还是是用make结合go install的方法来执行你的构建，在Makefile里面设置好的你的构建需要好的条件，然后直接Make install就能构建成功，或者Make test完成测试。这样也更加有利于自动化。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

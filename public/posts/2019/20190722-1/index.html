@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在 k8s 集群中构建镜像并不是一个负责的问题，主要是要将构建好的镜像推送到 private docker register 会有点麻烦，因为权限认证的问题，在 docker pull 的时候，我们使用 imagePullSecrets 设置来解决这个问题。
+谷歌开发一个 kaniko 工具，用于解决在 k8s 中构建镜像相关的问题，这个工具允许你给他配置 docker auth 信息,命令如下：
+基于已有的 credentials 创建 k8s secret kubectl create secret generic regcred \ --from-file=.dockerconfigjson=$HOME/.docker/config.json \ --type=kubernetes.io/dockerconfigjson 配置中使用这个 secret pipeline { agent { kubernetes { //cloud &#39;kubernetes&#39; yaml &#34;&#34;&#34; kind: Pod metadata: name: kaniko spec: containers: - name: kaniko image: gcr.io/kaniko-project/executor:debug-539ddefcae3fd6b411a95982a830d987f4214251 imagePullPolicy: Always command: - /busybox/cat tty: true volumeMounts: - name: jenkins-docker-cfg mountPath: /root volumes: - name: jenkins-docker-cfg projected: sources: - secret: name: regcred items: - key: .">  
+
+  <title>
+    
+      使用 kaniko 在 k8s 集群中构建镜像
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-07-22 00:00:00 &#43;0000 UTC">
+            2019-07-22
+        </time>
+    </p>
+
+    <h1>使用 kaniko 在 k8s 集群中构建镜像</h1>
+
+    
+
+    <p>在 k8s 集群中构建镜像并不是一个负责的问题，主要是要将构建好的镜像推送到 private docker register 会有点麻烦，因为权限认证的问题，在 docker pull 的时候，我们使用 imagePullSecrets 设置来解决这个问题。</p>
+<p>谷歌开发一个 kaniko 工具，用于解决在 k8s 中构建镜像相关的问题，这个工具允许你给他配置 docker auth 信息,命令如下：</p>
+<ol>
+<li>基于已有的 credentials 创建 k8s secret</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl create secret generic regcred <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --from-file<span style="color:#f92672">=</span>.dockerconfigjson<span style="color:#f92672">=</span>$HOME/.docker/config.json <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --type<span style="color:#f92672">=</span>kubernetes.io/dockerconfigjson
+</span></span></code></pre></div><ol start="2">
+<li>配置中使用这个 secret</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    kubernetes <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">//cloud &#39;kubernetes&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>      yaml <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">kind: Pod
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">metadata:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  name: kaniko
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">spec:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  containers:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: kaniko
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    image: gcr.io/kaniko-project/executor:debug-539ddefcae3fd6b411a95982a830d987f4214251
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    imagePullPolicy: Always
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    command:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    - /busybox/cat
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    tty: true
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    volumeMounts:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - name: jenkins-docker-cfg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        mountPath: /root
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  volumes:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  - name: jenkins-docker-cfg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    projected:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      sources:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      - secret:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          name: regcred
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          items:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            - key: .dockerconfigjson
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">              path: .docker/config.json
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  stages <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    stage<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;Build with Kaniko&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>      environment <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        PATH <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/busybox:/kaniko:$PATH&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>      steps <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        git <span style="color:#e6db74">&#39;https://github.com/jenkinsci/docker-jnlp-slave.git&#39;</span>
+</span></span><span style="display:flex;"><span>        container<span style="color:#f92672">(</span>name: <span style="color:#e6db74">&#39;kaniko&#39;</span><span style="color:#f92672">,</span> shell: <span style="color:#e6db74">&#39;/busybox/sh&#39;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            sh <span style="color:#e6db74">&#39;&#39;&#39;#!/busybox/sh
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>参考链接:</p>
+<ul>
+<li><a href="https://github.com/jenkinsci/kubernetes-plugin/blob/master/examples/kaniko-declarative.groovy">https://github.com/jenkinsci/kubernetes-plugin/blob/master/examples/kaniko-declarative.groovy</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-in-the-cluster-that-holds-your-authorization-token">https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-in-the-cluster-that-holds-your-authorization-token</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

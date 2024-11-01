@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天总算解决了在家无法登录公司测试服务器的问题。因为不知道的什么原因，公司是不允许在外部网络登录测试服务，虽然有vpn，但是运维禁止了vpn登录ssh,要登录测试服务，必须要申请权限，而且每次登录最长只能保持15分钟，过期了有要再次登录。所以我想能不能自己想办法绕过这个坑，我试了下，到跳板机的连接是ping的同的，说明网络是没有问题。我要的做的只是监听一个端口，把这个端口的输入和输出都同步到跳板机的ssh端口就可以了，代码如下
+https://github.com/hellojukay/ssh_proxy 登录到jenkins，部署，然后登录到部署系统，部署，本地连接完美登录成功。
+jukay@MP ~/.ssh(18.9)&gt; ssh -p 7013 -i licong_testing.rsa licong@huanggai 六 3/10 10:26:42 2018 key_load_public: invalid format Last login: Sat Mar 10 09:44:48 2018 from 192.168.1.197 [licong@xiangyun ~]$ 这行命令太长了，写在一个文件里面吧
+jukay@MP ~/.ssh(18.9)&gt; cat huanggai 六 3/10 10:28:07 2018 #!/bin/bash cd /Users/jukay/.ssh ssh -p 7013 -i licong_testing.rsa licong@huanggai jukay@MP ~/.ssh(18.9)&gt; 每次登录都要~/.ssh目录下执行huanggai，太麻烦了，取一个全局额别名吧,我用的shell是fish，直接在fish的配置里面加上
+alias huanggai=&#34;sh /Users/jukay/.ssh/huanggai&#34; 以后就可以在本地的任何目录执行huanggai，就能登录测试环境，以后要加班就不要去公司了。">  
+
+  <title>
+    
+      记一次&#34;hack&#34;公司ssh
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-03-10 00:00:00 &#43;0000 UTC">
+            2018-03-10
+        </time>
+    </p>
+
+    <h1>记一次&#34;hack&#34;公司ssh</h1>
+
+    
+
+    <p>今天总算解决了在家无法登录公司测试服务器的问题。因为不知道的什么原因，公司是不允许在外部网络登录测试服务，虽然有vpn，但是运维禁止了vpn登录ssh,要登录测试服务，必须要申请权限，而且每次登录最长只能保持15分钟，过期了有要再次登录。所以我想能不能自己想办法绕过这个坑，我试了下，到跳板机的连接是ping的同的，说明网络是没有问题。我要的做的只是监听一个端口，把这个端口的输入和输出都同步到跳板机的ssh端口就可以了，代码如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">https://github.com/hellojukay/ssh_proxy
+</span></span></span></code></pre></div><p>登录到jenkins，部署，然后登录到部署系统，部署，本地连接完美登录成功。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@MP ~/.ssh<span style="color:#f92672">(</span>18.9<span style="color:#f92672">)</span>&gt; ssh -p <span style="color:#ae81ff">7013</span> -i licong_testing.rsa licong@huanggai                     六  3/10 10:26:42 <span style="color:#ae81ff">2018</span>
+</span></span><span style="display:flex;"><span>key_load_public: invalid format
+</span></span><span style="display:flex;"><span>Last login: Sat Mar <span style="color:#ae81ff">10</span> 09:44:48 <span style="color:#ae81ff">2018</span> from 192.168.1.197
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>licong@xiangyun ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>这行命令太长了，写在一个文件里面吧</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>jukay@MP ~/.ssh<span style="color:#f92672">(</span>18.9<span style="color:#f92672">)</span>&gt; cat huanggai                                                          六  3/10 10:28:07 <span style="color:#ae81ff">2018</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash</span>
+</span></span><span style="display:flex;"><span>cd /Users/jukay/.ssh
+</span></span><span style="display:flex;"><span>ssh -p <span style="color:#ae81ff">7013</span> -i licong_testing.rsa licong@huanggai
+</span></span><span style="display:flex;"><span>jukay@MP ~/.ssh<span style="color:#f92672">(</span>18.9<span style="color:#f92672">)</span>&gt;
+</span></span></code></pre></div><p>每次登录都要~/.ssh目录下执行huanggai，太麻烦了，取一个全局额别名吧,我用的shell是fish，直接在fish的配置里面加上</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>alias huanggai=&#34;sh /Users/jukay/.ssh/huanggai&#34;
+</span></span></code></pre></div><p>以后就可以在本地的任何目录执行huanggai，就能登录测试环境，以后要加班就不要去公司了。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

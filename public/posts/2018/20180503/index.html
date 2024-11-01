@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="linux内核提供了用户访问内核数据的接口，就是/proc这个文件夹。这个文件夹中每一个数字组成的文件夹就是一个进程的信息，文件夹的数组是一个进程的pid，这篇文章是记录/pro/[pid]这个文件夹里面各个文件的调研结果，就是如何或程序在运行过程中的各项数据指标。/pro/[pid]这个文件夹里面一般有43个文件，每个文件或者文件夹都记录了不同的信息。
+[root@baochai /proc/1449]# ll total 0 dr-xr-xr-x 2 root root 0 May 3 14:58 attr -rw-r--r-- 1 root root 0 May 3 14:58 autogroup -r-------- 1 root root 0 May 3 14:58 auxv -r--r--r-- 1 root root 0 May 3 14:58 cgroup --w------- 1 root root 0 May 3 14:58 clear_refs -r--r--r-- 1 root root 0 May 3 11:40 cmdline -rw-r--r-- 1 root root 0 May 3 14:58 comm #命令行程序的名字 -rw-r--r-- 1 root root 0 May 3 14:58 coredump_filter -r--r--r-- 1 root root 0 May 3 14:58 cpuset lrwxrwxrwx 1 root root 0 May 3 14:58 cwd -&gt; /opt/gitlab/sv/gitaly # 当前进程的工作空间，可以理解为启动目录 -r-------- 1 root root 0 May 3 04:50 environ 这里文件里面存的是当前进程的环境变量 lrwxrwxrwx 1 root root 0 May 3 01:01 exe -&gt; /opt/gitlab/embedded/bin/runsv # 当前进程可执行文件的绝对路径 dr-x------ 2 root root 0 May 3 04:51 fd dr-x------ 2 root root 0 May 3 14:58 fdinfo -r-------- 1 root root 0 May 3 14:58 io -rw------- 1 root root 0 May 3 14:58 limits -rw-r--r-- 1 root root 0 May 3 14:58 loginuid -r--r--r-- 1 root root 0 May 3 14:58 maps -rw------- 1 root root 0 May 3 14:58 mem -r--r--r-- 1 root root 0 May 3 14:58 mountinfo -r--r--r-- 1 root root 0 May 3 14:58 mounts # 当前进程能观察到的挂载信息 -r-------- 1 root root 0 May 3 14:58 mountstats dr-xr-xr-x 4 root root 0 May 3 14:58 net dr-x--x--x 2 root root 0 May 3 14:58 ns -r--r--r-- 1 root root 0 May 3 14:58 numa_maps -rw-r--r-- 1 root root 0 May 3 14:58 oom_adj -r--r--r-- 1 root root 0 May 3 14:58 oom_score -rw-r--r-- 1 root root 0 May 3 14:58 oom_score_adj -r--r--r-- 1 root root 0 May 3 14:58 pagemap -r--r--r-- 1 root root 0 May 3 14:58 personality lrwxrwxrwx 1 root root 0 May 3 14:58 root -&gt; / -rw-r--r-- 1 root root 0 May 3 14:58 sched -r--r--r-- 1 root root 0 May 3 14:58 schedstat -r--r--r-- 1 root root 0 May 3 14:58 sessionid -r--r--r-- 1 root root 0 May 3 14:58 smaps -r--r--r-- 1 root root 0 May 3 14:58 stack -r--r--r-- 1 root root 0 May 3 11:20 stat -r--r--r-- 1 root root 0 May 3 10:44 statm -r--r--r-- 1 root root 0 May 3 11:20 status -r--r--r-- 1 root root 0 May 3 14:58 syscall dr-xr-xr-x 3 root root 0 May 3 14:58 task -r--r--r-- 1 root root 0 May 3 14:58 wchan [root@baochai /proc/1449]# /proc/[pid]/cmdline 一般情况下，这是一个只读的文件，只有当前该进程是僵尸进程的时候，你能够修改这个文件。读取这个文件返回的是当前进程的完成的命令行，如果当前进程是僵尸进程，那么读取这个文件会直接返回空字符串。">  
+
+  <title>
+    
+      /proc/pid文件夹解析
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-03 14:42:07 &#43;0000 UTC">
+            2018-05-03
+        </time>
+    </p>
+
+    <h1>/proc/pid文件夹解析</h1>
+
+    
+
+    <p>linux内核提供了用户访问内核数据的接口，就是/proc这个文件夹。这个文件夹中每一个数字组成的文件夹就是一个进程的信息，文件夹的数组是一个进程的pid，这篇文章是记录/pro/[pid]这个文件夹里面各个文件的调研结果，就是如何或程序在运行过程中的各项数据指标。/pro/[pid]这个文件夹里面一般有43个文件，每个文件或者文件夹都记录了不同的信息。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@baochai /proc/1449<span style="color:#f92672">]</span><span style="color:#75715e"># ll</span>
+</span></span><span style="display:flex;"><span>total <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>dr-xr-xr-x <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 attr
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 autogroup
+</span></span><span style="display:flex;"><span>-r-------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 auxv
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 cgroup
+</span></span><span style="display:flex;"><span>--w------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 clear_refs
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 11:40 cmdline
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 comm <span style="color:#75715e">#命令行程序的名字</span>
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 coredump_filter
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 cpuset
+</span></span><span style="display:flex;"><span>lrwxrwxrwx <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 cwd -&gt; /opt/gitlab/sv/gitaly <span style="color:#75715e"># 当前进程的工作空间，可以理解为启动目录</span>
+</span></span><span style="display:flex;"><span>-r-------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 04:50 environ 这里文件里面存的是当前进程的环境变量
+</span></span><span style="display:flex;"><span>lrwxrwxrwx <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 01:01 exe -&gt; /opt/gitlab/embedded/bin/runsv  <span style="color:#75715e"># 当前进程可执行文件的绝对路径</span>
+</span></span><span style="display:flex;"><span>dr-x------ <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 04:51 fd
+</span></span><span style="display:flex;"><span>dr-x------ <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 fdinfo
+</span></span><span style="display:flex;"><span>-r-------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 io
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 limits
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 loginuid
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 maps
+</span></span><span style="display:flex;"><span>-rw------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 mem
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 mountinfo
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 mounts  <span style="color:#75715e"># 当前进程能观察到的挂载信息</span>
+</span></span><span style="display:flex;"><span>-r-------- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 mountstats
+</span></span><span style="display:flex;"><span>dr-xr-xr-x <span style="color:#ae81ff">4</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 net
+</span></span><span style="display:flex;"><span>dr-x--x--x <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 ns
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 numa_maps
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 oom_adj
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 oom_score
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 oom_score_adj
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 pagemap
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 personality
+</span></span><span style="display:flex;"><span>lrwxrwxrwx <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 root -&gt; /
+</span></span><span style="display:flex;"><span>-rw-r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 sched
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 schedstat
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 sessionid
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 smaps
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 stack
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 11:20 stat
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 10:44 statm
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 11:20 status
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 syscall
+</span></span><span style="display:flex;"><span>dr-xr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 task
+</span></span><span style="display:flex;"><span>-r--r--r-- <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">0</span> May  <span style="color:#ae81ff">3</span> 14:58 wchan
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@baochai /proc/1449<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><h3 id="procpidcmdline">/proc/[pid]/cmdline</h3>
+<p>一般情况下，这是一个只读的文件，只有当前该进程是僵尸进程的时候，你能够修改这个文件。读取这个文件返回的是当前进程的完成的命令行，如果当前进程是僵尸进程，那么读取这个文件会直接返回空字符串。</p>
+<h3 id="procpidcwd">/proc/[pid]/cwd</h3>
+<p>这是一个link，指向当前进程的工作目录，也就是当前进程的启动目录,如果我需要看pid=20的进程的启动目录(工作空间),可以这样做</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd /proc/20/cwd <span style="color:#f92672">&amp;&amp;</span> /bin/pwd
+</span></span></code></pre></div><h3 id="procpidenviron">/proc/[pid]/environ</h3>
+<p>当前进程的环境变量的信息保存这个文件中</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>strings /proc/1/environ
+</span></span><span style="display:flex;"><span>// PATH<span style="color:#f92672">=</span>/opt/gitlab/bin:/opt/gitlab/embedded/bin:/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
+</span></span></code></pre></div><p>这里的strings命令在对象文件或二进制文件中查找可打印的字符串。字符串是4个或更多可打印字符的任意序列，以换行符或空字符结束。</p>
+<h3 id="procpidexe">/proc/[pid]/exe</h3>
+<p>指向当前可执行文件的link，如果这个link对应的可执行文件被删除了，那么这个link中会包含一个delete字符串.</p>
+<h3 id="procpidfd">/proc/[pid]/fd/</h3>
+<p>这个文件夹中还包含了当前进程打开的所有的文件的文件描述符.并且是一个指向真实文件的link</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@baochai /proc/1449/fd<span style="color:#f92672">]</span><span style="color:#75715e"># ll</span>
+</span></span><span style="display:flex;"><span>total <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>lrwx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">0</span> -&gt; /dev/null
+</span></span><span style="display:flex;"><span>lrwx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">1</span> -&gt; /dev/null
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">10</span> -&gt; /opt/gitlab/sv/gitaly/supervise/control
+</span></span><span style="display:flex;"><span>lr-x------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">11</span> -&gt; /opt/gitlab/sv/gitaly/log/supervise/control
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">12</span> -&gt; /opt/gitlab/sv/gitaly/log/supervise/control
+</span></span><span style="display:flex;"><span>lr-x------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">13</span> -&gt; /opt/gitlab/sv/gitaly/supervise/ok
+</span></span><span style="display:flex;"><span>lr-x------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">14</span> -&gt; /opt/gitlab/sv/gitaly/log/supervise/ok
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">2</span> -&gt; pipe:<span style="color:#f92672">[</span>11917<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>lr-x------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">3</span> -&gt; pipe:<span style="color:#f92672">[</span>11931<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">4</span> -&gt; pipe:<span style="color:#f92672">[</span>11931<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>lr-x------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">5</span> -&gt; pipe:<span style="color:#f92672">[</span>11945<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">6</span> -&gt; pipe:<span style="color:#f92672">[</span>11945<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">7</span> -&gt; /opt/gitlab/sv/gitaly/supervise/lock
+</span></span><span style="display:flex;"><span>l-wx------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">8</span> -&gt; /opt/gitlab/sv/gitaly/log/supervise/lock
+</span></span><span style="display:flex;"><span>lr-x------ <span style="color:#ae81ff">1</span> root root <span style="color:#ae81ff">64</span> May  <span style="color:#ae81ff">3</span> 15:59 <span style="color:#ae81ff">9</span> -&gt; /opt/gitlab/sv/gitaly/supervise/control
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@baochai /proc/1449/fd<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><p>0表示的是标准输入，1表示标准输出，2表示标准所诶输出</p>
+<h3 id="procpidio">/proc/[pid]/io</h3>
+<p>这个文件保存了当前进程的io状态。</p>
+<h3 id="procpidmountinfo">/proc/[pid]/mountinfo</h3>
+<p>这个文件保存了当前进程namespace空间下的挂载信息。</p>
+<h3 id="procpidstatm">/proc/[pid]/statm</h3>
+<p>这个文件保存了当前进程的内存使用信息。</p>
+<h3 id="procpidstatus">/proc/[pid]/status</h3>
+<p>这个文件保存了当前进程的状态信息，包括/proc/[pid]/stat 和/proc/[pid]/statm文件中的内存，如果它更加适阅读和理解。这个文件非常重要，大部分我需要关注的信息都能在这个文件里面找到。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@baochai /proc/1449<span style="color:#f92672">]</span><span style="color:#75715e"># cat status</span>
+</span></span><span style="display:flex;"><span>Name:	runsv
+</span></span><span style="display:flex;"><span>State:	S <span style="color:#f92672">(</span>sleeping<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Tgid:	<span style="color:#ae81ff">1449</span>
+</span></span><span style="display:flex;"><span>Pid:	<span style="color:#ae81ff">1449</span>
+</span></span><span style="display:flex;"><span>PPid:	<span style="color:#ae81ff">1423</span>
+</span></span><span style="display:flex;"><span>TracerPid:	<span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>Uid:	0	0	0	<span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>Gid:	0	0	0	<span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>Utrace:	<span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>FDSize:	<span style="color:#ae81ff">64</span>
+</span></span><span style="display:flex;"><span>Groups:
+</span></span><span style="display:flex;"><span>VmPeak:	    <span style="color:#ae81ff">3996</span> kB
+</span></span><span style="display:flex;"><span>VmSize:	    <span style="color:#ae81ff">3940</span> kB
+</span></span><span style="display:flex;"><span>VmLck:	       <span style="color:#ae81ff">0</span> kB
+</span></span><span style="display:flex;"><span>VmHWM:	     <span style="color:#ae81ff">380</span> kB
+</span></span><span style="display:flex;"><span>VmRSS:	     <span style="color:#ae81ff">380</span> kB
+</span></span><span style="display:flex;"><span>VmData:	      <span style="color:#ae81ff">40</span> kB
+</span></span><span style="display:flex;"><span>VmStk:	      <span style="color:#ae81ff">88</span> kB
+</span></span><span style="display:flex;"><span>VmExe:	      <span style="color:#ae81ff">24</span> kB
+</span></span><span style="display:flex;"><span>VmLib:	    <span style="color:#ae81ff">1704</span> kB
+</span></span><span style="display:flex;"><span>VmPTE:	      <span style="color:#ae81ff">32</span> kB
+</span></span><span style="display:flex;"><span>VmSwap:	       <span style="color:#ae81ff">0</span> kB
+</span></span><span style="display:flex;"><span>Threads:	<span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>SigQ:	0/62793
+</span></span><span style="display:flex;"><span>SigPnd:	<span style="color:#ae81ff">0000000000000000</span>
+</span></span><span style="display:flex;"><span>ShdPnd:	<span style="color:#ae81ff">0000000000000000</span>
+</span></span><span style="display:flex;"><span>SigBlk:	<span style="color:#ae81ff">0000000000000000</span>
+</span></span><span style="display:flex;"><span>SigIgn:	<span style="color:#ae81ff">0000000000000000</span>
+</span></span><span style="display:flex;"><span>SigCgt:	<span style="color:#ae81ff">0000000000014000</span>
+</span></span><span style="display:flex;"><span>CapInh:	<span style="color:#ae81ff">0000000000000000</span>
+</span></span><span style="display:flex;"><span>CapPrm:	ffffffffffffffff
+</span></span><span style="display:flex;"><span>CapEff:	ffffffffffffffff
+</span></span><span style="display:flex;"><span>CapBnd:	ffffffffffffffff
+</span></span><span style="display:flex;"><span>Cpus_allowed:	ffffffff
+</span></span><span style="display:flex;"><span>Cpus_allowed_list:	0-31
+</span></span><span style="display:flex;"><span>Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003
+</span></span><span style="display:flex;"><span>Mems_allowed_list:	0-1
+</span></span><span style="display:flex;"><span>voluntary_ctxt_switches:	<span style="color:#ae81ff">439</span>
+</span></span><span style="display:flex;"><span>nonvoluntary_ctxt_switches:	<span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@baochai /proc/1449<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><ul>
+<li>Name： 进程启动的名字</li>
+<li>State： 当前进程的状态, &ldquo;R (running)&rdquo;,
+&ldquo;S (sleeping)&rdquo;, &ldquo;D (disk sleep)&rdquo;, &ldquo;T (stopped)&rdquo;, &ldquo;T (tracing
+stop)&rdquo;, &ldquo;Z (zombie)&rdquo;, or &ldquo;X (dead)&rdquo;.</li>
+<li>Pid: 当前进程的pid</li>
+<li>PPid: 父进程的pid</li>
+<li>VmPeak: 最大虚拟内存大小</li>
+<li>VmSize: 虚拟内存大小</li>
+<li>VmLck: 被锁定的内存大小</li>
+<li>VmPin：固定内存大小</li>
+<li>VmRSS: 程序实际占用内存大小</li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

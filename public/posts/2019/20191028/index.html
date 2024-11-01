@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天在执行 golang 的时候报了一个错误
+flag provided but not defined: -test.testlogfile Usage of /var/folders/lb/j0gz8jln36z4frqkrzmkdb0c0000gp/T/go-build200454244/b001/cc.test: FAIL	github.com/bla/cc	0.007s 这个的意思是，我没有定义 -test.testlogfile 但是参数解析参数的时候确有这个参数。这里报这个错的原因是测试代码写在main 包中，而 main 包中有一个 init 函数调用了 flag.Parse() 方法
+flag.Parse() 在 testing 框架中也定义了 flag.StringXxxx 等方法，所以也会调用 flag.Prase() 来解析参数
+if !flag.Prase() { flag.Parse() } 这样就导致 testing 框架定义的 flag.StringXxxx 没有被解析。这个这个问题的方式，是在 go test 的用例执行之前，flag.StringXxxx 定义之后调用 flag.Parse() , 这需要用到 TestMain 机制，当一个 golang test file 中包含有
+func TestMain(t *testing.M){ } 函数时，其他的测试用例不会自动执行，而会触发执行 TestMain 参数， 所以我们可以编写 TestMain 参数如下:
+func TestMain(m *testing.M) { flag.">  
+
+  <title>
+    
+      golang  TestMain 方法
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-10-28 00:00:00 &#43;0000 UTC">
+            2019-10-28
+        </time>
+    </p>
+
+    <h1>golang  TestMain 方法</h1>
+
+    
+
+    <p>今天在执行 golang 的时候报了一个错误</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>flag provided but not defined: -test.testlogfile
+</span></span><span style="display:flex;"><span>Usage of /var/folders/lb/j0gz8jln36z4frqkrzmkdb0c0000gp/T/go-build200454244/b001/cc.test:
+</span></span><span style="display:flex;"><span>FAIL	 github.com/bla/cc	 0.007s
+</span></span></code></pre></div><p>这个的意思是，我没有定义 -test.testlogfile 但是参数解析参数的时候确有这个参数。这里报这个错的原因是测试代码写在main  包中，而 main 包中有一个 init 函数调用了 flag.Parse() 方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
+</span></span></code></pre></div><p>在 testing 框架中也定义了 flag.StringXxxx 等方法，所以也会调用 flag.Prase() 来解析参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Prase</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这样就导致 testing 框架定义的 flag.StringXxxx 没有被解析。这个这个问题的方式，是在 go test 的用例执行之前，flag.StringXxxx 定义之后调用 flag.Parse() , 这需要用到 TestMain 机制，当一个 golang test file 中包含有</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMain</span>(<span style="color:#a6e22e">t</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">M</span>){
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>函数时，其他的测试用例不会自动执行，而会触发执行 TestMain 参数， 所以我们可以编写 TestMain  参数如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">TestMain</span>(<span style="color:#a6e22e">m</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">M</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">flag</span>.<span style="color:#a6e22e">Parse</span>()
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Exit</span>(<span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Run</span>())
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>这里</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-golang" data-lang="golang"><span style="display:flex;"><span><span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Run</span>
+</span></span></code></pre></div><p>执行本文件中其他的测试函数,如果不调用 m.Run  那么 go test 永远返回 0 , 即使测试失败了。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

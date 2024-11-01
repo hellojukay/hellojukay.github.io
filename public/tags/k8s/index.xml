@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>K8s on 润物细无声</title>
+    <link>http://localhost:1313/tags/k8s/</link>
+    <description>Recent content in K8s on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 17 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>k8s 获取集群的健康信息的几条命令</title>
+      <link>http://localhost:1313/posts/2020/20201217/</link>
+      <pubDate>Thu, 17 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201217/</guid>
+      <description>一个被过期的命令是:&#xA;kubectl get componentstatus 他的简写是&#xA;kubectl get cs 一个最新的写法是&#xA;kubectl cluster-info 要获取更多的 debug 信息可以&#xA;kubectl cluster-info dump </description>
+    </item>
+    <item>
+      <title>k8s 无法创建 Statefulset</title>
+      <link>http://localhost:1313/posts/2020/20201210/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201210/</guid>
+      <description>错误信息如下&#xA;The StatefulSet &amp;#34;nacos&amp;#34; is invalid: spec: Forbidden: updates to statefulset spec for fields other than &amp;#39;replicas&amp;#39;, &amp;#39;template&amp;#39;, and &amp;#39;updateStrategy&amp;#39; are forbidden 原因： statefulset 已经存在了，当前 yml 文件的配置和已经存在的文件的配置又冲突，删除再次创建就没有问题.</description>
+    </item>
+    <item>
+      <title>failed to create rbd image: execut able file not found in $PATH, command output</title>
+      <link>http://localhost:1313/posts/2020/20201130/</link>
+      <pubDate>Mon, 30 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201130/</guid>
+      <description>k8s 在使用 Ceph 当作存储的时候无法根据 ClassStorage 分配PV,提示错误:&#xA;failed to create rbd image: execut able file not found in $PATH, command output: 关于社区对此问题的讨论见：https://github.com/kubernetes/kubernetes/issues/85454</description>
+    </item>
+    <item>
+      <title>kubeadm 忘记了 token 的情况添加新节点</title>
+      <link>http://localhost:1313/posts/2020/20200702-1/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200702-1/</guid>
+      <description>第一步：更新证书&#xA;kubeadm init phase upload-certs --upload-certs 得到证书信息&#xA;W0702 16:30:29.817135 10814 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io] [upload-certs] Storing the certificates in Secret &amp;#34;kubeadm-certs&amp;#34; in the &amp;#34;kube-system&amp;#34; Namespace [upload-certs] Using certificate key: 65d0e16cb416c38254f1cb544beec8e47c11d1655b515a26b4939d843629d736 第二步：创建 token 并且打印 join 命令&#xA;[root@master01v runner]# kubeadm token create --print-join-command --certificate-key=&amp;lt;token&amp;gt; 这里会用到上面的证书字符串,生成命令如下&#xA;W0702 16:30:47.775943 10980 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io] kubeadm join 192.168.0.100:443 --token tn0lnq.</description>
+    </item>
+    <item>
+      <title>weave 插件 CrashLoopBackOff</title>
+      <link>http://localhost:1313/posts/2020/20200702/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200702/</guid>
+      <description>新安装的高可用 k8s 集群，有一个节点加入到集群以后，网络通讯一直不正常&#xA;weave-net-bncrx 1/2 CrashLoopBackOff 8 11m 这个 pod 有2个容器，有一个容器无法启动，通过 kubect logs 查看日志&#xA;[root@master01v runner]# kubectl logs weave-net-bncrx -c weave -n kube-system Network 192.168.0.0/16 overlaps with existing route 192.168.0.0/20 on host 服务器上已经存在了到 192.168 的路由信息，路由冲突了，到服务器上看一眼,docker0 网卡的 ip 子网似乎不正常&#xA;[root@kuberntes05v licong]# ip a 1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1000 link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 inet 127.0.0.1/8 scope host lo valid_lft forever preferred_lft forever 2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000 link/ether fa:16:3e:8a:11:85 brd ff:ff:ff:ff:ff:ff .</description>
+    </item>
+    <item>
+      <title>jenkins 在 k8s 中构建的几种写法</title>
+      <link>http://localhost:1313/posts/2019/20191113-1/</link>
+      <pubDate>Wed, 13 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191113-1/</guid>
+      <description>jenkins 结合 k8s 插件能够在 k8s 集群中构建代码，这个非常方便。这里总结一下集中结合 k8s 的用法。&#xA;界面配置 template 在 jenkins 设置界面配置好 template 设置好标签以后，就能在 jenkinsfile 中使用这个节点了。如下：&#xA;pipeline { agent { label &amp;#34;k8s&amp;#34; } stages { stage(&amp;#34;test&amp;#34;){ steps { container(&amp;#34;node&amp;#34;){ echo &amp;#34;Hello World&amp;#34; } } } } } 这里使用 k8s 这个 template 来启动构建环境，并且使用容器名字为 node 的容器。&#xA;jenkinsfile 引入template 文件 在项目的其他文件中定义好 k8s 的 pod 文件，然后在 agent 中通过 yamlFile 指令导入进来&#xA;agent { kubernetes { yamlFile &amp;#34;k8s_pod.yml&amp;#34; } } jenkinsfile 直接定义 template podTemplate(containers: [ containerTemplate(name: &amp;#39;maven&amp;#39;, image: &amp;#39;maven:3.</description>
+    </item>
+    <item>
+      <title>k8s 中挂载 configMap</title>
+      <link>http://localhost:1313/posts/2019/20190903/</link>
+      <pubDate>Tue, 03 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190903/</guid>
+      <description>使用命令行从文件创建 configMap, 比如，我们的配置文件名字是 config.yaml , 那么我们可以创建 configMap :&#xA;kubectl create configmap myconfig --from-file=config.yaml 可以在 pod 的 yaml 文件中指定挂载这个文件到某个目录：&#xA;apiVersion: v1 kind: Pod metadata: name: myapp labels: name: myapp spec: containers: - name: myapp image: &amp;lt;image&amp;gt; volumeMounts: - name: config mountPath: /etc/config subPath: config volumes: - name: config configMap: name: myconfig 以上将 config.yaml 文件挂载到了 myapp 容器的 /et/config 文件。</description>
+    </item>
+    <item>
+      <title>jenkins k8s 编译 golang 遇到 vendor 的坑</title>
+      <link>http://localhost:1313/posts/2019/20190829/</link>
+      <pubDate>Thu, 29 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190829/</guid>
+      <description>将当前项目 link 到 /go/src/github.com/project,将 vendor 复制到 /go/src/&#xA;stage(&amp;#34;go build&amp;#34;) { steps { container(&amp;#34;golang&amp;#34;) { sh &amp;#34;&amp;#34;&amp;#34; cp vendor/* /go/src/ -rf mkdir -p /go/src/github.com/project ln -s `pwd` /go/sr/github.com/project cd /go/src/github.com/project &amp;amp;&amp;amp; go build &amp;#34;&amp;#34;&amp;#34; } } } 参考链接：&#xA;https://github.com/jenkinsci/kubernetes-plugin </description>
+    </item>
+    <item>
+      <title>【翻译】k8s 从私有仓库获取镜像</title>
+      <link>http://localhost:1313/posts/2019/20190802/</link>
+      <pubDate>Fri, 02 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190802/</guid>
+      <description>原文地址: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/&#xA;这篇文章将会教你在创建 pod 的时候如何正确从私有仓库获取镜像。&#xA;开始之前 你需要有一个 K8S 集群，并且安装配置好了 kubectl ，命令行能够访问你的集群。如果你还没有安装好 K8S ，那么请使用 minikube 安装， 或者使用我们为你准备好的集群&#xA;https://www.katacoda.com/courses/kubernetes/playground https://labs.play-with-k8s.com/ 检查版本信息 kubectl version, 在执行这个训练之前，你还需要有一个能登录 docker 私有仓库的账号。&#xA;登录 docker 仓库 在你的本地机器，你必须先登录 docker 仓库，才能获得 pull 私有仓库镜像的权限。&#xA;docker login {host} 会提示输入账号密码, 登录成功以后会更新 $HOME/.docker/config.json 配置文件。使用 cat 查看文件内容: cat ~/.docker/config.json 会输入类似如下的内容&#xA;{ &amp;#34;auths&amp;#34;: { &amp;#34;https://index.docker.io/v1/&amp;#34;: { &amp;#34;auth&amp;#34;: &amp;#34;c3R...zE2&amp;#34; } } } 该文件中保存了登录的 token 信息。&#xA;基于已经存在的 token 认证文件创建 K8S secret K8S 在 pull 镜像的时候会使用 docker 的登录认证信息来认证私有仓库的权限。如果你已经执行过 docker login ，并且登录成功，那么你可以将 token 信息复制到 K8S 集群中:</description>
+    </item>
+    <item>
+      <title>jenkins 结合 k8s 动态构建</title>
+      <link>http://localhost:1313/posts/2019/20190722/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190722/</guid>
+      <description>第一步：在 jenkins 上安装 k8s 插件 第二步: 在 jenkins 上配置 k8s 插件，在系统设置中添加&amp;quot;云&amp;quot; 第三步: 第二部中需要添加凭证信息，制作方式如下：&#xA;[licong@k8s01v pki]$ pwd /etc/kubernetes/pki [licong@k8s01v pki]$ ls -al 总用量 60 drwxr-xr-x 3 root root 4096 7月 17 13:55 . drwxr-xr-x 4 root root 125 7月 17 13:56 .. -rw-r--r-- 1 root root 1249 7月 17 13:55 apiserver.crt -rw-r--r-- 1 root root 1090 7月 17 13:55 apiserver-etcd-client.crt -rw------- 1 root root 1675 7月 17 13:55 apiserver-etcd-client.key -rw------- 1 root root 1679 7月 17 13:55 apiserver.</description>
+    </item>
+    <item>
+      <title>使用 kaniko 在 k8s 集群中构建镜像</title>
+      <link>http://localhost:1313/posts/2019/20190722-1/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190722-1/</guid>
+      <description>在 k8s 集群中构建镜像并不是一个负责的问题，主要是要将构建好的镜像推送到 private docker register 会有点麻烦，因为权限认证的问题，在 docker pull 的时候，我们使用 imagePullSecrets 设置来解决这个问题。&#xA;谷歌开发一个 kaniko 工具，用于解决在 k8s 中构建镜像相关的问题，这个工具允许你给他配置 docker auth 信息,命令如下：&#xA;基于已有的 credentials 创建 k8s secret kubectl create secret generic regcred \ --from-file=.dockerconfigjson=$HOME/.docker/config.json \ --type=kubernetes.io/dockerconfigjson 配置中使用这个 secret pipeline { agent { kubernetes { //cloud &amp;#39;kubernetes&amp;#39; yaml &amp;#34;&amp;#34;&amp;#34; kind: Pod metadata: name: kaniko spec: containers: - name: kaniko image: gcr.io/kaniko-project/executor:debug-539ddefcae3fd6b411a95982a830d987f4214251 imagePullPolicy: Always command: - /busybox/cat tty: true volumeMounts: - name: jenkins-docker-cfg mountPath: /root volumes: - name: jenkins-docker-cfg projected: sources: - secret: name: regcred items: - key: .</description>
+    </item>
+    <item>
+      <title>k8s服务发布的几种类型</title>
+      <link>http://localhost:1313/posts/2019/20190719/</link>
+      <pubDate>Fri, 19 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190719/</guid>
+      <description>k8s服务发布一共有 4 中类型:&#xA;ClusterIP: 集群内部分配 IP 地址，对外不可见(默认服务类型) NodePort：每个 node 都对外暴露一个端口，该端口的流量会被转发给 ClusterIP 的服务 LoadBalancer: 云服务商提供的，自动分配对外 IP 地址 ExternalName </description>
+    </item>
+    <item>
+      <title>使用私有仓库安装 k8s</title>
+      <link>http://localhost:1313/posts/2019/20190716/</link>
+      <pubDate>Tue, 16 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190716/</guid>
+      <description>使用 kubeadmin 安装 k8s 的时候会遇到一些墙的问题，导致安装比较麻烦。解决这个问题的方式，可以使用私有仓库来安装&#xA;登录私有仓库 私有仓库必须先登录了才能 pull 镜像&#xA;docker login docker.hellojukay.cn 指定私有仓库 有一个前提是私有仓库里面包含了，或者能够 pull 到所需的镜像&#xA;kubeadm init --image-repository 安装成功以后&#xA;kubeadm join 加入节点即可，会自动同步镜像的</description>
+    </item>
+    <item>
+      <title>k8s 的一些小技巧</title>
+      <link>http://localhost:1313/posts/2019/20190417/</link>
+      <pubDate>Wed, 17 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190417/</guid>
+      <description> k8s 中命令都是子命令的默认， 并且命令行选项特别多，不方便记忆，所以需要安装自动补全 echo &amp;#34;source &amp;lt;(kubectl completion bash)&amp;#34; &amp;gt;&amp;gt; $HOME/.bashrc k8s 镜像安装的时候, 默认是用 k8s.gcr.io 下载镜像, 也可以配置你自己的镜像仓库 kubeadm init --image-repository </description>
+    </item>
+    <item>
+      <title>基于 vagrant 的 k8s 安装过程</title>
+      <link>http://localhost:1313/posts/2019/20190414/</link>
+      <pubDate>Sun, 14 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190414/</guid>
+      <description>使用 vagrant 创建三个虚拟机 安装我们即将用到的工具 yum install git vim java groovy net-tools -y 安装 docker-ce 我们使用阿里云的 docker-ce 源代来安装 # 安装最新版本 yum install docker-ce 我们安装 k8s 相关命令行工具 添加 k8s 的 aliyun 的 yum 源, 编译 vi /etc/yum.repos.d/kubernetes.repo # 加入如下内容 [kubernetes] name=Kubernetes baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/ enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg 安装相关命令行工具 yum install -y kubeadm kubectl kubelet 将 kubelet 加入到服务 systemctl enable kubelet 设置系统 关闭防火墙 systemctl stop firewalld systemctl disable firewalld 关闭交换分区 swapoff -a sudo sed -i &amp;#39;/ swap / s/^\(.</description>
+    </item>
+    <item>
+      <title>centos 使用 aliyun 源安装 k8s 命令行工具</title>
+      <link>http://localhost:1313/posts/2019/20190413/</link>
+      <pubDate>Sat, 13 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190413/</guid>
+      <description>国内网络安装 k8s 命令行工具特别不方便, 我找到了阿里云的 yum 源来加速安装.&#xA;添加 yum 源代 vi /etc/yum.repos.d/kubernetes.repo 添加如下内容:&#xA;[kubernetes] name=Kubernetes baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/ enabled=1 gpgcheck=1 repo_gpgcheck=1 gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg 安装 k8s 命令行工具 yum install -y kubelet kubeadm kubectl 检查安装结果 [vagrant@localhost ~]$ kubectl version Client Version: version.Info{Major:&amp;#34;1&amp;#34;, Minor:&amp;#34;14&amp;#34;, GitVersion:&amp;#34;v1.14.1&amp;#34;, GitCommit:&amp;#34;b7394102d6ef778017f2ca4046abbaa23b88c290&amp;#34;, GitTreeState:&amp;#34;clean&amp;#34;, BuildDate:&amp;#34;2019-04-08T17:11:31Z&amp;#34;, GoVersion:&amp;#34;go1.12.1&amp;#34;, Compiler:&amp;#34;gc&amp;#34;, Platform:&amp;#34;linux/amd64&amp;#34;} The connection to the server localhost:8080 was refused - did you specify the right host or port? [vagrant@localhost ~]$ Ok , 安装成功了.&#xA;2020-06-09日更新 这个可以找到历史版本的 k8s 组件</description>
+    </item>
+    <item>
+      <title>k8s版本问题</title>
+      <link>http://localhost:1313/posts/2019/20190412/</link>
+      <pubDate>Fri, 12 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190412/</guid>
+      <description>对于镜像安装 k8s 而言, 所有版本的 k8s 都有一套配套的镜像, 通过&#xA;kubeadm config images list --kubernetes-version 1.13.0 看到对于的镜像, 1.13.0 版本所需要的镜像如下:&#xA;k8s.gcr.io/kube-apiserver:v1.13.0 k8s.gcr.io/kube-controller-manager:v1.13.0 k8s.gcr.io/kube-scheduler:v1.13.0 k8s.gcr.io/kube-proxy:v1.13.0 k8s.gcr.io/pause:3.1 k8s.gcr.io/etcd:3.2.24 k8s.gcr.io/coredns:1.3 </description>
+    </item>
+  </channel>
+</rss>

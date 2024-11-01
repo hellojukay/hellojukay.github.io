@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="brew是mac上的包管理神器，但是有时候访问服务比较慢，这是我不能忍受的，我们需要加速一个brew的安装速度，brew的源都是github上的项目，所以我们只需要找对应项目的镜像项目来替换他 就能加速我们访问速度。这里我将自己的mac的源都换成了清华的源，方法如下：
+替换brew.git
+cd &#34;$(brew --repo)&#34; git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git 替换homebrew-core.git
+cd &#34;$(brew --repo)/Library/Taps/homebrew/homebrew-core&#34; git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git 替换homebrew-bottles
+echo &#39;export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles&#39; &gt;&gt; ~/.bash_profile source ~/.bash_profile 更新生效
+brew update 安装速度明显变快了.">  
+
+  <title>
+    
+      brew访问加速
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-12-26 00:00:00 &#43;0000 UTC">
+            2018-12-26
+        </time>
+    </p>
+
+    <h1>brew访问加速</h1>
+
+    
+
+    <p>brew是mac上的包管理神器，但是有时候访问服务比较慢，这是我不能忍受的，我们需要加速一个brew的安装速度，brew的源都是github上的项目，所以我们只需要找对应项目的镜像项目来替换他
+就能加速我们访问速度。这里我将自己的mac的源都换成了清华的源，方法如下：</p>
+<p>替换brew.git</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>brew --repo<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
+</span></span></code></pre></div><p>替换homebrew-core.git</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>brew --repo<span style="color:#66d9ef">)</span><span style="color:#e6db74">/Library/Taps/homebrew/homebrew-core&#34;</span>
+</span></span><span style="display:flex;"><span>git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git
+</span></span></code></pre></div><p>替换homebrew-bottles</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles&#39;</span> &gt;&gt; ~/.bash_profile
+</span></span><span style="display:flex;"><span>source ~/.bash_profile
+</span></span></code></pre></div><p>更新生效</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>brew update
+</span></span></code></pre></div><p>安装速度明显变快了.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="因为长期使用 linux 系统， 使用大量的 linux 命令。 我发现命令行参数的设计似乎遵循这某些设计哲学。比如，当你使用一个新的命令的时候，如果你不太熟悉某个参数，你可能会这样:
+command -h 或者
+command --help 或者
+command help subcommand 你会使用 -h 或者 --help 查看帮助 ， 使用 help 来查看某个子命令的具体用法。当然， 你也可能会使用到 man
+man command 绝大部分的命令行程序都遵守着这种契约。还有很多其他的默认设计规范，上面没有介绍到。 这篇文章的目的就是要列出这些不成文的设计哲学， 以便我们自己在编写命令行程序的时候不走弯路，也能顺畅的使用。
+设计规范 程序返回合适的退出状态号码，执行成功返回０，否则返回对应的错误码，使用者能够参考返回码找到错误原因．
+永远要支持 --version 和 --help, -h
+支持长参数的简写,比如支持--number的同时支持简写-n,--number用于脚本文件中,s-n用于手动执行命令
+使用-选项来处理标准输入和标准输出.
+对于 bool 类型的参数-b=true和-b应该等价
+支持多个 bool 类型的参数合并写　-i -t应该可以合并为-it
+日志区分错误日志和提示日志，并且分日志级别，错误日志往标准错误输出中输出，其他日志往标准输出中输出
+有默认参数，并且可以通过命令参数和环境变量来设置对应的值．
+命令行参数优先于环境变量，环境变量优先于默认值.
+具体建议 命令行简写 简写说明 -a &ndash;append 的简写，　表示增加 -c &ndash;color的简写，表示演示,&ndash;clean的简写，表示清空 -d &ndash;deamon 的简写，表示后台运行， &ndash;dir 表示目录 -e &ndash;enviroment的简写,表示环境变量 -f &ndash;force的简写，表示强制执行，&ndash;file的简写，表示者件路径｜ -g &ndash;global 的简写，表示全局 -h &ndash;help 的简写，显示帮助信息, &ndash;human 表示人类可理解 -i, -I &ndash;input 的简写，表示输入，&ndash;ignore 的简写，表示忽略 -k &ndash;keep的简写，表示保持 -l &ndash;list的简写， 表示列表展示 -m &ndash;motify的简写，表示修改 -n &ndash;number的简写，　表示数量 -o &ndash;output的简写，表示输出 -p &ndash;port的简写，　表示端口 -q &ndash;qualify的简写，表示独一 -r &ndash;recursion的简写，表示递归 -s &ndash;set的简写，　表示设置 -t 表示 &ndash;terminal 或者 &ndash;time -u,-U &ndash;user 表示用户，　&ndash;update 表示更新 -v, -V &ndash;version的简写，显示版本信息或者调试信息 -w &ndash;workspace的简写，表示工作空间 -x 显示执行过程 -y &ndash;year的简写，表示年份 -z &ndash;zone的简写，表示区域 ">  
+
+  <title>
+    
+      命令行程序设计的最佳实践
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-05-10 00:00:00 &#43;0000 UTC">
+            2019-05-10
+        </time>
+    </p>
+
+    <h1>命令行程序设计的最佳实践</h1>
+
+    
+
+    <p>因为长期使用 linux 系统， 使用大量的 linux 命令。 我发现命令行参数的设计似乎遵循这某些设计哲学。比如，当你使用一个新的命令的时候，如果你不太熟悉某个参数，你可能会这样:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>command -h
+</span></span></code></pre></div><p>或者</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>command --help
+</span></span></code></pre></div><p>或者</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>command help subcommand
+</span></span></code></pre></div><p>你会使用 <code>-h</code> 或者 <code>--help</code> 查看帮助 ， 使用 <code>help</code> 来查看某个子命令的具体用法。当然， 你也可能会使用到 man</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>man command
+</span></span></code></pre></div><p>绝大部分的命令行程序都遵守着这种契约。还有很多其他的默认设计规范，上面没有介绍到。 这篇文章的目的就是要列出这些不成文的设计哲学， 以便我们自己在编写命令行程序的时候不走弯路，也能顺畅的使用。</p>
+<h1 id="设计规范">设计规范</h1>
+<ol>
+<li>
+<p>程序返回合适的退出状态号码，执行成功返回０，否则返回对应的错误码，使用者能够参考返回码找到错误原因．</p>
+</li>
+<li>
+<p>永远要支持 <code>--version</code> 和 <code>--help</code>, <code>-h</code></p>
+</li>
+<li>
+<p>支持长参数的简写,比如支持<code>--number</code>的同时支持简写<code>-n</code>,<code>--number</code>用于脚本文件中,s<code>-n</code>用于手动执行命令</p>
+</li>
+<li>
+<p>使用<code>-</code>选项来处理标准输入和标准输出.</p>
+</li>
+<li>
+<p>对于 bool 类型的参数<code>-b=true</code>和<code>-b</code>应该等价</p>
+</li>
+<li>
+<p>支持多个 bool 类型的参数合并写　<code>-i -t</code>应该可以合并为<code>-it</code></p>
+</li>
+<li>
+<p>日志区分错误日志和提示日志，并且分日志级别，错误日志往标准错误输出中输出，其他日志往标准输出中输出</p>
+</li>
+<li>
+<p>有默认参数，并且可以通过命令参数和环境变量来设置对应的值．</p>
+</li>
+<li>
+<p>命令行参数优先于环境变量，环境变量优先于默认值.</p>
+</li>
+</ol>
+<h1 id="具体建议">具体建议</h1>
+<table>
+<thead>
+<tr>
+<th>命令行简写</th>
+<th>简写说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-a</td>
+<td>&ndash;append 的简写，　表示增加</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>&ndash;color的简写，表示演示,&ndash;clean的简写，表示清空</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>&ndash;deamon 的简写，表示后台运行， &ndash;dir 表示目录</td>
+</tr>
+<tr>
+<td>-e</td>
+<td>&ndash;enviroment的简写,表示环境变量</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>&ndash;force的简写，表示强制执行，&ndash;file的简写，表示者件路径｜</td>
+</tr>
+<tr>
+<td>-g</td>
+<td>&ndash;global 的简写，表示全局</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>&ndash;help 的简写，显示帮助信息, &ndash;human 表示人类可理解</td>
+</tr>
+<tr>
+<td>-i, -I</td>
+<td>&ndash;input 的简写，表示输入，&ndash;ignore 的简写，表示忽略</td>
+</tr>
+<tr>
+<td>-k</td>
+<td>&ndash;keep的简写，表示保持</td>
+</tr>
+<tr>
+<td>-l</td>
+<td>&ndash;list的简写， 表示列表展示</td>
+</tr>
+<tr>
+<td>-m</td>
+<td>&ndash;motify的简写，表示修改</td>
+</tr>
+<tr>
+<td>-n</td>
+<td>&ndash;number的简写，　表示数量</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>&ndash;output的简写，表示输出</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>&ndash;port的简写，　表示端口</td>
+</tr>
+<tr>
+<td>-q</td>
+<td>&ndash;qualify的简写，表示独一</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>&ndash;recursion的简写，表示递归</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>&ndash;set的简写，　表示设置</td>
+</tr>
+<tr>
+<td>-t</td>
+<td>表示 &ndash;terminal 或者 &ndash;time</td>
+</tr>
+<tr>
+<td>-u,-U</td>
+<td>&ndash;user 表示用户，　&ndash;update 表示更新</td>
+</tr>
+<tr>
+<td>-v, -V</td>
+<td>&ndash;version的简写，显示版本信息或者调试信息</td>
+</tr>
+<tr>
+<td>-w</td>
+<td>&ndash;workspace的简写，表示工作空间</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>显示执行过程</td>
+</tr>
+<tr>
+<td>-y</td>
+<td>&ndash;year的简写，表示年份</td>
+</tr>
+<tr>
+<td>-z</td>
+<td>&ndash;zone的简写，表示区域</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

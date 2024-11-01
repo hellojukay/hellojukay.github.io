@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="对于镜像安装 k8s 而言, 所有版本的 k8s 都有一套配套的镜像, 通过
+kubeadm config images list --kubernetes-version 1.13.0 看到对于的镜像, 1.13.0 版本所需要的镜像如下:
+k8s.gcr.io/kube-apiserver:v1.13.0 k8s.gcr.io/kube-controller-manager:v1.13.0 k8s.gcr.io/kube-scheduler:v1.13.0 k8s.gcr.io/kube-proxy:v1.13.0 k8s.gcr.io/pause:3.1 k8s.gcr.io/etcd:3.2.24 k8s.gcr.io/coredns:1.3 ">  
+
+  <title>
+    
+      k8s版本问题
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-04-12 00:00:00 &#43;0000 UTC">
+            2019-04-12
+        </time>
+    </p>
+
+    <h1>k8s版本问题</h1>
+
+    
+
+    <p>对于镜像安装 k8s 而言, 所有版本的 k8s 都有一套配套的镜像, 通过</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm config images list --kubernetes-version 1.13.0
+</span></span></code></pre></div><p>看到对于的镜像, 1.13.0 版本所需要的镜像如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>k8s.gcr.io/kube-apiserver:v1.13.0
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-controller-manager:v1.13.0
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-scheduler:v1.13.0
+</span></span><span style="display:flex;"><span>k8s.gcr.io/kube-proxy:v1.13.0
+</span></span><span style="display:flex;"><span>k8s.gcr.io/pause:3.1
+</span></span><span style="display:flex;"><span>k8s.gcr.io/etcd:3.2.24
+</span></span><span style="display:flex;"><span>k8s.gcr.io/coredns:1.3
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

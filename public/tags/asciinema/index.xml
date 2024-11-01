@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Asciinema on 润物细无声</title>
+    <link>http://localhost:1313/tags/asciinema/</link>
+    <description>Recent content in Asciinema on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 11 May 2018 15:19:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/asciinema/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>asciinema记录你的终端操作</title>
+      <link>http://localhost:1313/posts/2018/20180511/</link>
+      <pubDate>Fri, 11 May 2018 15:19:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180511/</guid>
+      <description>在github上浏览项目的时候，看到 How to use it 是个录屏播放的动画，我觉得很炫酷，调研了下，其实他就是用asciinema这个工具生成的。它的项目地址是asciinema&#xA;mac直接可以通过brew 来安装。&#xA;brew install asciinema centos使用yum安装&#xA;yum install -y asciinema 这样就安装好了客户端了。一下是这个软件的使用方法:&#xA;jukay@mac-pro ~/C/W/blog&amp;gt; asciinema -h 367ms  五 5/11 15:23:45 2018 usage: asciinema [-h] [--version] {rec,play,cat,upload,auth} ... Record and share your terminal sessions, the right way. positional arguments: {rec,play,cat,upload,auth} rec Record terminal session play Replay terminal session cat Print full output of terminal session upload Upload locally saved terminal session to asciinema.org auth Manage recordings on asciinema.</description>
+    </item>
+  </channel>
+</rss>

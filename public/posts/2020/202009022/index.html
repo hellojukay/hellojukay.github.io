@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="linux 下要实现 losf 主要是依靠 linux 内核对外暴露的 procfs 文件系统,在 linux 上有一个特殊的文件目录 /proc 这个目录记录了当前系统运行的状态信息，除了少数量文件大部分文件都是不能写入的，比如 tcp 网络信息可以从 /proc/net/tcp 和 /proc/net/tcp6 获取，后者是针对 ipv6 的连接信息,对应每个进程也有单独的文件夹 /proc/pid/,比如要看 pid 为 10098 的进程的网络信息，可以看 /proc/10098/net/tcp 和 /proc/10096/net/tcp6,如果要看打开的文件信息，可以看 /proc/10098/fd/ 这个里面,如果要看进程的环境变量，可以看 /proc/10098/environ 这个文件,要看进程信息，可以看 /proc/10098/task 这个文件。 lsof 这个命令会打开所 /proc 目录下的所有文件，所以当你要查找某个文件被那个进程打开或者端口被占用的时候，可以很快的找到.">  
+
+  <title>
+    
+      linux下lsof命令的实现方式
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-09-22 00:00:00 &#43;0000 UTC">
+            2020-09-22
+        </time>
+    </p>
+
+    <h1>linux下lsof命令的实现方式</h1>
+
+    
+
+    <p>linux 下要实现 losf 主要是依靠 linux 内核对外暴露的 procfs 文件系统,在 linux 上有一个特殊的文件目录 /proc 这个目录记录了当前系统运行的状态信息，除了少数量文件大部分文件都是不能写入的，比如 tcp 网络信息可以从 /proc/net/tcp 和 /proc/net/tcp6 获取，后者是针对 ipv6 的连接信息,对应每个进程也有单独的文件夹 /proc/pid/,比如要看 pid 为 10098 的进程的网络信息，可以看 /proc/10098/net/tcp 和 /proc/10096/net/tcp6,如果要看打开的文件信息，可以看 /proc/10098/fd/ 这个里面,如果要看进程的环境变量，可以看 /proc/10098/environ 这个文件,要看进程信息，可以看 /proc/10098/task 这个文件。 lsof 这个命令会打开所 /proc 目录下的所有文件，所以当你要查找某个文件被那个进程打开或者端口被占用的时候，可以很快的找到.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

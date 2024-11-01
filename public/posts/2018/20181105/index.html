@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="每天都在使用Jenkins自动编译的功能，你是否了解Jenkins这个开源项目的历史，你是否还了解过其他的集成构建系统呢？这篇文章将会简单的介绍以上内容。
+Jenkins的历史 2007年sun公司开启了集成构建平台Hudson项目，并且将他开源出来，因为它安装友好，配置简单，并且天然的支持java语言，所以这个项目很快的流行开来，并且打败了诸多老牌对手，成为炙手可热的的明星项目。好景不长，此时的sun公司已经不如九十年代那么辉煌，2009年，Oracle收购了sun。Oracle为Hudson申请了商标，并且开始商业化推广，社区对于Oracle的行为深恶痛绝, 因此产生了矛盾。
+2011年，社区有人提议将Hudson改名为Jenkins来规避商标问题，提议很快就被采纳了，开发者在github上创建Jenkins的项目,并将代码迁移了过来，Hudson的开发者开发也慢慢往Jenkins迁移。所以现在你能够在Jenkins上看到不少Hudson的代码。Oracle宣布会继续维护项目，但是，同年失去了开发者的Hudson就被捐赠给Eclipse基金会，以此来讨好java开发者，希望能够继续吸收开源社区的养分。 事情发展到了今天，Hudson与Jenkins已经不可同日而语了，不管是社区的成熟度还是产品本身，Jenkins都遥遥领先。
+其他明星工具 同样是在2011年，在德国柏林的一家公司推出一款名字叫做Travis CI的企业级集成构建服务，并且他也推出了支持github的免费社区版本。跟随github的快速发展，Travis CI也越来越受到开源社区的欢迎。到现在Travis CI与github已经是相互促进，协调发展。
+为了拉拢开发者，github的敌对公司gitlab不甘示弱，迅速推出了gitlab ci。现在gitlab ci已经支持Docker,AutoDevOps等高级功能，在企业级用户中也非常受欢迎。">  
+
+  <title>
+    
+      CI工具介绍
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-05 00:00:00 &#43;0000 UTC">
+            2018-11-05
+        </time>
+    </p>
+
+    <h1>CI工具介绍</h1>
+
+    
+
+    <p>每天都在使用<code>Jenkins</code>自动编译的功能，你是否了解<code>Jenkins</code>这个开源项目的历史，你是否还了解过其他的集成构建系统呢？这篇文章将会简单的介绍以上内容。</p>
+<h1 id="jenkins的历史">Jenkins的历史</h1>
+<p>2007年<code>sun</code>公司开启了集成构建平台<code>Hudson</code>项目，并且将他开源出来，因为它安装友好，配置简单，并且天然的支持java语言，所以这个项目很快的流行开来，并且打败了诸多老牌对手，成为炙手可热的的明星项目。好景不长，此时的<code>sun</code>公司已经不如九十年代那么辉煌，2009年，<code>Oracle</code>收购了<code>sun</code>。<code>Oracle</code>为<code>Hudson</code>申请了商标，并且开始商业化推广，社区对于<code>Oracle</code>的行为深恶痛绝, 因此产生了矛盾。</p>
+<p>2011年，社区有人提议将<code>Hudson</code>改名为<code>Jenkins</code>来规避商标问题，提议很快就被采纳了，开发者在<code>github</code>上创建<code>Jenkins</code>的项目,并将代码迁移了过来，<code>Hudson</code>的开发者开发也慢慢往<code>Jenkins</code>迁移。所以现在你能够在<code>Jenkins</code>上看到不少<code>Hudson</code>的代码。<code>Oracle</code>宣布会继续维护项目，但是，同年失去了开发者的<code>Hudson</code>就被捐赠给<code>Eclipse</code>基金会，以此来讨好java开发者，希望能够继续吸收开源社区的养分。
+<img src="20181105/hudson.png" alt="image">
+事情发展到了今天，<code>Hudson</code>与<code>Jenkins</code>已经不可同日而语了，不管是社区的成熟度还是产品本身，<code>Jenkins</code>都遥遥领先。</p>
+<h1 id="其他明星工具">其他明星工具</h1>
+<p>同样是在2011年，在德国柏林的一家公司推出一款名字叫做<code>Travis CI</code>的企业级集成构建服务，并且他也推出了支持<code>github</code>的免费社区版本。跟随<code>github</code>的快速发展，<code>Travis CI</code>也越来越受到开源社区的欢迎。到现在<code>Travis CI</code>与<code>github</code>已经是相互促进，协调发展。</p>
+<p>为了拉拢开发者，<code>github</code>的敌对公司<code>gitlab</code>不甘示弱，迅速推出了<code>gitlab ci</code>。现在<code>gitlab ci</code>已经支持<code>Docker</code>,<code>AutoDevOps</code>等高级功能，在企业级用户中也非常受欢迎。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

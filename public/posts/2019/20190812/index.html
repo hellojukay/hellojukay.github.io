@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="设置国内镜像源 sudo pacman-mirrors -i -c China -mrank # OK * 2 sudo pacman -Syyu sudo pacman -S vim 添加 arch 源 vim /etc/pacman.conf [archlinuxcn] Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch sudo pacman -Syyu pacman -S archlinux-keyring archlinuxcn-keyring sudo pacman -S visual-studio-code-bin sudo pacman -S ocaml opam 安装输入法 sudo pacman -S fcitx-im #默认全部安装 sudo pacman -S fcitx-configtool sudo pacman -S fcitx-sogoupinyin vim ~/.xprofile export LC_ALL=zh_CN.UTF-8 export GTK_IM_MODULE=fcitx export QT_IM_MODULE=fcitx export XMODIFIERS=&#34;@im=fcitx&#34; 安装缺少的字体 sudo pacman -S wqy-microhei sudo pacman -S wqy-bitmapfont wqy-microhei \ wqy-zenhei adobe-source-code-pro-fonts \ adobe-source-han-sans-cn-fonts ttf-monaco reboot 安装相关工具 sudo pacman -S google-chrome pacman -S net-tools dnsutils inetutils iproute2 tmux bash-completion sudo pacman -S docker vim /etc/sudoers.">  
+
+  <title>
+    
+      安装 Manjaro 之后的做的事情
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-08-12 00:00:00 &#43;0000 UTC">
+            2019-08-12
+        </time>
+    </p>
+
+    <h1>安装 Manjaro 之后的做的事情</h1>
+
+    
+
+    <ol>
+<li>设置国内镜像源</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo pacman-mirrors -i -c China -mrank <span style="color:#75715e"># OK * 2</span>
+</span></span><span style="display:flex;"><span>sudo pacman -Syyu
+</span></span><span style="display:flex;"><span>sudo pacman -S vim
+</span></span></code></pre></div><ol start="2">
+<li>添加 arch 源</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vim /etc/pacman.conf
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>archlinuxcn<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>Server <span style="color:#f92672">=</span> https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+</span></span><span style="display:flex;"><span>sudo pacman -Syyu
+</span></span><span style="display:flex;"><span>pacman -S archlinux-keyring  archlinuxcn-keyring
+</span></span><span style="display:flex;"><span>sudo pacman -S visual-studio-code-bin
+</span></span><span style="display:flex;"><span>sudo pacman -S ocaml opam 
+</span></span></code></pre></div><ol start="3">
+<li>安装输入法</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo pacman -S fcitx-im <span style="color:#75715e">#默认全部安装</span>
+</span></span><span style="display:flex;"><span>sudo pacman -S fcitx-configtool
+</span></span><span style="display:flex;"><span>sudo pacman -S fcitx-sogoupinyin
+</span></span><span style="display:flex;"><span>vim ~/.xprofile
+</span></span><span style="display:flex;"><span>export LC_ALL<span style="color:#f92672">=</span>zh_CN.UTF-8
+</span></span><span style="display:flex;"><span>export GTK_IM_MODULE<span style="color:#f92672">=</span>fcitx
+</span></span><span style="display:flex;"><span>export QT_IM_MODULE<span style="color:#f92672">=</span>fcitx
+</span></span><span style="display:flex;"><span>export XMODIFIERS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;@im=fcitx&#34;</span>
+</span></span></code></pre></div><ol start="4">
+<li>安装缺少的字体</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo pacman -S wqy-microhei
+</span></span><span style="display:flex;"><span>sudo pacman -S wqy-bitmapfont wqy-microhei <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  wqy-zenhei adobe-source-code-pro-fonts <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  adobe-source-han-sans-cn-fonts ttf-monaco
+</span></span><span style="display:flex;"><span>reboot
+</span></span></code></pre></div><ol start="5">
+<li>安装相关工具</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo pacman -S google-chrome
+</span></span><span style="display:flex;"><span>pacman -S net-tools dnsutils inetutils iproute2 tmux bash-completion
+</span></span><span style="display:flex;"><span>sudo pacman -S docker
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vim /etc/sudoers.d/hellojukay
+</span></span><span style="display:flex;"><span>hellojukay ALL<span style="color:#f92672">=(</span>ALL<span style="color:#f92672">)</span> NOPASSWD : ALL
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>vim $HOME/.tmux.conf
+</span></span><span style="display:flex;"><span>set-window-option -g mouse on
+</span></span><span style="display:flex;"><span>set -g mouse on
+</span></span></code></pre></div><ol start="6">
+<li>开启代理打开 chrome , 安装代理插件</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>google-chrome-stable --proxy-server<span style="color:#f92672">=</span>http://proxy.hellojukay.cn:1080
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

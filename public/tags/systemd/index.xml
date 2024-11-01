@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Systemd on 润物细无声</title>
+    <link>http://localhost:1313/tags/systemd/</link>
+    <description>Recent content in Systemd on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 28 Mar 2018 11:43:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/systemd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>archlinux开机自动挂载磁盘</title>
+      <link>http://localhost:1313/posts/2018/20180401/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180401/</guid>
+      <description>我的这台archlinux的主板上接了一个2TB的硬盘，每次开机启动他斗没有自动挂载上来，我总是在自己需要使用这硬盘的时候来手动挂载他，这样太不方便了，我想能不能在开机的时候自动来挂载这个块硬盘。解决这个问题的方法是有的，往/etc/fstab这个文件的后面加入的分区信息和挂载点&#xA;[hellojukay@archlinux ~]$ cat /etc/fstab # Static information about the filesystems. # See fstab(5) for details. # &amp;lt;file system&amp;gt; &amp;lt;dir&amp;gt; &amp;lt;type&amp;gt; &amp;lt;options&amp;gt; &amp;lt;dump&amp;gt; &amp;lt;pass&amp;gt; # /dev/sda3 UUID=e3a426e2-4713-4b33-ad6c-773bf144081c&#x9;/ ext4 rw,relatime,data=ordered&#x9;0 1 # /dev/sda1 UUID=1b43aa57-22fc-4af2-8a84-cd8f6e27e8f2&#x9;/boot ext4 rw,relatime,data=ordered&#x9;0 2 # /dev/sda5 UUID=2d6bde7f-b18c-44e1-8036-8ecdd93c13c1&#x9;/home ext4 rw,relatime,data=ordered&#x9;0 2 # /dev/sda2 UUID=6bbfba42-07ec-479a-b9fa-d3e89e94af9f&#x9;none swap defaults,pri=-2&#x9;0 0 这个需要知道的分区的UUID,使用blkid命令能看到分区的id，一下是我的挂载的情况&#xA;[hellojukay@archlinux ~]$ sudo lsblk NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT sda 8:0 0 111.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="strace 是一个非常强大的工具，但是不是所有台服务都安装了这个命令，有时候受限制环境下需要用这个命令，所以我准备静态编译一个这个二进制文件，正好发现有人提了相关的 issue
+git clone https://github.com/strace/strace cd strace ./bootstrap export LDFLAGS=&#39;-static -pthread&#39; ./configure make Result: % file strace strace: ELF 64-bit LSB executable, x86-64, version 1 (GNU/linux), statically linked, BuildID[sha1]=d08a819c2abac4c8db9e6fcdcba8201cf1ba3406, for GNU/linux 3.2.0, with debug_info, not stripped ">  
+
+  <title>
+    
+      静态编译 strace
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-10-23 00:00:00 &#43;0000 UTC">
+            2020-10-23
+        </time>
+    </p>
+
+    <h1>静态编译 strace</h1>
+
+    
+
+    <p>strace 是一个非常强大的工具，但是不是所有台服务都安装了这个命令，有时候受限制环境下需要用这个命令，所以我准备静态编译一个这个二进制文件，正好发现有人提了相关的 <a href="https://github.com/strace/strace/issues/89">issue</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/strace/strace
+</span></span><span style="display:flex;"><span>cd strace
+</span></span><span style="display:flex;"><span>./bootstrap
+</span></span><span style="display:flex;"><span>export LDFLAGS<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;-static -pthread&#39;</span>
+</span></span><span style="display:flex;"><span>./configure
+</span></span><span style="display:flex;"><span>make
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Result:
+</span></span><span style="display:flex;"><span>% file strace
+</span></span><span style="display:flex;"><span>strace: ELF 64-bit LSB executable, x86-64, version <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>GNU/linux<span style="color:#f92672">)</span>, statically linked, BuildID<span style="color:#f92672">[</span>sha1<span style="color:#f92672">]=</span>d08a819c2abac4c8db9e6fcdcba8201cf1ba3406, <span style="color:#66d9ef">for</span> GNU/linux 3.2.0, with debug_info, not stripped
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

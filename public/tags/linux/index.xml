@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on 润物细无声</title>
+    <link>http://localhost:1313/tags/linux/</link>
+    <description>Recent content in Linux on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 29 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>那些常用的linux小技巧</title>
+      <link>http://localhost:1313/posts/2020/20201229/</link>
+      <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201229/</guid>
+      <description>既然是常用的技巧，肯定是随时都能用，在各个 linux 发行版上都能用,都是最纯粹，最简单有效的技能。&#xA;网络 检查网络端口是否网络联通 curl {ip}:{port} -v 比如:&#xA;vagrant@archlinux _posts (master) $ curl 127.0.0.1:22 -v * Trying 127.0.0.1:22... * Connected to 127.0.0.1 (127.0.0.1) port 22 (#0) &amp;gt; GET / HTTP/1.1 &amp;gt; Host: 127.0.0.1:22 &amp;gt; User-Agent: curl/7.74.0 &amp;gt; Accept: */* &amp;gt; * Received HTTP/0.9 when not allowed * Closing connection 0 curl: (1) Received HTTP/0.9 when not allowed 从输出日志可以看到 Connected 字样，说明端口是通的，类似的方式还有,netcat,telnet，不过这2个工具经常在服务器上没有。&#xA;获取 DNS 解析结果 通常我们使用 dig 或者 nslookup 命令来查看解析域名，但是这2个工具在很多场合下都没有，所以我们可以使用其它的工具来代替，比如: curl , ping</description>
+    </item>
+    <item>
+      <title>使用 CoreDNS 搭建内部 DNS 解析服务器</title>
+      <link>http://localhost:1313/posts/2020/20201214/</link>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201214/</guid>
+      <description>下载二进制文件 ghget --proxy --url &amp;#34;https://github.com/coredns/coredns/releases/download/v1.8.0/coredns_1.8.0_linux_amd64.tgz&amp;#34; 配置 service 在 /usr/lib/systemd/system/coredns.service 配置好 service 文件&#xA;[Unit] Description=Coredns server Documentation=https://coredns.io/ After=network-online.target firewalld.service Wants=network-online.target [Service] Type=simple ExecStart=/bin/coredns -conf /opt/coredns/Corefile -dns.port=53 TimeoutSec=0 RestartSec=2 Restart=always [Install] WantedBy=multi-user.targe 配置好配置文件 配置文件 /opt/coredns/Corefile 内容如下&#xA;. { hosts { 192.168.0.100 www.aaa.com 192.168.0.101 www.bbb.com reload 10s ttl 50 fallthrough } forward . /etc/resolv.conf cache 120 reload 10s log errors } 配置好了以后就能启动服务了&#xA;systemctl start coredns 然后就能使用 dig 命令解析服务了&#xA;dig @127.0.0.1 www.aaa.com </description>
+    </item>
+    <item>
+      <title>静态编译 strace</title>
+      <link>http://localhost:1313/posts/2020/20201023/</link>
+      <pubDate>Fri, 23 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201023/</guid>
+      <description>strace 是一个非常强大的工具，但是不是所有台服务都安装了这个命令，有时候受限制环境下需要用这个命令，所以我准备静态编译一个这个二进制文件，正好发现有人提了相关的 issue&#xA;git clone https://github.com/strace/strace cd strace ./bootstrap export LDFLAGS=&amp;#39;-static -pthread&amp;#39; ./configure make Result: % file strace strace: ELF 64-bit LSB executable, x86-64, version 1 (GNU/linux), statically linked, BuildID[sha1]=d08a819c2abac4c8db9e6fcdcba8201cf1ba3406, for GNU/linux 3.2.0, with debug_info, not stripped </description>
+    </item>
+    <item>
+      <title>linux 系统缓存</title>
+      <link>http://localhost:1313/posts/2020/20201013/</link>
+      <pubDate>Tue, 13 Oct 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201013/</guid>
+      <description>linux 系统为了增加系统的IO能力，会缓存磁盘的读写操作,将数据缓存在内存中。通过 free 命令可以看到系统的缓存信息&#xA;总计 已用 空闲 共享 缓冲/缓存 可用 内存： 15894 3817 7196 1120 4880 10747 交换： 9011 0 9011 包含写入缓存和读取缓存两个部分:&#xA;缓冲(buff) : 写缓存 缓存(cache) : 读缓存 buff 因为硬盘写入的速度有限，为了避免程序卡顿和IO等待，有时候写入数据都是被临时写入到了系统内存(也可以强制存盘),然后等到IO不繁忙的时候写入到磁盘，这样的做法也有丢失数据的风险，linux 下有手动同步数据到磁盘的命令:&#xA;sync 我就被这个问题坑过，在使用 dd 命令制作启动优盘的时候，一定要等待数据完全刷新到优盘在拔除优盘，否则启动盘会丢失数据,可以给 dd 命令加上写入磁盘的选项强制要求写入磁盘oflag=sync&#xA;sudo dd if=manjaro-xfce-20.0.3-200606-linux56.iso of=/dev/sdb4 bs=4M status=progress oflag=sync 同时，我们写程序的时候，写入文件结束以后记得调用 flush 来确保文件已经持久化成功。&#xA;cache cache 是从磁盘读取文件时候的缓存，第一次读文件的时候因为内存种没有缓存这个文件，所以去读比较慢，当第二次读取的时候，已经有一部分缓存信息在内存中，这个时候速度会比较快，我们做个测试，读取一个大文件&#xA;# 第一次 hellojukay@local ~ $ time cat large_file &amp;gt;&amp;gt; /dev/null real 0m10.221s user 0m0.059s sys 0m2.338s # 第二次 hellojukay@local ~ $ time cat large_file &amp;gt;&amp;gt; /dev/null real 0m1.</description>
+    </item>
+    <item>
+      <title>linux下lsof命令的实现方式</title>
+      <link>http://localhost:1313/posts/2020/202009022/</link>
+      <pubDate>Tue, 22 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/202009022/</guid>
+      <description>linux 下要实现 losf 主要是依靠 linux 内核对外暴露的 procfs 文件系统,在 linux 上有一个特殊的文件目录 /proc 这个目录记录了当前系统运行的状态信息，除了少数量文件大部分文件都是不能写入的，比如 tcp 网络信息可以从 /proc/net/tcp 和 /proc/net/tcp6 获取，后者是针对 ipv6 的连接信息,对应每个进程也有单独的文件夹 /proc/pid/,比如要看 pid 为 10098 的进程的网络信息，可以看 /proc/10098/net/tcp 和 /proc/10096/net/tcp6,如果要看打开的文件信息，可以看 /proc/10098/fd/ 这个里面,如果要看进程的环境变量，可以看 /proc/10098/environ 这个文件,要看进程信息，可以看 /proc/10098/task 这个文件。 lsof 这个命令会打开所 /proc 目录下的所有文件，所以当你要查找某个文件被那个进程打开或者端口被占用的时候，可以很快的找到.</description>
+    </item>
+    <item>
+      <title>sort命令排序版本</title>
+      <link>http://localhost:1313/posts/2020/20200826/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200826/</guid>
+      <description>一直以为 sort 命令只能按照字母，数字的方式排序，今天看到同事的新用法，发现还能实现对语意化版号的排序，被上了一课啊&#xA;# a.txt v10.1.2.3 v9.1.2.3 v1.2.100.4 v1.2.3.4 执行排序&#xA;hellojukay@local ~ $ cat a.txt | sort -V v1.2.3.4 v1.2.100.4 v9.1.2.3 v10.1.2.3 倒序排列&#xA;hellojukay@local ~ $ cat a.txt | sort -Vr v10.1.2.3 v9.1.2.3 v1.2.100.4 v1.2.3.4 </description>
+    </item>
+    <item>
+      <title>manjaro 安装 virtualbox 踩坑</title>
+      <link>http://localhost:1313/posts/2020/20200824/</link>
+      <pubDate>Mon, 24 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200824/</guid>
+      <description>如果是直接默认安装 virtualbox&#xA;yay -S virtualbox 那么肯定无法启动成功，会提示错误&#xA;WARNING: The vboxdrv kernel module is not loaded. Either there is no module available for the current kernel (5.7.15-1-MANJARO) or it failed to load. Please recompile the kernel module and install it by sudo /sbin/vboxconfig You will not be able to start VMs until this problem is fixed. 然后你按照提示执行命令，你会发现命令不存在&#xA;hellojukay@local $ sudo /sbin/vboxconfig sudo: /sbin/vboxconfig：找不到命令 原因是还缺少安装一个依赖&#xA;linux-virtualbox-host-modules 具体需要安装哪一个版本，可以通过&#xA;hellojukay@local etcd (release/hyperion) $ uname -r 5.</description>
+    </item>
+    <item>
+      <title>生成漂亮的代码片段图片</title>
+      <link>http://localhost:1313/posts/2020/20200804/</link>
+      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200804/</guid>
+      <description>发现一个类似 carbon 的命令行工具，能够再本地终端通过命令行来生成代码图片，项目地址是: https://github.com/Aloxaf/silicon&#xA;用 rust 编写，运行速度很快，安装方式也比较简单&#xA;// $HOME/.cargo/bin/ 目录需要加入到 path cargo install silicon 生成以后就能执行 silicon 命令了&#xA;silicon main.go -o main.png </description>
+    </item>
+    <item>
+      <title>dd 命令同步写入磁盘</title>
+      <link>http://localhost:1313/posts/2020/20200728/</link>
+      <pubDate>Tue, 28 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200728/</guid>
+      <description>dd 在写入文件的时候默认不会同步刷新数据到磁盘，很多数据其实是写入在了操作系统的 buffer 中，如果此时拔出U盘会出现数据不完整的问题，写入的时候加上 oflag=sync 即可自动刷新数据到磁盘。&#xA;sudo dd if=manjaro-xfce-20.0.3-200606-linux56.iso of=/dev/sdb4 bs=4M status=progress oflag=sync 要注意的是：因为没有使用 buffer 了，所以写入速度相对会慢很多。</description>
+    </item>
+    <item>
+      <title>解决wireshark在linux下不显示USB网卡的问题</title>
+      <link>http://localhost:1313/posts/2020/20200704/</link>
+      <pubDate>Sat, 04 Jul 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200704/</guid>
+      <description>我用的是台式机，安装的 manjaro 系统，用的 TP-Link 的一款 USB 无线网卡上网。在使用 wireshark 抓包的时候没有显示我的网卡信息。一顿尝试时候之后发现&#xA;捕获-》开始 提示报错 /usr/bin/dumpcap 没有执行权限，加上执行权限&#xA;sudo chmod a+x /usr/bin/dumpcap 暴力解决了。重启 wirehsark 无线网卡出现在了接口列表之中。</description>
+    </item>
+    <item>
+      <title>统计 tcp 连接数</title>
+      <link>http://localhost:1313/posts/2020/20200615-1/</link>
+      <pubDate>Mon, 15 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200615-1/</guid>
+      <description>直观看到服务器上各个进程链接 tcp 数量的情况&#xA;use strict; use warnings; my @lines = `ss -atp`; my %hash; for my $line (@lines) { if($line =~ /pid=(\d{1,9})/) { $hash{$1}++; } } printf &amp;#34;%s %10s %s\n&amp;#34;, &amp;#34;pid&amp;#34;,&amp;#34;tcp_count&amp;#34;,&amp;#34;cmdline&amp;#34;; for my $pid (keys %hash) { my $cmd = `cat /proc/$pid/cmdline`; printf &amp;#34;%5d %5d %s\n&amp;#34;, $pid,$hash{$pid},$cmd; } 执行结果&#xA;hellojukay@local ~ $ sudo perl ss.pl pid tcp_count cmdline 15026 1 /usr/lib/i386-linux-gnu/deepin-wine/./wineserver.real-p0 7907 2 /usr/sbin/vmware-authdlauncher 24113 1 /usr/sbin/smbd 9275 13 /opt/google/chrome/chrome --type=utility --field-trial-handle=2182854705504331656,15972359820735917946,131072 --lang=zh-CN --service-sandbox-type=network --disable-webrtc-apm-in-audio-service --shared-files 8150 3 /usr/lib/vmware/bin/vmware-hostd-a/etc/vmware/hostd/config.</description>
+    </item>
+    <item>
+      <title>upx 压缩可执行文件大小</title>
+      <link>http://localhost:1313/posts/2020/20200515/</link>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200515/</guid>
+      <description>upx 是一款高性能加壳工具，并且能够压缩可执行文件大小，目前支持 windows, linux ,dos 操作系统。&#xA;hellojukay@local debug (nightly) $ du -sh hyper_access 340M&#x9;hyper_access hellojukay@local debug (nightly) $ upx hyper_access Ultimate Packer for eXecutables Copyright (C) 1996 - 2013 UPX 3.91 Markus Oberhumer, Laszlo Molnar &amp;amp; John Reiser Sep 30th 2013 File size Ratio Format Name -------------------- ------ ----------- ----------- 356022752 -&amp;gt; 75735028 21.27% linux/ElfAMD hyper_access Packed 1 file. hellojukay@local debug (nightly) $ du -sh hyper_access 73M&#x9;hyper_access 2020-05-27 补充 linux 下面 strip 也能减精简二进制文件体积</description>
+    </item>
+    <item>
+      <title>rust 安装加速</title>
+      <link>http://localhost:1313/posts/2019/20191226/</link>
+      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191226/</guid>
+      <description>rust 安装一直是一个非常慢的事情，找到了一种加速安装的方法:&#xA;export RUSTUP_DIST_SERVER=&amp;#34;https://mirrors.ustc.edu.cn/rust-static&amp;#34; export RUSTUP_UPDATE_ROOT=&amp;#34;https://mirrors.ustc.edu.cn/rust-static/rustup&amp;#34; curl https://sh.rustup.rs -sSf | sh 2022年 01月 11日 星期二 10:48:47 CST&#xA;https://rsproxy.cn/</description>
+    </item>
+    <item>
+      <title>解决内网机器网上问题的通用方案</title>
+      <link>http://localhost:1313/posts/2019/20191127/</link>
+      <pubDate>Wed, 27 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191127/</guid>
+      <description>问题：&#xA;服务器或者其他机器被 OPS 限制了访问公网的能力。PS: 网络安全部和 OPS 做法是对的。 使用公司的翻墙代理网络会走到国外，访问国内网站反而更加慢 代理以后不设置 no_proxy 无法访问内网。 解决方案： 如果团队拥有能网上的服务器A，和无法上网的服务器B,并且服务器B能够访问服务器A, 这个时候服务器B可以通过代理到服务器A的方式访问网络。&#xA;在 A 机器上&#xA;yum install squid -y squid 在 B 机器上&#xA;# 只作演示，勿设置全局 # xxxx 位服务器 A 的主机名或 IP 或者 域名 export https_proxy=http://xxxx:3128 export http_proxy=http://xxxx:3128 </description>
+    </item>
+    <item>
+      <title>记一次解决 maven 安装慢的问题</title>
+      <link>http://localhost:1313/posts/2019/20191127-1/</link>
+      <pubDate>Wed, 27 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191127-1/</guid>
+      <description>有个团队遇到了 maven 编译非常慢的问题，一个 maven 项目编译需要 20 多分钟。我看了一下编译过程，大部分的时间都在下载依赖，其中会向 repo.spring.org 发起访问，但是这台机器的外网十分不稳定，导致每次请求都会超时，然后等待一些时间，再次发起请求，这就导致编译时间非常慢了。解决这个问题的方法是给 maven 配置网络代理，让他走代理网络访问 repo.spring.org .配置如下：&#xA;&amp;lt;proxies&amp;gt; &amp;lt;proxy&amp;gt; &amp;lt;id&amp;gt;example-proxy&amp;lt;/id&amp;gt; &amp;lt;active&amp;gt;true&amp;lt;/active&amp;gt; &amp;lt;protocol&amp;gt;http&amp;lt;/protocol&amp;gt; &amp;lt;host&amp;gt;proxy.example.com&amp;lt;/host&amp;gt; &amp;lt;port&amp;gt;8080&amp;lt;/port&amp;gt; &amp;lt;username&amp;gt;proxyuser&amp;lt;/username&amp;gt; &amp;lt;password&amp;gt;somepassword&amp;lt;/password&amp;gt; &amp;lt;nonProxyHosts&amp;gt;www.google.com|*.example.com&amp;lt;/nonProxyHosts&amp;gt; &amp;lt;/proxy&amp;gt; &amp;lt;/proxies&amp;gt; 注意，如果代理网络在公网，而私有 maven 服务器在内网，一定记得配置 nonPoroxyHosts.</description>
+    </item>
+    <item>
+      <title>命令行参数与配置文件优缺点</title>
+      <link>http://localhost:1313/posts/2019/20191030/</link>
+      <pubDate>Wed, 30 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191030/</guid>
+      <description>在 Linux 上很多的程序都支持设置命令行启动参数的方式来控制程序的行为，必须使用 -x 输出 debug 的日志信息，使用 -p 来配置端口，也有一些程序支持使用配置文件来控制程序的行为，比如 mysql 使用一个 ini 格式的文件来配置 mysql 的信息。使用命令行和使用配置文件都有那些有点和缺点呢？&#xA;使用配置文件 使用配置文件的好处是，即使程序配置很复杂 ，在配置文件配置好了以后，每次启动都很简单，配置能够被之久话保存下来。·配置文件能够被备份，复制，版本控制。&#xA;使用启动参数 命令行参数具有很好的灵活性，方便自动化脚本来控制程序,但是如果启动命令行很长，很复杂的情况下，每次启动程序都需要输入或者复制很长的启动参数，容易出错，也比较麻烦，甚至有可能忘记上次是怎么设置的启动惨。&#xA;总结 综合上述，全部使用启动参数或者全部使用配置文件，都是不合适的。我认为比较和的方式同时支持配置文件和启动参数，能够写在配置文件里面的配置，也应该能通过命令行参数设置，反过来也是。这一点，prometheus 做的非常好，值得借鉴。这里写了一个例子来说明 golang 在同时支持配置文件和启动方式的处理方式，见代码</description>
+    </item>
+    <item>
+      <title>net-tools 和 iproute2</title>
+      <link>http://localhost:1313/posts/2019/20190912/</link>
+      <pubDate>Thu, 12 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190912/</guid>
+      <description>基础的 linux 发行版中都包含了一些强大的网络相关的命令，这些命令都来自 net-tools 包，在很长一段时间 net-tools 几乎在所有的 linux 发 行版中都很流行。它包含了一下命令:&#xA;ifconfig route nameif iwconfig iptunnel netstat arp 这些命令能让 linux 新手和专家都能得心应手的配置 linux 网络， 但是随着 linux 内核的发展，这套工具的维护成了一个棘手的问题，需要有 新的工具来替代他们。&#xA;iproute2 就是上面所有提到的替代 net-tools 的工具集合，iproute2 和 linux 内核紧密结合。iproute2 包含了一下命令行工具:&#xA;ip ss bridge rtacct rtmon tc ctstat lnstat nstat routeef routel rtstat tpic arpd devlink net-tools 和 iproute2 的替换关系&#xA;| net-tools 工具 | iproute2 工具 | 备注 | | --- | --- | --- | | ifconfig | ip addr , ip link , ip -s | 网络配置 | | route | ip route | 路由表 | | arg | ip neigh | arp 列表 | | iptunnel | ip tunnel | 网络代理 | | nameif | iprename , ip link set name | 重命名网卡 | | ipmaddr | ip maddr | 广播地址 | | netstat | ip -s ss , ip route | 显示网络状态 | 参考链接</description>
+    </item>
+    <item>
+      <title>SpaceVim 配置 golang IDE</title>
+      <link>http://localhost:1313/posts/2019/20190821/</link>
+      <pubDate>Wed, 21 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190821/</guid>
+      <description> 安装SpaceVim curl -sLf https://spacevim.org/install.sh | bash -s -- -h 配置 golang 模块 go get -u github.com/jstemmer/gotags vim ~/.SpaceVim.d/init.toml [[layers]] 安装 golang 插件 # 这个安装过程可能会遇到 golang/x/tools 的问题 vim :GoInstallBinaries </description>
+    </item>
+    <item>
+      <title>Manjaro terminal 快速弹出</title>
+      <link>http://localhost:1313/posts/2019/20190812-1/</link>
+      <pubDate>Mon, 12 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190812-1/</guid>
+      <description>默认快捷键是: Ctrl + Alt + T , 可以在键盘-&amp;gt;快捷键中设置。&#xA;参考链接:&#xA;https://forum.manjaro.org/t/xfce-terminal-drop-down-option/45950/2 </description>
+    </item>
+    <item>
+      <title>安装 Manjaro 之后的做的事情</title>
+      <link>http://localhost:1313/posts/2019/20190812/</link>
+      <pubDate>Mon, 12 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190812/</guid>
+      <description>设置国内镜像源 sudo pacman-mirrors -i -c China -mrank # OK * 2 sudo pacman -Syyu sudo pacman -S vim 添加 arch 源 vim /etc/pacman.conf [archlinuxcn] Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch sudo pacman -Syyu pacman -S archlinux-keyring archlinuxcn-keyring sudo pacman -S visual-studio-code-bin sudo pacman -S ocaml opam 安装输入法 sudo pacman -S fcitx-im #默认全部安装 sudo pacman -S fcitx-configtool sudo pacman -S fcitx-sogoupinyin vim ~/.xprofile export LC_ALL=zh_CN.UTF-8 export GTK_IM_MODULE=fcitx export QT_IM_MODULE=fcitx export XMODIFIERS=&amp;#34;@im=fcitx&amp;#34; 安装缺少的字体 sudo pacman -S wqy-microhei sudo pacman -S wqy-bitmapfont wqy-microhei \ wqy-zenhei adobe-source-code-pro-fonts \ adobe-source-han-sans-cn-fonts ttf-monaco reboot 安装相关工具 sudo pacman -S google-chrome pacman -S net-tools dnsutils inetutils iproute2 tmux bash-completion sudo pacman -S docker vim /etc/sudoers.</description>
+    </item>
+    <item>
+      <title>Manjaro 微信解决方案</title>
+      <link>http://localhost:1313/posts/2019/20190810/</link>
+      <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190810/</guid>
+      <description>在 Manjaro 上使用 deepin-wine-chat&#xA;wget https://github.com/countstarlight/deepin-wine-wechat-arch/releases/download/v2.6.8.65-1/deepin-wine-wechat-2.6.8.65-1-x86_64.pkg.tar.xz sudo pacman -U deepin-wine-wechat-2.6.8.65-1-x86_64.pkg.tar.xz 在安装成功，登录微信成功，发送消息无法输入中文，主要原因是: archlinux应用不支持fcitx中文输,参考: https://www.jianshu.com/p/a3f1c5619ad2&#xA;$ cd /opt/deepinwine/apps/Deepin-WeChat $ vim run.sh #!/bin/sh # Copyright (C) 2016 Deepin, Inc. # # Author: Li LongYu &amp;lt;lilongyu@linuxdeepin.com&amp;gt; # Peng Hao &amp;lt;penghao@linuxdeepin.com&amp;gt; export XMODIFIERS=&amp;#34;@im=fcitx&amp;#34; export GTK_IM_MODULE=&amp;#34;fcitx&amp;#34; export QT_IM_MODULE=&amp;#34;fcitx&amp;#34; 重新启动微信，可以输入中文了，遇到同类问题，其他 wine app 解决方案类似。 参考链接:&#xA;https://aur.archlinux.org/packages/deepin-wine-wechat/ https://www.jianshu.com/p/a3f1c5619ad2 </description>
+    </item>
+    <item>
+      <title>Manjaro 安装 CrossOver 找不到 lib32-nss-mdns</title>
+      <link>http://localhost:1313/posts/2019/20190809/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190809/</guid>
+      <description>解决方案： 从源码手动编译一个 32 位的动态链接库&#xA;源码地址: https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz&#xA;wget https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz tar -xf nss-mdns-0.14.1.tar.gz cd nss-mdns-0.14.1 # 编译出 32 位的动态链接库 ./configure &amp;#34;CFLAGS=-m32&amp;#34; &amp;#34;CXXFLAGS=-m32&amp;#34; &amp;#34;LDFLAGS=-m32&amp;#34; make cp .libs/libnss_mdns.so.2 /home/hellojukay/cxoffice/lib 顺道还把乱码的问题解决了&#xA;wget https://github.com/fphoenix88888/ttf-mswin10-arch/raw/master/ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz tar -xf ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz cd ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz sudo mkdir -p /usr/share/fonts/WindowsFonts cp ./* /usr/share/fonts/WindowsFonts/ 参考链接:&#xA;https://www.codeweavers.com/support/forums/general?t=26;msg=204194 </description>
+    </item>
+    <item>
+      <title>【翻译】如何检查 centos 版本信息</title>
+      <link>http://localhost:1313/posts/2019/20190731/</link>
+      <pubDate>Wed, 31 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190731/</guid>
+      <description>原文地址: https://www.thegeekdiary.com/how-to-check-centos-version/&#xA;有一些时候我需要了解当前的 Linux 服务的系统版本信息，来帮助我们排查一些问题。这篇文章将会介绍几个技巧来查看当前系统版本信息，总的来说有两种思路：&#xA;通过系统更新版本来了解系统信息 通过内核运行版本来了解系统信息 检查系统更新版本 在 RedHat/Centos 上有4个文件提供了信息的版本信息&#xA;/etc/centos-release /etc/os-release /etc/redhat-release /etc/system-release 他们的内容如下 [licong@analysis01 ~]$ cat /etc/centos-release CentOS Linux release 7.2.1511 (Core) [licong@analysis01 ~]$ cat /etc/os-release NAME=&amp;#34;CentOS Linux&amp;#34; VERSION=&amp;#34;7 (Core)&amp;#34; ID=&amp;#34;centos&amp;#34; ID_LIKE=&amp;#34;rhel fedora&amp;#34; VERSION_ID=&amp;#34;7&amp;#34; PRETTY_NAME=&amp;#34;CentOS Linux 7 (Core)&amp;#34; ANSI_COLOR=&amp;#34;0;31&amp;#34; CPE_NAME=&amp;#34;cpe:/o:centos:centos:7&amp;#34; HOME_URL=&amp;#34;https://www.centos.org/&amp;#34; BUG_REPORT_URL=&amp;#34;https://bugs.centos.org/&amp;#34; CENTOS_MANTISBT_PROJECT=&amp;#34;CentOS-7&amp;#34; CENTOS_MANTISBT_PROJECT_VERSION=&amp;#34;7&amp;#34; REDHAT_SUPPORT_PRODUCT=&amp;#34;centos&amp;#34; REDHAT_SUPPORT_PRODUCT_VERSION=&amp;#34;7&amp;#34; [licong@analysis01 ~]$ cat /etc/redhat-release CentOS Linux release 7.2.1511 (Core) [licong@analysis01 ~]$ cat /etc/system-release CentOS Linux release 7.2.1511 (Core) 还可以通过 rpm 查询某个文件的版本信息</description>
+    </item>
+    <item>
+      <title>如何制作一个 deb 安装包</title>
+      <link>http://localhost:1313/posts/2019/20190726-1/</link>
+      <pubDate>Fri, 26 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190726-1/</guid>
+      <description>一个标准的 deb 制作目录如下：&#xA;hellojukay@local hello-ocaml-deb (master) $ tree hello_0.0.1 hello_0.0.1 ├── DEBIAN │ └── control └── usr └── local └── bin └── hello 4 directories, 2 files 更目录下包含一个 DEBIAN/contorl 文件，内容信息如下:&#xA;Package: hello Version: 0.0.1 Section: base Priority: optional Architecture: amd64 Depends: libsomethingorrather (&amp;gt;= 1.2.13), anotherDependency (&amp;gt;= 1.2.6) Maintainer: hellojukay@163.com Description: Hello World Just print Hello &amp;lt;name&amp;gt; to console 其他目录的文本信息会被复制到对应的目录中去，我们使用 dpkg-deb 命令来制作安装包&#xA;dpkg-deb --build hello_0.0.1 如果不出意外的话会生成 hello_0.0.1.deb 文件,安装命令为&#xA;sudo apt install .</description>
+    </item>
+    <item>
+      <title>Centos 7 网卡命令规则</title>
+      <link>http://localhost:1313/posts/2019/20190703/</link>
+      <pubDate>Wed, 03 Jul 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190703/</guid>
+      <description>网上很多 linux 网络设置的教程中都提到了 eth0 网卡配置，但是有时候我发现我的机器上并没有 eth0 网卡，反而有 enp0s31f6 网卡。&#xA;Centos 7 中将网卡命名和编号有了新的规则：&#xA;eno1: 代表主板bios内置网卡 ens1: 代表主板bios内置的PCI-E 网卡 enp2s0: PCI-E 独立网卡 eth0: 如果以上都不使用，最回到默认网卡 enp0s31f6 网卡属于第三种特效，centos 的网卡配置见&#xA;/etc/sysconfig/network-scripts </description>
+    </item>
+    <item>
+      <title>在 Makefile 中读取用户输入</title>
+      <link>http://localhost:1313/posts/2019/20190531/</link>
+      <pubDate>Fri, 31 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190531/</guid>
+      <description>发先一个在 make 过程中读取账号密码的方法了&#xA;build: @read -p &amp;#34;Enter Username: &amp;#34; username;echo $${username} 这里的 $${username} 其实也可以改成 $$username 执行如下:&#xA;hellojukay@local test $ vim Makefile hellojukay@local test $ make Enter Username: hello world hello world hellojukay@local test $ 非常可惜的是：不支持 read -s, 就是说输入密码的时候是明文的。</description>
+    </item>
+    <item>
+      <title>命令行程序设计的最佳实践</title>
+      <link>http://localhost:1313/posts/2019/20190510/</link>
+      <pubDate>Fri, 10 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190510/</guid>
+      <description>因为长期使用 linux 系统， 使用大量的 linux 命令。 我发现命令行参数的设计似乎遵循这某些设计哲学。比如，当你使用一个新的命令的时候，如果你不太熟悉某个参数，你可能会这样:&#xA;command -h 或者&#xA;command --help 或者&#xA;command help subcommand 你会使用 -h 或者 --help 查看帮助 ， 使用 help 来查看某个子命令的具体用法。当然， 你也可能会使用到 man&#xA;man command 绝大部分的命令行程序都遵守着这种契约。还有很多其他的默认设计规范，上面没有介绍到。 这篇文章的目的就是要列出这些不成文的设计哲学， 以便我们自己在编写命令行程序的时候不走弯路，也能顺畅的使用。&#xA;设计规范 程序返回合适的退出状态号码，执行成功返回０，否则返回对应的错误码，使用者能够参考返回码找到错误原因．&#xA;永远要支持 --version 和 --help, -h&#xA;支持长参数的简写,比如支持--number的同时支持简写-n,--number用于脚本文件中,s-n用于手动执行命令&#xA;使用-选项来处理标准输入和标准输出.&#xA;对于 bool 类型的参数-b=true和-b应该等价&#xA;支持多个 bool 类型的参数合并写　-i -t应该可以合并为-it&#xA;日志区分错误日志和提示日志，并且分日志级别，错误日志往标准错误输出中输出，其他日志往标准输出中输出&#xA;有默认参数，并且可以通过命令参数和环境变量来设置对应的值．&#xA;命令行参数优先于环境变量，环境变量优先于默认值.&#xA;具体建议 命令行简写 简写说明 -a &amp;ndash;append 的简写，　表示增加 -c &amp;ndash;color的简写，表示演示,&amp;ndash;clean的简写，表示清空 -d &amp;ndash;deamon 的简写，表示后台运行， &amp;ndash;dir 表示目录 -e &amp;ndash;enviroment的简写,表示环境变量 -f &amp;ndash;force的简写，表示强制执行，&amp;ndash;file的简写，表示者件路径｜ -g &amp;ndash;global 的简写，表示全局 -h &amp;ndash;help 的简写，显示帮助信息, &amp;ndash;human 表示人类可理解 -i, -I &amp;ndash;input 的简写，表示输入，&amp;ndash;ignore 的简写，表示忽略 -k &amp;ndash;keep的简写，表示保持 -l &amp;ndash;list的简写， 表示列表展示 -m &amp;ndash;motify的简写，表示修改 -n &amp;ndash;number的简写，　表示数量 -o &amp;ndash;output的简写，表示输出 -p &amp;ndash;port的简写，　表示端口 -q &amp;ndash;qualify的简写，表示独一 -r &amp;ndash;recursion的简写，表示递归 -s &amp;ndash;set的简写，　表示设置 -t 表示 &amp;ndash;terminal 或者 &amp;ndash;time -u,-U &amp;ndash;user 表示用户，　&amp;ndash;update 表示更新 -v, -V &amp;ndash;version的简写，显示版本信息或者调试信息 -w &amp;ndash;workspace的简写，表示工作空间 -x 显示执行过程 -y &amp;ndash;year的简写，表示年份 -z &amp;ndash;zone的简写，表示区域 </description>
+    </item>
+    <item>
+      <title>在 Jenkinsfile 的 sh 中执行 awk</title>
+      <link>http://localhost:1313/posts/2019/20190508/</link>
+      <pubDate>Wed, 08 May 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190508/</guid>
+      <description>在 Jenkinsfile 中如果要执行 awk :&#xA;sh(&amp;#34;ls -al | awk &amp;#39;{print $3}&amp;#39;&amp;#34;) 这么写可能会报错， 因为 $3 被 groovy 认为是要替换字符传， 当前上下文中并没有 3 这个变量，所以会报错。&#xA;解决这个问题的方式如下:&#xA;sh &amp;#34;&amp;#34;&amp;#34; ls -al | awk &amp;#39;{print \$3}&amp;#39; &amp;#34;&amp;#34;&amp;#34; 2020年01月15日更新 有同学的docker用户名中包含了 $ 符号，也可以用相同的方法来解决&#xA;sh &amp;#34;&amp;#34;&amp;#34; echo ${PASSWD} | docker -u \$xxx --password-stdin &amp;#34;&amp;#34;&amp;#34; 参考文档:&#xA;https://blog.isntall.us/node/34 https://stackoverflow.com/questions/43451380/right-syntax-using-command-sh-in-jenkinsfile </description>
+    </item>
+    <item>
+      <title>在 docker 中运行 shadowsocks 客户端</title>
+      <link>http://localhost:1313/posts/2019/20190429/</link>
+      <pubDate>Mon, 29 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190429/</guid>
+      <description>deepin 升级了以后, 不知道是哪个系统包被升级了, 我的 shadowsocks 客户端一直不能正常使用正常使用, 尝试和很多方法没有解决. 最后我终于开窍了: 此路不通, 我换条路走.&#xA;在 chrome 里面配置了插件 SwitchyOmega , 这个插件里面配置了代理服务器的地址和端口, 通常这个地址和端口是本机的 shadowsocks client, 好傻. 宿主机器上依赖有问题, 那我何不将 shadowsocks client 允许在 docker 中呢, 说这我就到 dockerhub 上找到了对于的镜像：&#xA;*　https://hub.docker.com/r/mritd/shadowsocks/&#xA;符合条件的镜像很多，　这个是使用最多的一个．　于是研究了一下这个镜像，Dockerfile 写的挺复杂的，启动参数也不够友好．　于是，参考他的 Dockerfile　删掉了一些功能和配置． 我从新打了一个新的镜像，　参数更加简单了，　对 docker-compose 支持也更加友好了．&#xA;docker pull hellojukay/shadowsocks:1.0.0 我也将这个镜像开源到 dockerhub 上了，　使用方式非常简单&#xA;https://hub.docker.com/r/hellojukay/shadowsocks&#xA;version: &amp;#39;2&amp;#39; services: ssclient: image: hellojukay/shadowsocks:1.0.0 container_name: &amp;#39;ssclient&amp;#39; restart: always ports: - 1080:1080 environment: SERVER: &amp;#39;xxx&amp;#39; PORT: xxx LISTEN: 1080 METHOD: &amp;#39;chacha20-ietf-poly1305&amp;#39; PASSWD: &amp;#39;q6Gsdfsdfx9sd&amp;#39; 使用 docker-compose 启动即可</description>
+    </item>
+    <item>
+      <title>免密码使用 sudo</title>
+      <link>http://localhost:1313/posts/2019/20190421/</link>
+      <pubDate>Sun, 21 Apr 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190421/</guid>
+      <description>在 linux 中， 默认情况下只有 root 用户能够在输入密码的情况下使用 sudo 命令。但是接触了 vagrant 以后， 你可能 会发现，vagrant 默认创建的用户: vagrant , 这个用户能够使用 sudo ， 而不需要输入密码就使用 sudo.&#xA;我查了一下， 就是配置 /etc/sudoers 这个文件, centos 和 debain 的配置方式还有一点不一样, 假设我们的用户是 hellojukay,我们 希望在输入密码的时候使用sudo.&#xA;centos 下配置如下内容，&#xA;vim /etc/sudoers # 加入如内容 hellojukay ALL=(ALL:ALL) NOPASSWD:ALL debain 中配置如下&#xA;vim /etc/sudoers.d/{filename} hellojukay ALL=(ALL:ALL) NOPASSWD:ALL 在 /etc/sudoers.d/ 文件夹中创建一个文件， 加入 hellojukay ALL=(ALL:ALL) NOPASSWD:ALL, 这样 hellojukay 就能使用任何命令了，这种方法在 centos 系统中也奏效。</description>
+    </item>
+    <item>
+      <title>在docker中运行flyway</title>
+      <link>http://localhost:1313/posts/2019/20190226/</link>
+      <pubDate>Tue, 26 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190226/</guid>
+      <description>如果你还没有听说flyway,请移步flyway。大部分情况下，我们是在java中使用mvn插件的方式来使用flyway，虽然flyway是 使用java语言编写的，但是也提供了命令行的方式来使用它，我们也可以将他打包在docker容器中。官方有专门的项目来给flyway打镜像https://github.com/flyway/flyway-docker。&#xA;所以我只需要官方的目录结构来配置即可https://hub.docker.com/r/boxfuse/flyway。&#xA;这里要说明的是flyway的配置文件配置项:&#xA;flyway.url=jdbc:mysql://xxxxx:3306/xxx flyway.username=xxx flyway.password=xxx flyway.baselineDescription=V1.0 flywaydb.placeholderReplacment=false </description>
+    </item>
+    <item>
+      <title>一个简单的端口转发方式</title>
+      <link>http://localhost:1313/posts/2018/20181225/</link>
+      <pubDate>Tue, 25 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181225/</guid>
+      <description>今天介绍一个简单的端口转发工具:rinetd， 这个工具的安装和配置非常的简单。&#xA;安装 使用源码安装的方式来安装这个工具&#xA;[root@localhost rinetd]# cd ~/zhenyutest/ [root@localhost rinetd]# wget http://www.boutell.com/rinetd/http/rinetd.tar.gz [root@localhost rinetd]# tar -xvf ~/zhenyutest/rinetd.tar.gz [root@localhost rinetd]# cd ~/zhenyutest/rinetd/ [root@localhost rinetd]# sed -i &amp;#39;s/65536/65535/g&amp;#39; rinetd.c [root@localhost rinetd]# mkdir /usr/man/ [root@localhost rinetd]# make &amp;amp;&amp;amp; make install cc -DLINUX -g -c -o rinetd.o rinetd.c rinetd.c:176:6: 警告：与内建函数‘log’类型冲突 [默认启用] void log(int i, int coSe, int result); ^ cc -DLINUX -g -c -o match.o match.c gcc rinetd.o match.o -o rinetd install -m 700 rinetd /usr/sbin install -m 644 rinetd.</description>
+    </item>
+    <item>
+      <title>【翻译】Linux进程全知道</title>
+      <link>http://localhost:1313/posts/2018/20181216/</link>
+      <pubDate>Sun, 16 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181216/</guid>
+      <description>这篇文章将会介绍在Linux中，进程是如何产生，管理和销毁的。&#xA;进程是操作系统内执行的任务，程序是磁盘存储的一系列机器码和数据的集合。当一个程序启动的时候，就创建了一个新的进程，进程的状态是动态的，随着机器指令的执行而变化，他主要包含一些寄存器，计数器和数据。进程之间的状态是相互独立的，一个进程奔溃不会影响操作系统上的其他进程。每一个进程在内存中都有自己的独立的地址空间。&#xA;在进程的生命周期中，他会使用操作系统的许多资源，是运行的时候会使用CPU和物理内存以及数据。也许会打开文件，打开设备。其余的进程必须等待当前的进程释放CPU才能得到执行。Linux操作系统必须跟踪进程和进程使用的资源，以确保一个进程不会独占大部分的内存和CPU。&#xA;在系统中，最常用的资源就是CPU，他只能同一时间被一个进程占用。Linux是一个多任务操作系统，每一段时间内都运行多个进程。如果有多个CPU, 系统主剩下的进程必须要等待有一个一个CPU空闲可以使用，这个进程才能够得到执行。多处理是用来解决并发问题的一个比较简洁的方法。&#xA;linux支持多个格式的可执行文件，ELF就是其中一种.&#xA;Linux进程 linux能够管理操作系统中的进程，每一个进程在操作系统中都是一个task_struct结构体,有个一个指针指向一个task_struct的数组，数组里面就是所有的进程。这也就意味着linux系统是可以设置进程数量的最大值和最小值的，最大值默认是512,也就是说能管理一个512个进程。每产生一个新的进程，就选出一个可能的空间来保存该进程。为了便于场照，当前正在运行的进程被一个current指针指向着。 原文地址: https://www.tldp.org/LDP/tlk/kernel/processes.html</description>
+    </item>
+    <item>
+      <title>linux上网络问题排查工具</title>
+      <link>http://localhost:1313/posts/2018/20181208/</link>
+      <pubDate>Sat, 08 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181208/</guid>
+      <description>在linux上有非常多的工具，能在让你在排查问题多额时候获取有用的信息，这篇文件将会介绍一些network相关的troubleshot技巧。&#xA;ifconfig ifconfig是linux上设置网卡信息的命令，他们启动网卡，禁止网卡，查看网卡的ip地址个mac地址等等.&#xA;# 查看所有网卡的信息 ifconfig # 查看eth0网卡的信息 ifconfig eth0 # 设置 eth0 网卡的ip地址和子网掩码 ifconfig eth0 192.168.50.5 netmask 255.255.255.0 # 启用eth0网卡 ifup eth0 # 禁止eh0网卡 ifdown eth0 # 设置eth0网卡的最大通讯包大小 ifconfig eth0 mtu xxx ping ping是最常用的检查两个机器是否网络连通的方式，&#xA;ping 192.168.1.1 ping baidu.com ping是基于ICMP协议，因为可以设置ICMP不响应，所以有时候这个方式不那么管用。 往/etc/sysctl.conf中加入net.ipv4.icmp_echo_ignore_all=1然后sysctl -p刷新就能禁止ping返回了,ping命令能够指定发送包的次数:&#xA;# 发送五次 ping -c 5 baidu.com traceroute traceroute是检查网卡中数据包的ip路由情况的&#xA;hellojukay@local:~/data/Code/github/blog$ traceroute baidu.com traceroute to baidu.com (220.181.57.216), 30 hops max, 60 byte packets 1 Hiwifi.lan (192.168.199.1) 0.393 ms 0.451 ms 0.</description>
+    </item>
+    <item>
+      <title>【翻译】nmap命令介绍</title>
+      <link>http://localhost:1313/posts/2018/20181202/</link>
+      <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181202/</guid>
+      <description>nmap是一个开源的网络扫描工具，在网络方便使用较多。然后nmap的命令行用法对于初学者来说非常不友好，这篇文件将会介绍基本的nmap命令，不会面面俱到，只希望你对nmap有一个基本的了解，不在惧怕nmap命令。&#xA;nmap能做什么？ nmap使用IP包的方式发送数据，他能找到局域网内有那些机器在运行那些服务，他们分别是什么操作系统，端口是否开放，机器启动时间等等。&#xA;一下问题，使用nmap能够轻易的解决。&#xA;局域网内有那些机器在运行 局域网内有那些IP地址 某个IP所指向的机器运行着什么操作系统 你能扫描目标机器上有那些端口开放着 了解目标机器是否感染了病毒 搜索当前网络中有那些未认证的网络服务 查找安全级别较低的机器 如何安装nmap呢？ 如果你是debian操作系统&#xA;sudo apt install nmap 参考文章：&#xA;https://www.cyberciti.biz/faq/install-nmap-debian-ubuntu-server-desktop-system/ https://www.cyberciti.biz/faq/howto-install-nmap-on-centos-rhel-redhat-enterprise-linux/ https://www.cyberciti.biz/faq/installing-nmap-network-port-scanner-under-openbsd-using-pkg_add/ 扫描单个目标 # 扫描单个目标机器 nmap 192.168.1.1 # 扫描单个域名 nmap gitlab.hellojukay.cn 扫描多个目标或者是子网 nmap 192.168.1.1 182.168.1.2 nmap 192.168.1.1,2,3 你也可以扫描某个范围内的IP地址&#xA;nmap 192.168.1.1-20 你也可以使用通配符&#xA;nmap 192.168.1.* 你也可以扫描整个子网&#xA;nmap 192.168.1.0/24 从文件中读取扫描目标 使用-iL选项来读取你需要扫描的目标机器列表，这通常使用来扫描一大批机器，文件编写语法如下：&#xA;gitlab.hellojukay.cn 192.168.1.1 192.168.1.0/24 localhost 命令行语法：&#xA;nmap -iL hosts.txt 过滤目标 当你扫描一大批机器的时候，你想过滤掉某个目标，不进行网络扫描，你可以使用--exlude选项来跳过目标&#xA;nmap 192.168.1.0/24 --exclude 192.168.1.5 nmap 192.168.1.0/24 --exclude 192.168.1.5 192.168.1.6 扫描机器的系统和网络版本信息 nmap -A 192.168.1.254 nmap -v -A 192.</description>
+    </item>
+    <item>
+      <title>【翻译】基本的Linux排查问题的技巧</title>
+      <link>http://localhost:1313/posts/2018/20181124/</link>
+      <pubDate>Sat, 24 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181124/</guid>
+      <description>硬件相关 获取内存信息 cat /proc/meninfo 如果你只是想看一下内存的大小，你可以这样：&#xA;cat /proc/meminfo | head -n 1 一些其他有意思的操作，下面这条命令你能看到内存中纯文本信息:&#xA;sudo dd if=/dev/mem | cat | strings 同样的，使用strings命令你也能够查看二进制程序中的字符串常量。&#xA;获取CPU信息 一些时候你想要知道是什么进程占用了CPU，是你的应用程序还是操作系统，你可以使用如下两条命令:&#xA;cat /proc/cupinfo top top有一个升级版本htop，他显示更加友好:&#xA;htop 获取CPU当前温度信息:&#xA;cat /proc/acpi/thermal_zone/THRM/temperature 列出外部设备以及USB信息 lspci `` 对于USB信息: ```shell lsusb 检查硬盘使用情况 df -h 检查硬盘挂载情况 sudo fdisk -l 安装应用程序 有时候你需要查看一下当前系统上安装的所有的包，你能发现为甚会安装他，那些包在依赖这些包&#xA;dpkg --get-selections | less 检查所有已经安装的包，对于yum来说是&#xA;sudo yum list --installed 查看安装原因:&#xA;aptitude why packagename 找出包中存储的文件:&#xA;dpkg -L packagename dpkg这个命令怎么记呢: debian package的缩写。&#xA;关闭进程 ps -A | grep Prograname kill 7207 其他杂项 显示所有的网络链接 Linux上有非常多的好用的功能能查看网络情况，netstat就是其中最简单易用的一个。</description>
+    </item>
+    <item>
+      <title>环境变量中能写脚本吗</title>
+      <link>http://localhost:1313/posts/2018/20181121/</link>
+      <pubDate>Wed, 21 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181121/</guid>
+      <description>今天早上回顾了昨天写的一篇文章,无意中发现我在环境变量中写入脚本，一下子有了疑问：环境变量中也能写脚本吗？那么不是说通过环境变量也能删库跑路。&#xA;使用golang写个简单的例子试试:&#xA;package main import &amp;#34;fmt&amp;#34; import &amp;#34;os&amp;#34; func main() { var foo = os.Getenv(&amp;#34;foo&amp;#34;) fmt.Println(foo) } go build main.go jukay@~/Code/Golang/env$ env foo=&amp;#34;$(echo Hello World)&amp;#34; ./main Hello World 输出foo环境变量的值是Hello World。&#xA;jukay@~/Code/Golang/env$ env foo=&amp;#34;$(echo $GOPATH)&amp;#34; ./main /Users/jukay/Code/Go 环境变量中写脚本使用另一个环境变量&#xA;jukay@~/Code/Golang/env$ touch bar.txt jukay@~/Code/Golang/env$ ls bar.txt main main.go jukay@~/Code/Golang/env$ env foo=&amp;#34;$(rm bar.txt)&amp;#34; ./main jukay@~/Code/Golang/env$ ls main main.go 可以删除文件&#xA;jukay@~/Code/Golang/env$ cat bar.sh #!/usr/bin/env bash echo Hello World jukay@~/Code/Golang/env$ env foo=&amp;#34;$(sh bar.sh)&amp;#34; ./main Hello World 在环境变量中能够启动另一个脚本</description>
+    </item>
+    <item>
+      <title>linux服务器安全最佳实践</title>
+      <link>http://localhost:1313/posts/2018/20181109/</link>
+      <pubDate>Fri, 09 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181109/</guid>
+      <description>在拿到一台初始化的的linux服务的第一时候，你就应该为他台服务器配置相关的安全设置。养成好的习惯，因为这可能帮你减少因为黑客攻击带来的巨额度损失。精密的配置的服务器难以攻破，会让黑可放弃攻击你的服务器。&#xA;用户管理 linux系统会默认创建第一个用户&amp;ndash;root。这个用户应该被禁止使用ssh远程登录服务器。禁止root会让黑客更难攻破你的服务器。如果黑客知道root能够登录，就相当于得到攻破服务器的一半的信息，这就为暴力破解减少一半的计算量。我们一般创建一个单独的用户来配置系统，如果需要权限，那么就使用sudo来获取root权限，而不是直接使用root账户。&#xA;密码强度设置 在你创建用户的时候，你必须确保你的密码有足够的长度和字符，这样会比较难攻破一点。&#xA;密码长度尽量在12位以上 密码尽量包含，大写字母，小写字母，数字，特殊字符 尽量使用随机密码工具来生成密码 密码不要使用连续或者重复的数字，字母 密码中不要包含个人信息 不要使用简单的单词来组合密码 添加用户(Debian 和 Ubuntu) 创建用户，设置密码 adduser {username} 如果这个用户是的主要运维用户，那么可以给他添加root权限 visudo 添加如下配置&#xA;{usernamd} ALL=(ALL:ALL) ALL 测试一些以上配置是否正确 su {username} sudo iptables -L 当你执行以上两条命令之一的时候，系统会要求你输入当前用户的密码。&#xA;创建ssh秘钥对 比密码登录更加安全的方式是使用秘钥登录，执行如下命令创建秘钥： ssh-genkey -b 4096 -t rsa 会要求你输入保存秘钥的文件，直接使用默认文件名即可，如果要更加安全，你可以给你的秘钥添加一个访问密码。创建文件了秘钥以后,```$HOME/.ssh文件夹下会生成两个文件，id_rsa和id_rsa.pub`文件。&#xA;在你生成好了秘钥以后，你需要将之前生成的公钥上传到你的远程服务器上 务必要注意，是上传公钥到服务器上，而不是上传私钥到服务器上.&#xA;ssh-copy-id -i ~/.ssh/id_rsa.pub {username}@{remotePublicIPAddress} 这行命令会提示你输入密码，在输入密码结束以后，你可以尝试ssh {username}@{remotePublicIPAddress}来登录服务器，如果一切正常，系统将不会要求你输入密码。&#xA;ssh服务端配置 现在你已经禁止了root登录，并且创建了运维专用的账号，你可以配置ssh daemon来提高服务器的安全系数了。&#xA;在你更改ssh daemon的配置的时候，你务必要确认更改配置之后你还能访问服务器，最好的是提前通知系统管理员。&#xA;ssh 配置项 这里将会介绍一些常用的ssh相关安全配置，如果你想要更加详细的说明，推荐你查阅openssh的官方文档&#xA;这一小节将包含如下信息:&#xA;Port xxx ssh默认端口配置（默认22端口） PubkeyAuthentication 允许或者禁止秘钥登录服务器 PasswordAuthentication 允许或者禁止密码登录服务器 众所周知，ssh 默认监听22端口，所以黑客都会尝试使用用户和密码爆破22端口，因为这个原因，所以你应该修改ssh服务的端口号。修改端口号不会保证服务器绝对安全，但是能够抵御所有对22端口的攻击。&#xA;登录服务器有两种方法，一种是密码的登录，另一种是秘钥登录，秘钥是成对生成，他们只能结合使用，私钥被存储在你本地的计算机上，为了保证安全，你的私钥永远都不因该改分享给他人，公钥存储你的远程服务器上。&#xA;修改sshd_config 上面说过，你应该禁止root登录，创建运维账户，为运维账户添加sudo权限，修改ssh的端口号，禁止密码登录服务器。下面我将演示如何配置：&#xA;打开openssh的配置文件 sudo vi /etc/ssh/sshd_config 更改以下几行的默认值 Port 22 &amp;gt; Port 9001 PermitRootLogin yes &amp;gt; PermitRootLogin no PasswordAuthentication yes &amp;gt; PasswordAuthentication no 把9001改成你想设置的端口号。 3.</description>
+    </item>
+    <item>
+      <title>linux查看运行中的程序的环境变量</title>
+      <link>http://localhost:1313/posts/2018/20180914-1/</link>
+      <pubDate>Fri, 14 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180914-1/</guid>
+      <description>我们的代码如下：&#xA;package main import &amp;#34;fmt&amp;#34; import &amp;#34;os&amp;#34; import &amp;#34;time&amp;#34; func main() { for { var name = os.Getenv(&amp;#34;name&amp;#34;) time.Sleep(time.Duration(2) * time.Second) fmt.Println(name) } } 通过内核提供的/proc文件来看程序运行中一些状态数据。&#xA;这里我们很清楚的看到了name=hellojukay，非常的遗憾的是environ这个文件是无法写入的 sudo chmod +w environ也不行。</description>
+    </item>
+    <item>
+      <title>自建asciinema服务器</title>
+      <link>http://localhost:1313/posts/2018/20180904/</link>
+      <pubDate>Tue, 04 Sep 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180904/</guid>
+      <description>把自己的终端上传到官方服务器，始终是一件不安全的事情，所以推荐大家自建asciinema服务器。直接使用官方的docker-compose文件，稍加修改就能成功clone官方的项目&#xA;version: &amp;#39;2&amp;#39; services: postgres: image: postgres container_name: asciinema_postgres restart: unless-stopped volumes: - ./volumes/postgres:/var/lib/postgresql/data ### See https://hub.docker.com/_/postgres/ for more ### configuration options for this image. redis: image: redis container_name: asciinema_redis restart: unless-stopped volumes: - ./volumes/redis:/data ### See https://hub.docker.com/_/redis/ for more ### configuration options for this image. smtp: image: namshi/smtp container_name: asciinema_smtp restart: unless-stopped env_file: .env.production ### See https://github.com/namshi/docker-smtp for more SMTP configuration ### options for this image. nginx: image: nginx:alpine container_name: asciinema_nginx restart: unless-stopped links: - phoenix - rails ports: - &amp;#34;3000:80&amp;#34; ### Uncomment for HTTPS: # - &amp;#34;443:443&amp;#34; volumes: - .</description>
+    </item>
+    <item>
+      <title>Makefile相关知识点</title>
+      <link>http://localhost:1313/posts/2018/20180822/</link>
+      <pubDate>Wed, 22 Aug 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180822/</guid>
+      <description>开源项目中非常流行使用Makefile来处理构建的问题，我比较喜欢使用Makefile来给命令行分组。Makefile文件前面的缩进不是空格，这个写Makefile前一定要明确的问题。&#xA;[jukay@mac-pro]~/Desktop$ cat Makefile test: echo Hello World [jukay@mac-pro]~/Desktop$ make echo Hello World Hello World [jukay@mac-pro]~/Desktop$ make命令会自动寻找当前目录下面的名字叫做Makefile的文件，可能使用make -f filename来指定其他文件，找到了文件以后构建你指定的产物，如果没有指定产物，那么会默认构建第一个产物，如果产物已经存在了，那么不会执行构建流水了。例如，当前目录下面已经存在了一个名字为 test 文件，那么执行 make test 是不会执行构建的。&#xA;[infra@dev ~]$ ls Makefile test [infra@dev ~]$ make test make: “test”是最新的。 [infra@dev ~]$ make make: “test”是最新的。 [infra@dev ~]$ 这里在shell命令前面加上@符号，是表示在指定当前命令的会后，不要打印这条命令的指定过程。如果当前的目标产物存在了，但是构建目标产物还需要其他依赖,那么还是会重新构建当前目标产物的&#xA;[infra@dev ~]$ ls Makefile test [infra@dev ~]$ cat Makefile test: dev @echo Hello World dev: @echo dev [infra@dev ~]$ make test dev Hello World [infra@dev ~]$ make也是可以一次构建两个产物的</description>
+    </item>
+    <item>
+      <title>基于密码的自动登录方案</title>
+      <link>http://localhost:1313/posts/2018/20180731/</link>
+      <pubDate>Tue, 31 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180731/</guid>
+      <description>虽然密码登很不安全，运维是应该禁止掉这样的登录方式。但是。。。&#xA;编写自动登录脚本 cat auto_login.sh #!/usr/bin/expect set user xxxx set host localhost set password &amp;#39;xxxx&amp;#39; catch {set user $env(login_user)} catch {set host $env(login_host)} catch {set password $env(login_passwd)} set timeout 60 spawn ssh &amp;#34;$user@$host&amp;#34; expect &amp;#34;*assword:*&amp;#34; send &amp;#34;$password\r&amp;#34; interact 这里expect是读取的环境变量中的登录用户，登录机器，登录密码，如果环境变量没有对应的变量，会使用默认值进行登录。&#xA;编写特定机器登录脚本 #!/usr/bin/env bash env login_user=xxxx login_passwd=xxxx login_host=$(basename $0) auto_login.sh 当前脚本文件的文件名字就是你需要登录的机器，可以是域名，也可以是ip.如果我要登录的机器是blog.hellojukauy.cn。那么脚本的文件名字应该是blog.hellojukauy.cn&#xA;cat blog.hellojukauy.cn #!/usr/bin/env bash env login_user=xxxx login_passwd=xxxx login_host=$(basename $0) auto_login.sh 上面调用了auto_login.sh这个脚本，所以auto_login这个脚本最好是应该放在当前用户的PATH中。&#xA;修改PATH 在.bashrc中添加append函数&#xA;append(){ PATH=$PATH:$1 } 使用apppend将auto_login.sh加入到PATH&#xA;append /Users/jukay/login/ 更新当前环境变量,更新以后登录就能自动补全了，登录blog.hellshell.cn&#xA;source .bashrc # 登录成功 blog.</description>
+    </item>
+    <item>
+      <title>使用文件记录命令行执行过程</title>
+      <link>http://localhost:1313/posts/2018/20180703/</link>
+      <pubDate>Tue, 03 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180703/</guid>
+      <description>今天学习了一个有意思的命令行程序，script这个命令，基本上linux上都会自带这个命令，它的使用方式也非常简单&#xA;script -a recordfile 这里-a表示以追加的形式记录，如果之前已经记录了一部分，是可以追加再次记录的，但是并不是说recordfile这个文件就一定要预先存在，它也是会临时创建文件的．执行script -a 开始记录命令行执行过程，输出exit退出记录，ctrl + D也可以退出．如果你要查看记录，直接使用cat命令查看文件即可．你也可以把文件传给别人．&#xA;hellojukay@deepin:~$ cat record Script started on 2018年07月03日 星期二 23时25分35秒 hellojukay@deepin:~$ ls 2018-07-01-14-26-10.088-VBoxSVC-4767.log Documents Pictures Steam word_list Data Downloads record Templates Desktop Music source.txt Videos hellojukay@deepin:~$ tail -f record ^C hellojukay@deepin:~$ #la hellojukay@deepin:~$ 怎么没有数据呢 bash: 怎么没有数据呢: 未找到命令 hellojukay@deepin:~$ exit exit Script done on 2018年07月03日 星期二 23时26分05秒 hellojukay@deepin:~$ </description>
+    </item>
+    <item>
+      <title>shell多进程编程</title>
+      <link>http://localhost:1313/posts/2018/20180701/</link>
+      <pubDate>Sun, 01 Jul 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180701/</guid>
+      <description>#!/usr/bin/env bash mysleep() { echo &amp;#34;sleep $1 seconds&amp;#34; sleep &amp;#34;$1&amp;#34; } main() { for ((i = 1; i &amp;lt; 10; i++)); do (mysleep $i) &amp;amp; done wait } time main 直接上了,这里要说明的是,把一行命令包起来表示用子shell来执行，而不是当前进程的shell,　＆　表示让当前进程到后台执行，不阻塞当前进程，这里的&amp;amp;非常关键，如果没有&amp;amp;就还是顺序执行，大家可以试一下，下面的wait命令也非常关键，表示等待当前进程的所有子进程返回，没有这里wait命令，main进程会提前退出，那么就有可能有命令没有执行完全．&#xA;hellojukay@deepin:~/Data/Code/Web/blog$ bash source/_posts/20180701/mysleep.sh sleep 1 seconds sleep 2 seconds sleep 3 seconds sleep 4 seconds sleep 5 seconds sleep 6 seconds sleep 7 seconds sleep 8 seconds sleep 9 seconds real 0m9.004s user 0m0.011s sys 0m0.006s 可以看到这里只使用了９秒钟，因为他是并行的．如果去掉 &amp;amp; ,那么有可能是45秒钟左右，如果去掉wait，可能就是不到一秒钟就结束了．</description>
+    </item>
+    <item>
+      <title>常用的Linux命令</title>
+      <link>http://localhost:1313/posts/2018/20180602/</link>
+      <pubDate>Sat, 02 Jun 2018 13:38:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180602/</guid>
+      <description>昨天面试，面试官问我都用了哪些linux命令，我一想，那可太多了。回来有我总结一下，这里列举一下自己经常使用的linux命令&#xA;ls,ll 查看当前目录，或者给定目录下的文件 cd 工作目录切换 pushd, popd 切换目录 pwd 查看当前用户所在工作空间 clear 清屏 echo 输出到终端 yes,true 返回成功 no 返回失败 tail 从尾部开始查看文件，可以实时查看 cat 查看整个文件 more 分页查看文件 head 从文件头部 vi， vim linux上最流行的编辑器 sed 实时编辑文本 awk 字符流处理 touch 创建文件 mkfs 分区格式化 tar ,zip, unzip 文件打包，压缩或者解压 dd 磁盘快拷贝 rm 删除文件 mv 移动文件或文件改名字 rename 文件改名字 cp 文件复制 df 查看磁盘使用情况 du 查看文件信息 top 查看当前进程列表 free 查看内存使用情况 ps 查看进程信息 grep 搜索文本 reboot 重启 shutdown 关闭计算机或者重启 date 查看当前日期 watch 重复执行命令 chmod 修改文件权限 chown 修改文件属主 chsl 修改用户默认shell lsof 查看Linux打开的文件信息 netstat 查看系统网络相关信息 ssh 登录服务相关 nc , netcat 连接远程服务器，有点hack telnet 连接远程服务器 ping 使用icpm协议看出网络情况 ifconfig 查看网络配置 ip 查看ip地址 nslookup dns查询 whois 域名信息查询 dig 域名信息查询 curl 发送http请求 wget http下载 rsync 文件同步 scp 文件传输 rz,sz 文件传输 gcc, g++ 编译c++或者c make 执行构建 xargs 将管道数据转换成命令行参数 kill 给进程发送信号 ptree 查看进程书状结构 strace 查看进程的系统调用情况 find 文件查找 sysctl 内核配置相关 systemd ， service 操作linux服务 nohup 进程托管 killall 关闭特定名字的进程 pidof 获取后面进程的进程号 exit 退出shell的session yum ,pacman, apt 包管理工具 bash,sh,source 执行shell脚本 env 设置当前命令的环境变量 set 查看环境变量 export 设置环境变量 sudo 以root全新执行命令 su 切换用户 file 查看文件内心 type 查看命令内心 man 查看命令手册 ln link相关操作 bc 计算器 sort 排序 md5 计算文件md5值 jobs 查看后台作业 useradd 添加用户 userdel 删除用户 users 查看已经登录的用户 w 查看负载信息 mount 挂载磁盘 uname ，lsb_release 查看系统信息 pip 安装node包 lsblk 查看磁盘分区信息 chpassword, password 修改密码 svn svn相关的操作 git git相关操作 </description>
+    </item>
+    <item>
+      <title>终端文件传输神器rz与sz</title>
+      <link>http://localhost:1313/posts/2018/20180524-1/</link>
+      <pubDate>Thu, 24 May 2018 15:10:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180524-1/</guid>
+      <description>简介 rz和sz是目前为止我看到过的最简单的终端文件命令，他不止操作简单，功能也非常简单：当前桌面系统与当前终端所在服务器传输文件。也就是说如果你通过ssh跳转了多个服务器，rz和sh也是能够正常工作的，这一点就绕过了堡垒机导致不方便传输文件的问题,手动运维的时候，这个功能简直不要太好用了。&#xA;安装 这里介绍一下源码安装的方法。目前最新版本的源码是lrzsz-0.12.20.tar.gz,使用wget下载源码然后编译安装：&#xA;# 下载源码 wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz # 解压源码 tar -xf lrzsz-0.12.20.tar.gz # 安装到/root/soft/fuck目录 cd lrzsz-0.12.20 ./configure --prefix=/root/soft/fuck make install 这样就安装好了，买一送一，还送了装了别的工具，可以探索一下。&#xA;[root@iz2zefvnzjphkalt990sg0z bin]# pwd /root/soft/fuck/bin [root@iz2zefvnzjphkalt990sg0z bin]# ll 总用量 1416 -rwxr-xr-x 3 root root 233624 5月 24 15:38 lrb -rwxr-xr-x 3 root root 233624 5月 24 15:38 lrx -rwxr-xr-x 3 root root 233624 5月 24 15:38 lrz -rwxr-xr-x 3 root root 244536 5月 24 15:38 lsb -rwxr-xr-x 3 root root 244536 5月 24 15:38 lsx -rwxr-xr-x 3 root root 244536 5月 24 15:38 lsz [root@iz2zefvnzjphkalt990sg0z bin]# 这里的命令都前置了 &amp;ldquo;l&amp;quot;这个字符，不知道是啥含义。总之：</description>
+    </item>
+    <item>
+      <title>linux中的/bin与/usr/bin</title>
+      <link>http://localhost:1313/posts/2018/20180521/</link>
+      <pubDate>Mon, 21 May 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180521/</guid>
+      <description>有一些开源项目在make构建的时候会调用一些shell脚本，我发现这些shell脚本的shebang有一些微妙之处：&#xA;/usr/bin/env bash /usr/bin/bash /bin/bash 第一种我就不讨论了，主要是后面两种，我老是傻傻的分不清，今天找了个时间，到服务器上一看,傻眼了。 阿里云机器的centos 7&#xA;[root@iz2zefvnzjphkalt990sg0z /]# uname -a Linux iz2zefvnzjphkalt990sg0z 3.10.0-693.2.2.el7.x86_64 #1 SMP Tue Sep 12 22:26:13 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux [root@iz2zefvnzjphkalt990sg0z /]# ll / 总用量 72 lrwxrwxrwx. 1 root root 7 10月 15 2017 bin -&amp;gt; usr/bin dr-xr-xr-x. 5 root root 4096 10月 15 2017 boot drwxr-xr-x 20 root root 3040 5月 14 18:09 dev drwxr-xr-x. 88 root root 12288 5月 21 12:46 etc drwxr-xr-x.</description>
+    </item>
+    <item>
+      <title>ssh相关的若干技巧</title>
+      <link>http://localhost:1313/posts/2018/20180514/</link>
+      <pubDate>Mon, 14 May 2018 17:05:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180514/</guid>
+      <description>写在前面的废话。&#xA;明天就是5月15日了，锤子科技的新手机即将发布，现在这个手机已经用了一年半了，老化严重，我已经迫不及待要想换手机了。&#xA;ssh的基本操作 ssh分为ssh客户端和服务端，服务端的程序通常名字叫做sshd,服务端的配置文件一般都是/etc/ssh/sshd_config，可以配置大概有一下内容:&#xA;是否允许明码登录 是否允许远程主机登录 绑定端口号 进程id所在文件(通常不改) 是否保持长连接 是否允许端口转发 公钥所在文件 修改之后一般执行systemctl restart sshd 或者service restart sshd(这两个命令有什么区别，请自行google)重启就能更新配置，重启过程中当前的会话不会断开(自行思考为什么不会断开)。一下是几种常规的用法:&#xA;deploy登录39.106.10.228，默认端口22&#xA;// root 登录同理 ssh deploy@39.106.10.228 deploy登录39.106.10.228,远程端口8099&#xA;ssh -p 8099 deploy@39.106.10.228 当前用户登录39.106.10.228&#xA;ssh 39.106.10.228 ssh免密码登录 ssh免密码登录需要生产一对私钥和公钥&#xA;ssh-keygen -t rsa 将公钥复制远程服务端的 .ssh/authorized_keys 文件中(默认是这个文件，上面讲了，这个也是可以配置的),记得配置这个文件的权限，chmod u+600,登录使用ssh -i 指定私钥文件路径，如下:&#xA;ssh -p 33339 -i licong_simulate.rsa licong@211.100.49.107 复制公钥的时候可以使使用ssh-copy-id这个命令来copy，避免了手动在远处服务器上修改或者创建文件的麻烦&#xA;ssh-copy-id -i hack.pub root@hacking #输入密码就完事了 ssh设置默认秘钥文件和端口 本地的~/.ssh目录下面创建config文件，文件内容格式如下&#xA;Host aliyun Hostname Port 22 Username hellojukay IdentityFile ~/.ssh/myaliyun 这里指定登录远程ssh的端口是22，也可以修改成别的端口。这里同时指定登录aliyun这台机器的默认秘钥文件为~/.ssh/myaliyun。&#xA;使用ssh来进行内网穿透 ssh功能非常非常强大，和frp一样，它也能用来做内网穿透。什么是内网穿透呢，打个比方，就是我本地局域网内的一台机器能访问互联网，能够主动socket连接阿里云上的一台机器，但是因为nat的原因，阿里云上的那台机器不能主动连接我本机的机器。让局域网内的机器暴露在公网上，这个的操作就是内网穿透。比如你需要远程操作你家里的空调，小米电视机，这些都需要内网穿透。ssh内网穿透的命令如下:&#xA;ssh -fNR 7000:localhost:4000 root@aliyun 这样就把本地的4000端口暴露在aliyun的7000端口上了，访问aliyun:7000的流量会被导入到内网机器的4000端口。</description>
+    </item>
+    <item>
+      <title>源码安装Python</title>
+      <link>http://localhost:1313/posts/2018/20180510-1/</link>
+      <pubDate>Thu, 10 May 2018 21:57:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180510-1/</guid>
+      <description>&amp;amp;bnsp; 今天同事向我抱怨，服务上的python版本太低了，他想把python版本升级到2.7.10，但是他没有root权限，使用yum更新python是需要root权限。求人不如求自己,所以自己动手，我告诉它用源码安装，它说源码安装以后会覆盖当前的默认python,我告诉它，可以单独源码安装python，不需要覆盖默认的Python，可以两个版本并存。这里记录一下安装的过程，这里我们以安装Python 3.4为例子。&#xA;下载Python-3.4.0a4.tar.xz 解压 tar -xvf Python-3.4.0a4.tar.xz 生成makefile文件,这里我们设置python安装到 /home/hellojukay/Data/Bin/python这个目录中 # 这不操作可能需要半分钟左右 ./configure --prefix=/home/hellojukay/Data/Bin/python/ 生成了Makefile文件，我们来编译python # 这里时间也会比较长，C、C++语言编译大型项目都比较慢,这个是个梗了 hellojukay@deepin:~/Data/Bin/Python-3.4.0a4$ make 安装编译好的python到之前设置的目录。 hellojukay@deepin:~/Data/Bin/Python-3.4.0a4$ make install 这里我们已经安装好了，可以到对应目录看一下。&#xA;hellojukay@deepin:~/Data/Bin/python$ ll 总用量 24 drwxr-sr-x 6 hellojukay hellojukay 4096 5月 10 22:17 . drwxr-sr-x 8 hellojukay hellojukay 4096 5月 10 22:11 .. drwxr-sr-x 2 hellojukay hellojukay 4096 5月 10 22:17 bin drwxr-sr-x 3 hellojukay hellojukay 4096 5月 10 22:17 include drwxr-sr-x 4 hellojukay hellojukay 4096 5月 10 22:17 lib drwxr-sr-x 3 hellojukay hellojukay 4096 5月 10 22:17 share hellojukay@deepin:~/Data/Bin/python$ 把bin目录加入到path中，我们就能正常使用了。</description>
+    </item>
+    <item>
+      <title>/proc/pid文件夹解析</title>
+      <link>http://localhost:1313/posts/2018/20180503/</link>
+      <pubDate>Thu, 03 May 2018 14:42:07 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180503/</guid>
+      <description>linux内核提供了用户访问内核数据的接口，就是/proc这个文件夹。这个文件夹中每一个数字组成的文件夹就是一个进程的信息，文件夹的数组是一个进程的pid，这篇文章是记录/pro/[pid]这个文件夹里面各个文件的调研结果，就是如何或程序在运行过程中的各项数据指标。/pro/[pid]这个文件夹里面一般有43个文件，每个文件或者文件夹都记录了不同的信息。&#xA;[root@baochai /proc/1449]# ll total 0 dr-xr-xr-x 2 root root 0 May 3 14:58 attr -rw-r--r-- 1 root root 0 May 3 14:58 autogroup -r-------- 1 root root 0 May 3 14:58 auxv -r--r--r-- 1 root root 0 May 3 14:58 cgroup --w------- 1 root root 0 May 3 14:58 clear_refs -r--r--r-- 1 root root 0 May 3 11:40 cmdline -rw-r--r-- 1 root root 0 May 3 14:58 comm #命令行程序的名字 -rw-r--r-- 1 root root 0 May 3 14:58 coredump_filter -r--r--r-- 1 root root 0 May 3 14:58 cpuset lrwxrwxrwx 1 root root 0 May 3 14:58 cwd -&amp;gt; /opt/gitlab/sv/gitaly # 当前进程的工作空间，可以理解为启动目录 -r-------- 1 root root 0 May 3 04:50 environ 这里文件里面存的是当前进程的环境变量 lrwxrwxrwx 1 root root 0 May 3 01:01 exe -&amp;gt; /opt/gitlab/embedded/bin/runsv # 当前进程可执行文件的绝对路径 dr-x------ 2 root root 0 May 3 04:51 fd dr-x------ 2 root root 0 May 3 14:58 fdinfo -r-------- 1 root root 0 May 3 14:58 io -rw------- 1 root root 0 May 3 14:58 limits -rw-r--r-- 1 root root 0 May 3 14:58 loginuid -r--r--r-- 1 root root 0 May 3 14:58 maps -rw------- 1 root root 0 May 3 14:58 mem -r--r--r-- 1 root root 0 May 3 14:58 mountinfo -r--r--r-- 1 root root 0 May 3 14:58 mounts # 当前进程能观察到的挂载信息 -r-------- 1 root root 0 May 3 14:58 mountstats dr-xr-xr-x 4 root root 0 May 3 14:58 net dr-x--x--x 2 root root 0 May 3 14:58 ns -r--r--r-- 1 root root 0 May 3 14:58 numa_maps -rw-r--r-- 1 root root 0 May 3 14:58 oom_adj -r--r--r-- 1 root root 0 May 3 14:58 oom_score -rw-r--r-- 1 root root 0 May 3 14:58 oom_score_adj -r--r--r-- 1 root root 0 May 3 14:58 pagemap -r--r--r-- 1 root root 0 May 3 14:58 personality lrwxrwxrwx 1 root root 0 May 3 14:58 root -&amp;gt; / -rw-r--r-- 1 root root 0 May 3 14:58 sched -r--r--r-- 1 root root 0 May 3 14:58 schedstat -r--r--r-- 1 root root 0 May 3 14:58 sessionid -r--r--r-- 1 root root 0 May 3 14:58 smaps -r--r--r-- 1 root root 0 May 3 14:58 stack -r--r--r-- 1 root root 0 May 3 11:20 stat -r--r--r-- 1 root root 0 May 3 10:44 statm -r--r--r-- 1 root root 0 May 3 11:20 status -r--r--r-- 1 root root 0 May 3 14:58 syscall dr-xr-xr-x 3 root root 0 May 3 14:58 task -r--r--r-- 1 root root 0 May 3 14:58 wchan [root@baochai /proc/1449]# /proc/[pid]/cmdline 一般情况下，这是一个只读的文件，只有当前该进程是僵尸进程的时候，你能够修改这个文件。读取这个文件返回的是当前进程的完成的命令行，如果当前进程是僵尸进程，那么读取这个文件会直接返回空字符串。</description>
+    </item>
+    <item>
+      <title>不为人知的echo黑魔法</title>
+      <link>http://localhost:1313/posts/2018/20180402/</link>
+      <pubDate>Mon, 02 Apr 2018 15:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180402/</guid>
+      <description>今天干了件大事：把测试环境的机器搞死机了。事情的发展顺序是这样的：有人向我反馈jenkins编译速度特别慢，我打开jenkins一看，好多任务都没有执行完，打开jenkins的过程是非常缓慢，想到早上仿真环境网络的问题，我下意识的认为是今天的网络太慢了。我登录baochai试一下，发现登录服务竟然需要10秒钟之久，ls回显也很慢。这个时候在钉钉上联系运维的同学，我说baochai的网络特别慢，运维的同学去机房找原因，半小时未果，突然钉钉里有测试的同学发了一条消息，说baochai的cpu占用非常高，这个时候运维的同学在群里发了一张截图，说是有条bash命令占用了83G的内存，服务器濒临司机。于是赶紧kill了这个进程。一切恢复平静。大家都在讨论那条命令是在干什么，他们当时没有看就Kill了。后来我想起来了，我上午在服务器上执行了一条echo命令，当时卡死了，ctrl+c也无法退出，于是我关闭了当前的iterm2会话窗口，没有当一回事，我没有想到我退出登录以后echo经常竟然没有自动退出，并且造成了这么大的影响。&#xA;echo [{&amp;#34;id&amp;#34;:188,&amp;#34;cat&amp;#34;:&amp;#34;java&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;websocket-thrift-service&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;websocket-thrift-service&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;1.8&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2018-02-02 09:52:23&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2018-03-30 18:03:39&amp;#34;},{&amp;#34;id&amp;#34;:117,&amp;#34;cat&amp;#34;:&amp;#34;go&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;日志系统agent&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;plat-log-agent&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2017-09-28 19:22:32&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2018-03-21 18:02:37&amp;#34;},{&amp;#34;id&amp;#34;:204,&amp;#34;cat&amp;#34;:&amp;#34;go&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;jaeger-agent&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;jaeger-agent&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2018-03-27 14:01:21&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2018-03-27 14:01:21&amp;#34;},{&amp;#34;id&amp;#34;:120,&amp;#34;cat&amp;#34;:&amp;#34;tomcat&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;deploy_tmcat_test&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;deploy_tomcat_test&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;1.7&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2017-09-29 16:16:16&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2017-09-29 20:19:18&amp;#34;},{&amp;#34;id&amp;#34;:102,&amp;#34;cat&amp;#34;:&amp;#34;java&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;transferhook-service&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;transferhook-service&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;1.7&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2017-09-28 19:22:31&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2018-02-08 09:58:36&amp;#34;},{&amp;#34;id&amp;#34;:183,&amp;#34;cat&amp;#34;:&amp;#34;go&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;plat-log-agent-new&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;plat-log-agent-new&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2018-01-30 19:08:50&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2018-01-30 19:56:20&amp;#34;},{&amp;#34;id&amp;#34;:66,&amp;#34;cat&amp;#34;:&amp;#34;java&amp;#34;,&amp;#34;user&amp;#34;:0,&amp;#34;name&amp;#34;:&amp;#34;carbooking_queue&amp;#34;,&amp;#34;code&amp;#34;:&amp;#34;carbooking_queue&amp;#34;,&amp;#34;jdk&amp;#34;:&amp;#34;1.7&amp;#34;,&amp;#34;create_time&amp;#34;:&amp;#34;2017-09-28 19:22:30&amp;#34;,&amp;#34;update_time&amp;#34;:&amp;#34;2017-09-29 09:35:52&amp;#34;}] 在我看来这是条在普通不过的echo命令了，我的本意是重定向这条json到underscore，格式化这条json。没想到会造成服务器司机。这里的原因是没有给字符串加上引号，造成了自动的排列组合。他的原理如下：&#xA;&amp;#39;-&amp;gt;$ echo [{1,2,3},{a,b,c}] [1,a] [2,a] [3,a] [1,b] [2,b] [3,b] [1,c] [2,c] [3,c] </description>
+    </item>
+    <item>
+      <title>archlinux开机自动挂载磁盘</title>
+      <link>http://localhost:1313/posts/2018/20180401/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180401/</guid>
+      <description>我的这台archlinux的主板上接了一个2TB的硬盘，每次开机启动他斗没有自动挂载上来，我总是在自己需要使用这硬盘的时候来手动挂载他，这样太不方便了，我想能不能在开机的时候自动来挂载这个块硬盘。解决这个问题的方法是有的，往/etc/fstab这个文件的后面加入的分区信息和挂载点&#xA;[hellojukay@archlinux ~]$ cat /etc/fstab # Static information about the filesystems. # See fstab(5) for details. # &amp;lt;file system&amp;gt; &amp;lt;dir&amp;gt; &amp;lt;type&amp;gt; &amp;lt;options&amp;gt; &amp;lt;dump&amp;gt; &amp;lt;pass&amp;gt; # /dev/sda3 UUID=e3a426e2-4713-4b33-ad6c-773bf144081c&#x9;/ ext4 rw,relatime,data=ordered&#x9;0 1 # /dev/sda1 UUID=1b43aa57-22fc-4af2-8a84-cd8f6e27e8f2&#x9;/boot ext4 rw,relatime,data=ordered&#x9;0 2 # /dev/sda5 UUID=2d6bde7f-b18c-44e1-8036-8ecdd93c13c1&#x9;/home ext4 rw,relatime,data=ordered&#x9;0 2 # /dev/sda2 UUID=6bbfba42-07ec-479a-b9fa-d3e89e94af9f&#x9;none swap defaults,pri=-2&#x9;0 0 这个需要知道的分区的UUID,使用blkid命令能看到分区的id，一下是我的挂载的情况&#xA;[hellojukay@archlinux ~]$ sudo lsblk NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT sda 8:0 0 111.</description>
+    </item>
+    <item>
+      <title>gitlab从卸载到放弃</title>
+      <link>http://localhost:1313/posts/2018/20180328/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180328/</guid>
+      <description>最近要调用gitlab-ci，正好测试环境的huanggai这机器上，安装了gitlab，但是使用起来总有一些问题，应该安装时候的问题吧。决定重装gitlab,首先，我关闭gitlab服务&#xA;gitlab-ctl stop 但是执行关了这个命令以后，还是有一些gitlab的进程存在&#xA;[deploy@huanggai /opt/gitlab/sv/unicorn]$ ps aux | grep gitlab root 3499 0.0 0.0 11420 1296 ? Ss 12:34 0:00 /bin/sh /opt/gitlab/embedded/bin/gitlab-logrotate-wrapper root 11996 0.0 0.0 35516 3136 ? Ss 13:10 0:00 /opt/gitlab/embedded/sbin/nginx -p /var/opt/gitlab/nginx git 12016 0.0 0.0 11428 1376 ? Ss 13:10 0:00 /bin/bash /opt/gitlab/embedded/bin/gitlab-unicorn-wrapper deploy 12054 0.0 0.0 103416 888 pts/1 S+ 13:10 0:00 grep gitlab root 84470 0.0 0.0 4176 460 ? Ss 11:34 0:02 runsvdir -P /opt/gitlab/service log: to lock directory: /var/log/gitlab/redis-exporter: temporary failure?</description>
+    </item>
+    <item>
+      <title>记一次服务部署失败</title>
+      <link>http://localhost:1313/posts/2018/20180316/</link>
+      <pubDate>Fri, 16 Mar 2018 21:28:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180316/</guid>
+      <description>最有golang服务部署一直失败，服务被启动起来以后，打印了两行启动日志，然后立马就自动退出了，没有panic日志，而且在老版本的部署系统上部署是没有这个问题的。而且吧部署系统的使用的命令行复制出来，直接在服务器上执行，进程也能正常启动，并且退出登录以后，程序也不会挂掉，所以我确认我的启动方式是没有问题的，之前那么多的golang服务启动也没有问题，后来下载代码下来看发现代码。这个golang服务监听了SIGHUP信号，收到这个号信号以后程序会调用os.Exit(1)自动退出，然后我用老版本的部署系统启动进程,手动给这个进程发送SIGHUP信号，果然程序自动退出了。于是我想起来了，通知相关的开发人员收到这个信号以后忽略掉。再次部署，一气呵成。事情还没有完，因为我想到了之前部署node服务的时候也发生了这样的问题，一直没有找到原因，不得已放弃nohup的形式，改用pm2来管理进程，所以我怀疑node是不是默认监听了SIGHUP型号，并且收到型号以后自动退出。于是我验证了下，手写了最简单的服务，手动启动，发送SIGHUP型号，果然程序退出了。那么手动忽略这个型号是不是就ok了呢&#xA;var http = require(&amp;#39;http&amp;#39;); var hostname = &amp;#39;127.0.0.1&amp;#39;; var port = 3000; var server = http.createServer(function(req, res) { res.statusCode = 200; res.setHeader(&amp;#39;Content-Type&amp;#39;, &amp;#39;text/html&amp;#39;); res.write(&amp;#39;&amp;lt;head&amp;gt;&amp;lt;meta charset=&amp;#34;utf-8&amp;#34;/&amp;gt;&amp;lt;/head&amp;gt;&amp;#39;); var htmlDiv = &amp;#39;&amp;lt;div style=&amp;#34;width: 200px;height: 200px;background-color: #f0f;&amp;#34;&amp;gt;div&amp;lt;/div&amp;gt;&amp;#39;; res.write(&amp;#39;&amp;lt;b&amp;gt;亲爱的，你慢慢飞，小心前面带刺的玫瑰...&amp;lt;/b&amp;gt;&amp;#39;); res.write(htmlDiv); res.end(&amp;#39;&amp;lt;h1&amp;gt;Hello world!&amp;lt;/h1&amp;gt;&amp;#39;); }); process.on(&amp;#39;SIGHUP&amp;#39;, (err) =&amp;gt; { console.info(err) }); server.listen(port, hostname, function() { console.log(&amp;#39;Server running at http://%s:%s&amp;#39;, hostname, port); }); jukay@localhost ~/C/W/blog(20.5)&amp;gt; lsof -i:3000 五 3/16 17:21:20 2018 COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME node 85016 jukay 13u IPv4 0xd088754a58137eaf 0t0 TCP localhost:hbci (LISTEN) jukay@localhost ~/C/W/blog(20.</description>
+    </item>
+    <item>
+      <title>记一次&#34;hack&#34;公司ssh</title>
+      <link>http://localhost:1313/posts/2018/20180310/</link>
+      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180310/</guid>
+      <description>今天总算解决了在家无法登录公司测试服务器的问题。因为不知道的什么原因，公司是不允许在外部网络登录测试服务，虽然有vpn，但是运维禁止了vpn登录ssh,要登录测试服务，必须要申请权限，而且每次登录最长只能保持15分钟，过期了有要再次登录。所以我想能不能自己想办法绕过这个坑，我试了下，到跳板机的连接是ping的同的，说明网络是没有问题。我要的做的只是监听一个端口，把这个端口的输入和输出都同步到跳板机的ssh端口就可以了，代码如下&#xA;https://github.com/hellojukay/ssh_proxy 登录到jenkins，部署，然后登录到部署系统，部署，本地连接完美登录成功。&#xA;jukay@MP ~/.ssh(18.9)&amp;gt; ssh -p 7013 -i licong_testing.rsa licong@huanggai 六 3/10 10:26:42 2018 key_load_public: invalid format Last login: Sat Mar 10 09:44:48 2018 from 192.168.1.197 [licong@xiangyun ~]$ 这行命令太长了，写在一个文件里面吧&#xA;jukay@MP ~/.ssh(18.9)&amp;gt; cat huanggai 六 3/10 10:28:07 2018 #!/bin/bash cd /Users/jukay/.ssh ssh -p 7013 -i licong_testing.rsa licong@huanggai jukay@MP ~/.ssh(18.9)&amp;gt; 每次登录都要~/.ssh目录下执行huanggai，太麻烦了，取一个全局额别名吧,我用的shell是fish，直接在fish的配置里面加上&#xA;alias huanggai=&amp;#34;sh /Users/jukay/.ssh/huanggai&amp;#34; 以后就可以在本地的任何目录执行huanggai，就能登录测试环境，以后要加班就不要去公司了。</description>
+    </item>
+    <item>
+      <title>nc命令</title>
+      <link>http://localhost:1313/posts/2018/20180214/</link>
+      <pubDate>Wed, 14 Feb 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180214/</guid>
+      <description>nc命令的全称是netcat，netcat是一款带有hack性质的网络工具，他的功能非常强力。在网络工具中有“瑞士军刀”美誉.&#xA;mac 安装netcat&#xA;brew install netcat ubunt安装netcat&#xA;apt install netcat cenots安装netcat&#xA;yum install netcat 基本参数&#xA;root@tiantian-MS-7A36:~# nc -h GNU netcat 0.7.1, a rewrite of the famous networking tool. Basic usages: connect to somewhere: nc [options] hostname port [port] ... listen for inbound: nc -l -p port [options] [hostname] [port] ... tunnel to somewhere: nc -L hostname:port -p port [options] Mandatory arguments to long options are mandatory for short options too. Options: -c, --close close connection on EOF from stdin -e, --exec=PROGRAM program to exec after connect -g, --gateway=LIST source-routing hop point[s], up to 8 -G, --pointer=NUM source-routing pointer: 4, 8, 12, .</description>
+    </item>
+    <item>
+      <title>watch命令</title>
+      <link>http://localhost:1313/posts/2018/20180208/</link>
+      <pubDate>Thu, 08 Feb 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180208/</guid>
+      <description>今年在查看端口情况使用到了watch命令,如果我要实时的查看当前系统的端口使用情况,这样写:&#xA;watch -n 1 &amp;#34;netstat -ant&amp;#34; 显示结果如下:&#xA;Every 1.0s: netstat -ant Thu Feb 8 22:25:55 2018 Active Internet connections (servers and established) Proto Recv-Q Send-Q Local Address Foreign Address State tcp 0&#x9;0 0.0.0.0:80 0.0.0.0:* LISTEN tcp 0&#x9;0 0.0.0.0:22 0.0.0.0:* LISTEN tcp 0&#x9;0 0.0.0.0:443 0.0.0.0:* LISTEN tcp 0&#x9;0 172.17.220.102:22 221.217.218.194:49390 ESTABLISHED tcp&#x9;391&#x9;0 172.17.220.102:51760 106.11.68.13:80 CLOSE_WAIT tcp&#x9;401&#x9;0 172.17.220.102:50192 140.205.140.205:80 CLOSE_WAIT tcp 0&#x9;0 172.17.220.102:56940 106.</description>
+    </item>
+    <item>
+      <title>linux磁盘挂载</title>
+      <link>http://localhost:1313/posts/2018/20180130/</link>
+      <pubDate>Tue, 30 Jan 2018 21:28:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180130/</guid>
+      <description>查看磁盘信息&#xA;fdisk -l oot@tiantian-MS-7A36:/# fdisk -l Disk /dev/sda: 111.8 GiB, 120034123776 bytes, 234441648 sectors Units: sectors of 1 * 512 = 512 bytes Sector size (logical/physical): 512 bytes / 512 bytes I/O size (minimum/optimal): 512 bytes / 512 bytes Disklabel type: dos Disk identifier: 0x8381099c Device Boot Start End Sectors Size Id Type /dev/sda1 * 2048 217761791 217759744 103.9G 83 Linux /dev/sda2 217763838 234440703 16676866 8G 5 Extended /dev/sda5 217763840 234440703 16676864 8G 82 Linux swap / Solaris Disk /dev/sdb: 931.</description>
+    </item>
+    <item>
+      <title>Linux用户相关操作</title>
+      <link>http://localhost:1313/posts/2017/20171205-1/</link>
+      <pubDate>Tue, 05 Dec 2017 15:07:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2017/20171205-1/</guid>
+      <description>添加新用户 useradd {username} 这样会创建{username}用户，并且会同步产生/home/{username}主目录文件夹&#xA;删除用户 userdel {username} 修改用户的密码 passwd {username} 这里会提示输出两次密码，输入密码以后，{username}用户的密码就被改变了</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在 https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal 上看到的代码
+class bcolors: HEADER = &#39;\033[95m&#39; OKBLUE = &#39;\033[94m&#39; OKCYAN = &#39;\033[96m&#39; OKGREEN = &#39;\033[92m&#39; WARNING = &#39;\033[93m&#39; FAIL = &#39;\033[91m&#39; ENDC = &#39;\033[0m&#39; BOLD = &#39;\033[1m&#39; UNDERLINE = &#39;\033[4m&#39; print(bcolors.WARNING &#43; &#34;Warning: No active frommets remain. Continue?&#34; &#43; bcolors.ENDC) python 3.6&#43; 如下： print(f&#34;{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}&#34;) 也有更加高级一点的，能够设置字体颜色
+class colors: &#39;&#39;&#39;Colors class: Reset all colors with colors.reset Two subclasses fg for foreground and bg for background. Use as colors.">  
+
+  <title>
+    
+      python 终端简单输出颜色
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-05-07 00:00:00 &#43;0000 UTC">
+            2021-05-07
+        </time>
+    </p>
+
+    <h1>python 终端简单输出颜色</h1>
+
+    
+
+    <p>在 <a href="https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal">https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal</a> 上看到的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">bcolors</span>:
+</span></span><span style="display:flex;"><span>    HEADER <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[95m&#39;</span>
+</span></span><span style="display:flex;"><span>    OKBLUE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[94m&#39;</span>
+</span></span><span style="display:flex;"><span>    OKCYAN <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[96m&#39;</span>
+</span></span><span style="display:flex;"><span>    OKGREEN <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[92m&#39;</span>
+</span></span><span style="display:flex;"><span>    WARNING <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[93m&#39;</span>
+</span></span><span style="display:flex;"><span>    FAIL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[91m&#39;</span>
+</span></span><span style="display:flex;"><span>    ENDC <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[0m&#39;</span>
+</span></span><span style="display:flex;"><span>    BOLD <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[1m&#39;</span>
+</span></span><span style="display:flex;"><span>    UNDERLINE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[4m&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(bcolors<span style="color:#f92672">.</span>WARNING <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;Warning: No active frommets remain. Continue?&#34;</span> <span style="color:#f92672">+</span> bcolors<span style="color:#f92672">.</span>ENDC)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>python 3.6+ 如下：
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(f&#34;{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}&#34;)
+</span></span></code></pre></div><p>也有更加高级一点的，能够设置字体颜色</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">colors</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;&#39;&#39;Colors class:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Reset all colors with colors.reset
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Two subclasses fg for foreground and bg for background.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Use as colors.subclass.colorname.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    i.e. colors.fg.red or colors.bg.green
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Also, the generic bold, disable, underline, reverse, strikethrough,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    and invisible work with the main class
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    i.e. colors.bold
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#39;&#39;&#39;</span>
+</span></span><span style="display:flex;"><span>    reset<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[0m&#39;</span>
+</span></span><span style="display:flex;"><span>    bold<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[01m&#39;</span>
+</span></span><span style="display:flex;"><span>    disable<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[02m&#39;</span>
+</span></span><span style="display:flex;"><span>    underline<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[04m&#39;</span>
+</span></span><span style="display:flex;"><span>    reverse<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[07m&#39;</span>
+</span></span><span style="display:flex;"><span>    strikethrough<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[09m&#39;</span>
+</span></span><span style="display:flex;"><span>    invisible<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[08m&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">fg</span>:
+</span></span><span style="display:flex;"><span>        black<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[30m&#39;</span>
+</span></span><span style="display:flex;"><span>        red<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[31m&#39;</span>
+</span></span><span style="display:flex;"><span>        green<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[32m&#39;</span>
+</span></span><span style="display:flex;"><span>        orange<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[33m&#39;</span>
+</span></span><span style="display:flex;"><span>        blue<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[34m&#39;</span>
+</span></span><span style="display:flex;"><span>        purple<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[35m&#39;</span>
+</span></span><span style="display:flex;"><span>        cyan<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[36m&#39;</span>
+</span></span><span style="display:flex;"><span>        lightgrey<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[37m&#39;</span>
+</span></span><span style="display:flex;"><span>        darkgrey<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[90m&#39;</span>
+</span></span><span style="display:flex;"><span>        lightred<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[91m&#39;</span>
+</span></span><span style="display:flex;"><span>        lightgreen<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[92m&#39;</span>
+</span></span><span style="display:flex;"><span>        yellow<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[93m&#39;</span>
+</span></span><span style="display:flex;"><span>        lightblue<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[94m&#39;</span>
+</span></span><span style="display:flex;"><span>        pink<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[95m&#39;</span>
+</span></span><span style="display:flex;"><span>        lightcyan<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[96m&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">bg</span>:
+</span></span><span style="display:flex;"><span>        black<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[40m&#39;</span>
+</span></span><span style="display:flex;"><span>        red<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[41m&#39;</span>
+</span></span><span style="display:flex;"><span>        green<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[42m&#39;</span>
+</span></span><span style="display:flex;"><span>        orange<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[43m&#39;</span>
+</span></span><span style="display:flex;"><span>        blue<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[44m&#39;</span>
+</span></span><span style="display:flex;"><span>        purple<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[45m&#39;</span>
+</span></span><span style="display:flex;"><span>        cyan<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[46m&#39;</span>
+</span></span><span style="display:flex;"><span>        lightgrey<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\033</span><span style="color:#e6db74">[47m&#39;</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="有个团队遇到了 maven 编译非常慢的问题，一个 maven 项目编译需要 20 多分钟。我看了一下编译过程，大部分的时间都在下载依赖，其中会向 repo.spring.org 发起访问，但是这台机器的外网十分不稳定，导致每次请求都会超时，然后等待一些时间，再次发起请求，这就导致编译时间非常慢了。解决这个问题的方法是给 maven 配置网络代理，让他走代理网络访问 repo.spring.org .配置如下：
+&lt;proxies&gt; &lt;proxy&gt; &lt;id&gt;example-proxy&lt;/id&gt; &lt;active&gt;true&lt;/active&gt; &lt;protocol&gt;http&lt;/protocol&gt; &lt;host&gt;proxy.example.com&lt;/host&gt; &lt;port&gt;8080&lt;/port&gt; &lt;username&gt;proxyuser&lt;/username&gt; &lt;password&gt;somepassword&lt;/password&gt; &lt;nonProxyHosts&gt;www.google.com|*.example.com&lt;/nonProxyHosts&gt; &lt;/proxy&gt; &lt;/proxies&gt; 注意，如果代理网络在公网，而私有 maven 服务器在内网，一定记得配置 nonPoroxyHosts.">  
+
+  <title>
+    
+      记一次解决 maven 安装慢的问题
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-11-27 00:00:00 &#43;0000 UTC">
+            2019-11-27
+        </time>
+    </p>
+
+    <h1>记一次解决 maven 安装慢的问题</h1>
+
+    
+
+    <p>有个团队遇到了 maven 编译非常慢的问题，一个 maven 项目编译需要 20 多分钟。我看了一下编译过程，大部分的时间都在下载依赖，其中会向 repo.spring.org 发起访问，但是这台机器的外网十分不稳定，导致每次请求都会超时，然后等待一些时间，再次发起请求，这就导致编译时间非常慢了。解决这个问题的方法是给 maven 配置网络代理，让他走代理网络访问 repo.spring.org .配置如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span>  <span style="color:#f92672">&lt;proxies&gt;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">&lt;proxy&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;id&gt;</span>example-proxy<span style="color:#f92672">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;active&gt;</span>true<span style="color:#f92672">&lt;/active&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;protocol&gt;</span>http<span style="color:#f92672">&lt;/protocol&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;host&gt;</span>proxy.example.com<span style="color:#f92672">&lt;/host&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;port&gt;</span>8080<span style="color:#f92672">&lt;/port&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;username&gt;</span>proxyuser<span style="color:#f92672">&lt;/username&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;password&gt;</span>somepassword<span style="color:#f92672">&lt;/password&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;nonProxyHosts&gt;</span>www.google.com|*.example.com<span style="color:#f92672">&lt;/nonProxyHosts&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/proxy&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;/proxies&gt;</span>
+</span></span></code></pre></div><p>注意，如果代理网络在公网，而私有 maven 服务器在内网，一定记得配置 nonPoroxyHosts.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

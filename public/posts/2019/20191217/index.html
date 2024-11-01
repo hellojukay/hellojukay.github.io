@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="将下列代码加入到 .bashrc
+SSH_ENV=$HOME/.ssh/environment function start_agent { echo &#34;Initialising new SSH agent...&#34; /usr/bin/ssh-agent | sed &#39;s/^echo/#echo/&#39; &gt; ${SSH_ENV} echo succeeded chmod 600 ${SSH_ENV} . ${SSH_ENV} &gt; /dev/null /usr/bin/ssh-add; } # Source SSH settings, if applicable if [ -f &#34;${SSH_ENV}&#34; ]; then . ${SSH_ENV} &gt; /dev/null #ps ${SSH_AGENT_PID} doesn&#39;t work under cywgin ps -efp ${SSH_AGENT_PID} | grep ssh-agent$ &gt; /dev/null || { start_agent; } else start_agent; fi 然后
+source .bashrc ">  
+
+  <title>
+    
+      shell 使用同一个 ssh-agent
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-12-17 00:00:00 &#43;0000 UTC">
+            2019-12-17
+        </time>
+    </p>
+
+    <h1>shell 使用同一个 ssh-agent</h1>
+
+    
+
+    <p>将下列代码加入到 .bashrc</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>SSH_ENV<span style="color:#f92672">=</span>$HOME/.ssh/environment
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> start_agent <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     echo <span style="color:#e6db74">&#34;Initialising new SSH agent...&#34;</span>
+</span></span><span style="display:flex;"><span>     /usr/bin/ssh-agent | sed <span style="color:#e6db74">&#39;s/^echo/#echo/&#39;</span> &gt; <span style="color:#e6db74">${</span>SSH_ENV<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>     echo succeeded
+</span></span><span style="display:flex;"><span>     chmod <span style="color:#ae81ff">600</span> <span style="color:#e6db74">${</span>SSH_ENV<span style="color:#e6db74">}</span>
+</span></span><span style="display:flex;"><span>     . <span style="color:#e6db74">${</span>SSH_ENV<span style="color:#e6db74">}</span> &gt; /dev/null
+</span></span><span style="display:flex;"><span>     /usr/bin/ssh-add;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Source SSH settings, if applicable</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -f <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>SSH_ENV<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>     . <span style="color:#e6db74">${</span>SSH_ENV<span style="color:#e6db74">}</span> &gt; /dev/null
+</span></span><span style="display:flex;"><span>     <span style="color:#75715e">#ps ${SSH_AGENT_PID} doesn&#39;t work under cywgin</span>
+</span></span><span style="display:flex;"><span>     ps -efp <span style="color:#e6db74">${</span>SSH_AGENT_PID<span style="color:#e6db74">}</span> | grep ssh-agent$ &gt; /dev/null <span style="color:#f92672">||</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>         start_agent;
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>     start_agent;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span></code></pre></div><p>然后</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>source .bashrc
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

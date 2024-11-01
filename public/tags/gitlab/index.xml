@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gitlab on 润物细无声</title>
+    <link>http://localhost:1313/tags/gitlab/</link>
+    <description>Recent content in Gitlab on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 06 Aug 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/gitlab/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>gitlab ci　跳过机器人提交</title>
+      <link>http://localhost:1313/posts/2020/20200806/</link>
+      <pubDate>Thu, 06 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200806/</guid>
+      <description>因为一些原因，比如 gitlab ci 机器人推送了一个提交，如果这次提交还触发构建，那么又会继续触发一次提交，无线循环下去．所以要跳过机器人的提交，jenkins 的做法是在 commit 信息中包含 [ci skip] 或者[skip ci], gitlab ci 也支持这种方法．还有一种是设置 git push 的参数:&#xA;git push --option=ci.skip # git version &amp;gt; 2.10 git push -o ci.skip # git version &amp;gt; 2.18 </description>
+    </item>
+    <item>
+      <title>gitlab ci从入门到放弃</title>
+      <link>http://localhost:1313/posts/2018/20180329/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180329/</guid>
+      <description>我们组要做持续集成，需要调研gitlab的ci。这里来写一下记录下这个学习的过程。gitlab需要像github上那些开源项目一样，展示自己的编译情况和测试情况，就是build status badge icon,需要在README.md文件中加入markdown连接&#xA;![build](http://baochai:7201/plat/hello/badges/master/build.svg) ![coverage](http://baochai:7201/plat/hello/badges/master/coverage.svg) 然后在项目的主页就能看到下面的图标了 这个还是没有生成测试覆盖的服务，看到测试覆盖率.再看一下一个基本的.gitlab-ci.yml文件样子&#xA;variables: project_name: hello bin_name: sayhello before_script: - export GOPATH=/deployment/GoProjects - export GOROOT=/deployment/ci/go; - export PATH=$PATH:$GOROOT/bin; - echo $GOPATH stages: - test - pre - build - deploy # 调整目录结构 setenv: stage: pre script: - ls -al - rm -rf ${GOPATH}/src/github.com/hellojukay/${project_name} - mkdir -p ${GOPATH}/src/github.com/hellojukay/${project_name} - cp -rf ./* ${GOPATH}/src/github.com/hellojukay/${project_name} # 执行测试用例 test: stage: test script: - cd ${GOPATH}/src/github.com/hellojukay/${project_name} - go test -v -cover -race .</description>
+    </item>
+    <item>
+      <title>gitlab从卸载到放弃</title>
+      <link>http://localhost:1313/posts/2018/20180328/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180328/</guid>
+      <description>最近要调用gitlab-ci，正好测试环境的huanggai这机器上，安装了gitlab，但是使用起来总有一些问题，应该安装时候的问题吧。决定重装gitlab,首先，我关闭gitlab服务&#xA;gitlab-ctl stop 但是执行关了这个命令以后，还是有一些gitlab的进程存在&#xA;[deploy@huanggai /opt/gitlab/sv/unicorn]$ ps aux | grep gitlab root 3499 0.0 0.0 11420 1296 ? Ss 12:34 0:00 /bin/sh /opt/gitlab/embedded/bin/gitlab-logrotate-wrapper root 11996 0.0 0.0 35516 3136 ? Ss 13:10 0:00 /opt/gitlab/embedded/sbin/nginx -p /var/opt/gitlab/nginx git 12016 0.0 0.0 11428 1376 ? Ss 13:10 0:00 /bin/bash /opt/gitlab/embedded/bin/gitlab-unicorn-wrapper deploy 12054 0.0 0.0 103416 888 pts/1 S+ 13:10 0:00 grep gitlab root 84470 0.0 0.0 4176 460 ? Ss 11:34 0:02 runsvdir -P /opt/gitlab/service log: to lock directory: /var/log/gitlab/redis-exporter: temporary failure?</description>
+    </item>
+  </channel>
+</rss>

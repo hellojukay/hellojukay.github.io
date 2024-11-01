@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kernel on 润物细无声</title>
+    <link>http://localhost:1313/tags/kernel/</link>
+    <description>Recent content in Kernel on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 03 May 2018 14:42:07 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/kernel/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>/proc/pid文件夹解析</title>
+      <link>http://localhost:1313/posts/2018/20180503/</link>
+      <pubDate>Thu, 03 May 2018 14:42:07 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180503/</guid>
+      <description>linux内核提供了用户访问内核数据的接口，就是/proc这个文件夹。这个文件夹中每一个数字组成的文件夹就是一个进程的信息，文件夹的数组是一个进程的pid，这篇文章是记录/pro/[pid]这个文件夹里面各个文件的调研结果，就是如何或程序在运行过程中的各项数据指标。/pro/[pid]这个文件夹里面一般有43个文件，每个文件或者文件夹都记录了不同的信息。&#xA;[root@baochai /proc/1449]# ll total 0 dr-xr-xr-x 2 root root 0 May 3 14:58 attr -rw-r--r-- 1 root root 0 May 3 14:58 autogroup -r-------- 1 root root 0 May 3 14:58 auxv -r--r--r-- 1 root root 0 May 3 14:58 cgroup --w------- 1 root root 0 May 3 14:58 clear_refs -r--r--r-- 1 root root 0 May 3 11:40 cmdline -rw-r--r-- 1 root root 0 May 3 14:58 comm #命令行程序的名字 -rw-r--r-- 1 root root 0 May 3 14:58 coredump_filter -r--r--r-- 1 root root 0 May 3 14:58 cpuset lrwxrwxrwx 1 root root 0 May 3 14:58 cwd -&amp;gt; /opt/gitlab/sv/gitaly # 当前进程的工作空间，可以理解为启动目录 -r-------- 1 root root 0 May 3 04:50 environ 这里文件里面存的是当前进程的环境变量 lrwxrwxrwx 1 root root 0 May 3 01:01 exe -&amp;gt; /opt/gitlab/embedded/bin/runsv # 当前进程可执行文件的绝对路径 dr-x------ 2 root root 0 May 3 04:51 fd dr-x------ 2 root root 0 May 3 14:58 fdinfo -r-------- 1 root root 0 May 3 14:58 io -rw------- 1 root root 0 May 3 14:58 limits -rw-r--r-- 1 root root 0 May 3 14:58 loginuid -r--r--r-- 1 root root 0 May 3 14:58 maps -rw------- 1 root root 0 May 3 14:58 mem -r--r--r-- 1 root root 0 May 3 14:58 mountinfo -r--r--r-- 1 root root 0 May 3 14:58 mounts # 当前进程能观察到的挂载信息 -r-------- 1 root root 0 May 3 14:58 mountstats dr-xr-xr-x 4 root root 0 May 3 14:58 net dr-x--x--x 2 root root 0 May 3 14:58 ns -r--r--r-- 1 root root 0 May 3 14:58 numa_maps -rw-r--r-- 1 root root 0 May 3 14:58 oom_adj -r--r--r-- 1 root root 0 May 3 14:58 oom_score -rw-r--r-- 1 root root 0 May 3 14:58 oom_score_adj -r--r--r-- 1 root root 0 May 3 14:58 pagemap -r--r--r-- 1 root root 0 May 3 14:58 personality lrwxrwxrwx 1 root root 0 May 3 14:58 root -&amp;gt; / -rw-r--r-- 1 root root 0 May 3 14:58 sched -r--r--r-- 1 root root 0 May 3 14:58 schedstat -r--r--r-- 1 root root 0 May 3 14:58 sessionid -r--r--r-- 1 root root 0 May 3 14:58 smaps -r--r--r-- 1 root root 0 May 3 14:58 stack -r--r--r-- 1 root root 0 May 3 11:20 stat -r--r--r-- 1 root root 0 May 3 10:44 statm -r--r--r-- 1 root root 0 May 3 11:20 status -r--r--r-- 1 root root 0 May 3 14:58 syscall dr-xr-xr-x 3 root root 0 May 3 14:58 task -r--r--r-- 1 root root 0 May 3 14:58 wchan [root@baochai /proc/1449]# /proc/[pid]/cmdline 一般情况下，这是一个只读的文件，只有当前该进程是僵尸进程的时候，你能够修改这个文件。读取这个文件返回的是当前进程的完成的命令行，如果当前进程是僵尸进程，那么读取这个文件会直接返回空字符串。</description>
+    </item>
+  </channel>
+</rss>

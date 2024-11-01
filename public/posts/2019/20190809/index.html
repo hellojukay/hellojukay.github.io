@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="解决方案： 从源码手动编译一个 32 位的动态链接库
+源码地址: https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz
+wget https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz tar -xf nss-mdns-0.14.1.tar.gz cd nss-mdns-0.14.1 # 编译出 32 位的动态链接库 ./configure &#34;CFLAGS=-m32&#34; &#34;CXXFLAGS=-m32&#34; &#34;LDFLAGS=-m32&#34; make cp .libs/libnss_mdns.so.2 /home/hellojukay/cxoffice/lib 顺道还把乱码的问题解决了
+wget https://github.com/fphoenix88888/ttf-mswin10-arch/raw/master/ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz tar -xf ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz cd ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz sudo mkdir -p /usr/share/fonts/WindowsFonts cp ./* /usr/share/fonts/WindowsFonts/ 参考链接:
+https://www.codeweavers.com/support/forums/general?t=26;msg=204194 ">  
+
+  <title>
+    
+      Manjaro 安装 CrossOver 找不到 lib32-nss-mdns
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-08-09 00:00:00 &#43;0000 UTC">
+            2019-08-09
+        </time>
+    </p>
+
+    <h1>Manjaro 安装 CrossOver 找不到 lib32-nss-mdns</h1>
+
+    
+
+    <p>解决方案： 从源码手动编译一个 32 位的动态链接库</p>
+<p>源码地址: <a href="https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz">https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>wget https://github.com/lathiat/nss-mdns/releases/download/v0.14.1/nss-mdns-0.14.1.tar.gz
+</span></span><span style="display:flex;"><span>tar -xf nss-mdns-0.14.1.tar.gz
+</span></span><span style="display:flex;"><span>cd nss-mdns-0.14.1
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 编译出 32 位的动态链接库</span>
+</span></span><span style="display:flex;"><span>./configure <span style="color:#e6db74">&#34;CFLAGS=-m32&#34;</span> <span style="color:#e6db74">&#34;CXXFLAGS=-m32&#34;</span> <span style="color:#e6db74">&#34;LDFLAGS=-m32&#34;</span>
+</span></span><span style="display:flex;"><span>make 
+</span></span><span style="display:flex;"><span>cp .libs/libnss_mdns.so.2 /home/hellojukay/cxoffice/lib
+</span></span></code></pre></div><p>顺道还把乱码的问题解决了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>wget https://github.com/fphoenix88888/ttf-mswin10-arch/raw/master/ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz
+</span></span><span style="display:flex;"><span>tar -xf ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz
+</span></span><span style="display:flex;"><span>cd ttf-ms-win10-zh_cn-10.0.18362.116-1-any.pkg.tar.xz
+</span></span><span style="display:flex;"><span>sudo mkdir -p /usr/share/fonts/WindowsFonts
+</span></span><span style="display:flex;"><span>cp ./*  /usr/share/fonts/WindowsFonts/
+</span></span></code></pre></div><p>参考链接:</p>
+<ul>
+<li><a href="https://www.codeweavers.com/support/forums/general?t=26;msg=204194">https://www.codeweavers.com/support/forums/general?t=26;msg=204194</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

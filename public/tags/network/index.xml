@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Network on 润物细无声</title>
+    <link>http://localhost:1313/tags/network/</link>
+    <description>Recent content in Network on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 14 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/network/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用 CoreDNS 搭建内部 DNS 解析服务器</title>
+      <link>http://localhost:1313/posts/2020/20201214/</link>
+      <pubDate>Mon, 14 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201214/</guid>
+      <description>下载二进制文件 ghget --proxy --url &amp;#34;https://github.com/coredns/coredns/releases/download/v1.8.0/coredns_1.8.0_linux_amd64.tgz&amp;#34; 配置 service 在 /usr/lib/systemd/system/coredns.service 配置好 service 文件&#xA;[Unit] Description=Coredns server Documentation=https://coredns.io/ After=network-online.target firewalld.service Wants=network-online.target [Service] Type=simple ExecStart=/bin/coredns -conf /opt/coredns/Corefile -dns.port=53 TimeoutSec=0 RestartSec=2 Restart=always [Install] WantedBy=multi-user.targe 配置好配置文件 配置文件 /opt/coredns/Corefile 内容如下&#xA;. { hosts { 192.168.0.100 www.aaa.com 192.168.0.101 www.bbb.com reload 10s ttl 50 fallthrough } forward . /etc/resolv.conf cache 120 reload 10s log errors } 配置好了以后就能启动服务了&#xA;systemctl start coredns 然后就能使用 dig 命令解析服务了&#xA;dig @127.0.0.1 www.aaa.com </description>
+    </item>
+  </channel>
+</rss>

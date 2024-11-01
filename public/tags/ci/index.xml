@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ci on 润物细无声</title>
+    <link>http://localhost:1313/tags/ci/</link>
+    <description>Recent content in Ci on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 28 Mar 2018 11:43:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/ci/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>gitlab ci从入门到放弃</title>
+      <link>http://localhost:1313/posts/2018/20180329/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180329/</guid>
+      <description>我们组要做持续集成，需要调研gitlab的ci。这里来写一下记录下这个学习的过程。gitlab需要像github上那些开源项目一样，展示自己的编译情况和测试情况，就是build status badge icon,需要在README.md文件中加入markdown连接&#xA;![build](http://baochai:7201/plat/hello/badges/master/build.svg) ![coverage](http://baochai:7201/plat/hello/badges/master/coverage.svg) 然后在项目的主页就能看到下面的图标了 这个还是没有生成测试覆盖的服务，看到测试覆盖率.再看一下一个基本的.gitlab-ci.yml文件样子&#xA;variables: project_name: hello bin_name: sayhello before_script: - export GOPATH=/deployment/GoProjects - export GOROOT=/deployment/ci/go; - export PATH=$PATH:$GOROOT/bin; - echo $GOPATH stages: - test - pre - build - deploy # 调整目录结构 setenv: stage: pre script: - ls -al - rm -rf ${GOPATH}/src/github.com/hellojukay/${project_name} - mkdir -p ${GOPATH}/src/github.com/hellojukay/${project_name} - cp -rf ./* ${GOPATH}/src/github.com/hellojukay/${project_name} # 执行测试用例 test: stage: test script: - cd ${GOPATH}/src/github.com/hellojukay/${project_name} - go test -v -cover -race .</description>
+    </item>
+  </channel>
+</rss>

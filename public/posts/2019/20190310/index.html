@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在我们团队，我们看到用python写代码的同学，他们的项目目录结构都非常乱，五花八门，每个同学都是随意的按照自己的喜好来创建文件夹，源码散落在这个文件夹中，很难看出代码的入口是在哪里。
+JAVA有标准的maven目录结构，golang也有建议的目录结构，那么我想python是不是也有一个比较好的目录结构组织方式呢。我看了下几个比较流行的python开源项目。
+flask requests thefuck compose tensorflow django 我也网上查了一下best practice https://stackoverflow.com/questions/193161/what-is-the-best-project-structure-for-a-python-application
+基本上可以归纳出一个比较大众的，符合开源社区习惯的目录结构:
+├── README.md ├── docs ├── project │ ├── __init__.py │ ├── __main__.py │ ├── moduleA │ │ ├── __init__.py │ │ └── packageA.py │ └── moduleB │ └── __init__.py ├── setup.py └── tests └── moduleA └── test_packageA.py 我们可以借鉴这种方式来安排目录结构.">  
+
+  <title>
+    
+      python项目目录结构建议
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-03-10 00:00:00 &#43;0000 UTC">
+            2019-03-10
+        </time>
+    </p>
+
+    <h1>python项目目录结构建议</h1>
+
+    
+
+    <p>在我们团队，我们看到用python写代码的同学，他们的项目目录结构都非常乱，五花八门，每个同学都是随意的按照自己的喜好来创建文件夹，源码散落在这个文件夹中，很难看出代码的入口是在哪里。</p>
+<p>JAVA有标准的maven目录结构，golang也有建议的目录结构，那么我想python是不是也有一个比较好的目录结构组织方式呢。我看了下几个比较流行的python开源项目。</p>
+<ul>
+<li><a href="https://github.com/pallets/flask">flask</a></li>
+<li><a href="https://github.com/kennethreitz/requests">requests</a></li>
+<li><a href="https://github.com/nvbn/thefuck">thefuck</a></li>
+<li><a href="https://github.com/docker/compose">compose</a></li>
+<li><a href="https://github.com/tensorflow/tensorflow">tensorflow</a></li>
+<li><a href="https://github.com/django/django">django</a></li>
+</ul>
+<p>我也网上查了一下<code>best practice</code> <a href="https://stackoverflow.com/questions/193161/what-is-the-best-project-structure-for-a-python-application">https://stackoverflow.com/questions/193161/what-is-the-best-project-structure-for-a-python-application</a></p>
+<p>基本上可以归纳出一个比较大众的，符合开源社区习惯的目录结构:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>├── README.md
+</span></span><span style="display:flex;"><span>├── docs
+</span></span><span style="display:flex;"><span>├── project
+</span></span><span style="display:flex;"><span>│   ├── __init__.py
+</span></span><span style="display:flex;"><span>│   ├── __main__.py
+</span></span><span style="display:flex;"><span>│   ├── moduleA
+</span></span><span style="display:flex;"><span>│   │   ├── __init__.py
+</span></span><span style="display:flex;"><span>│   │   └── packageA.py
+</span></span><span style="display:flex;"><span>│   └── moduleB
+</span></span><span style="display:flex;"><span>│       └── __init__.py
+</span></span><span style="display:flex;"><span>├── setup.py
+</span></span><span style="display:flex;"><span>└── tests
+</span></span><span style="display:flex;"><span>    └── moduleA
+</span></span><span style="display:flex;"><span>        └── test_packageA.py
+</span></span></code></pre></div><p>我们可以借鉴这种方式来安排目录结构.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

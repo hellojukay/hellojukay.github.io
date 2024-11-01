@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vscode on 润物细无声</title>
+    <link>http://localhost:1313/tags/vscode/</link>
+    <description>Recent content in Vscode on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 08 May 2018 20:42:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/vscode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>vscode插件系列（shellcheck）</title>
+      <link>http://localhost:1313/posts/2018/20180508/</link>
+      <pubDate>Tue, 08 May 2018 20:42:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180508/</guid>
+      <description>shellcheck简介 不知道什么时候开始，我已经从一个开发变成了一个半开发半运维的程序员了，在我的工作中，运维和开发同等的重要。编写shell脚本和编写golang,java代码也是同样的多。通常我使用vscode来编写shell脚本，除了java，我一切的代码编写工作都是使用vscode编辑器完成的。所以这里介绍一款shell语法检查的lint工具，shellcheck类似于jslint或者tslint这类的工具。如果你不希望你的shell脚本中不小心混入了sudo rm -rf / ,你就应该使用shellcheck, shellcheck的官网地址是:&#xA;https://www.shellcheck.net 打开官网以后,你可以在文本编辑窗口输入你的shell脚本，如果你代码有不恰当的地方，你会收到提示。&#xA;插件安装 在vscode的插件搜索框输入shell，你就能搜索到shellcheck了，它的图标大概是下面这个样子: shellcheck这个插件需要安装shellcheck这个命令行工具,我们可以在github上找到这个项目的仓库:&#xA;https://github.com/koalaman/shellchecks 下面是这个软件在各种操作系统下的安装方法:&#xA;max osx&#xA;brew install shellcheck FreeBSD&#xA;pkg install hs-ShellCheck openSUSE&#xA;zypper in ShellCheck Arch Linux&#xA;pacman -S shellcheck Debian&#xA;apt-get install shellcheck CentOS&#xA;yum -y install epel-release yum install ShellChecks 这里安装完了shellcheck以后，我们再为vscode安装shellcheck插件就能生效了，如果是安装shellcheck检查，插件是不生效的。这里提一句，shellcheck命令是可以单独使用的，具体使用方式如下:&#xA;正在处理用于 man-db (2.7.6.1-2) 的触发器 ... hellojukay@deepin:~/Data/Code/Web/blog$ shellcheck No files specified. Usage: shellcheck [OPTIONS...] FILES... -e CODE1,CODE2.. --exclude=CODE1,CODE2.. exclude types of warnings -f FORMAT --format=FORMAT output format -C[WHEN] --color[=WHEN] Use color (auto, always, never) -s SHELLNAME --shell=SHELLNAME Specify dialect (sh,bash,dash,ksh) -x --external-sources Allow &amp;#39;source&amp;#39; outside of FILES.</description>
+    </item>
+  </channel>
+</rss>

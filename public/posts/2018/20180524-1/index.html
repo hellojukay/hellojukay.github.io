@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="简介 rz和sz是目前为止我看到过的最简单的终端文件命令，他不止操作简单，功能也非常简单：当前桌面系统与当前终端所在服务器传输文件。也就是说如果你通过ssh跳转了多个服务器，rz和sh也是能够正常工作的，这一点就绕过了堡垒机导致不方便传输文件的问题,手动运维的时候，这个功能简直不要太好用了。
+安装 这里介绍一下源码安装的方法。目前最新版本的源码是lrzsz-0.12.20.tar.gz,使用wget下载源码然后编译安装：
+# 下载源码 wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz # 解压源码 tar -xf lrzsz-0.12.20.tar.gz # 安装到/root/soft/fuck目录 cd lrzsz-0.12.20 ./configure --prefix=/root/soft/fuck make install 这样就安装好了，买一送一，还送了装了别的工具，可以探索一下。
+[root@iz2zefvnzjphkalt990sg0z bin]# pwd /root/soft/fuck/bin [root@iz2zefvnzjphkalt990sg0z bin]# ll 总用量 1416 -rwxr-xr-x 3 root root 233624 5月 24 15:38 lrb -rwxr-xr-x 3 root root 233624 5月 24 15:38 lrx -rwxr-xr-x 3 root root 233624 5月 24 15:38 lrz -rwxr-xr-x 3 root root 244536 5月 24 15:38 lsb -rwxr-xr-x 3 root root 244536 5月 24 15:38 lsx -rwxr-xr-x 3 root root 244536 5月 24 15:38 lsz [root@iz2zefvnzjphkalt990sg0z bin]# 这里的命令都前置了 &ldquo;l&quot;这个字符，不知道是啥含义。总之：">  
+
+  <title>
+    
+      终端文件传输神器rz与sz
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-24 15:10:00 &#43;0000 UTC">
+            2018-05-24
+        </time>
+    </p>
+
+    <h1>终端文件传输神器rz与sz</h1>
+
+    
+
+    <h3 id="简介">简介</h3>
+<p>rz和sz是目前为止我看到过的最简单的终端文件命令，他不止操作简单，功能也非常简单：当前桌面系统与当前终端所在服务器传输文件。也就是说如果你通过ssh跳转了多个服务器，rz和sh也是能够正常工作的，这一点就绕过了堡垒机导致不方便传输文件的问题,手动运维的时候，这个功能简直不要太好用了。</p>
+<h3 id="安装">安装</h3>
+<p>这里介绍一下源码安装的方法。目前最新版本的源码是<a href="https://www.ohse.de/uwe/software/lrzsz.html">lrzsz-0.12.20.tar.gz</a>,使用wget下载源码然后编译安装：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 下载源码</span>
+</span></span><span style="display:flex;"><span>wget http://www.ohse.de/uwe/releases/lrzsz-0.12.20.tar.gz
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 解压源码 </span>
+</span></span><span style="display:flex;"><span>tar -xf lrzsz-0.12.20.tar.gz
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 安装到/root/soft/fuck目录</span>
+</span></span><span style="display:flex;"><span>cd lrzsz-0.12.20
+</span></span><span style="display:flex;"><span>./configure --prefix<span style="color:#f92672">=</span>/root/soft/fuck
+</span></span><span style="display:flex;"><span>make install
+</span></span></code></pre></div><p>这样就安装好了，买一送一，还送了装了别的工具，可以探索一下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@iz2zefvnzjphkalt990sg0z bin<span style="color:#f92672">]</span><span style="color:#75715e"># pwd</span>
+</span></span><span style="display:flex;"><span>/root/soft/fuck/bin
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@iz2zefvnzjphkalt990sg0z bin<span style="color:#f92672">]</span><span style="color:#75715e"># ll</span>
+</span></span><span style="display:flex;"><span>总用量 <span style="color:#ae81ff">1416</span>
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">233624</span> 5月  <span style="color:#ae81ff">24</span> 15:38 lrb
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">233624</span> 5月  <span style="color:#ae81ff">24</span> 15:38 lrx
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">233624</span> 5月  <span style="color:#ae81ff">24</span> 15:38 lrz
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">244536</span> 5月  <span style="color:#ae81ff">24</span> 15:38 lsb
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">244536</span> 5月  <span style="color:#ae81ff">24</span> 15:38 lsx
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">3</span> root root <span style="color:#ae81ff">244536</span> 5月  <span style="color:#ae81ff">24</span> 15:38 lsz
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>root@iz2zefvnzjphkalt990sg0z bin<span style="color:#f92672">]</span><span style="color:#75715e">#</span>
+</span></span></code></pre></div><p>这里的命令都前置了 &ldquo;l&quot;这个字符，不知道是啥含义。总之：</p>
+<ul>
+<li>lrz 就是 rz , r 可以理解为receive，接受文件，从桌面系统往服务器发送</li>
+<li>lsz 就是 sz , s 可以理解为send, 发送文件，把吧服务器上的文件发送到桌面系统，通常我用这个来下载日志</li>
+</ul>
+<h3 id="使用">使用</h3>
+<p>使用起来简单到爆炸，比如我要下载服务器上的文件到本地，直接在服务器上输入命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sz <span style="color:#f92672">{</span>file<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>会激活一个窗口，你选择一个目录，然后文件就会被保存在这个路径下面。如果我要上传一个文件，直接在服务器上服务输入命令:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rz
+</span></span></code></pre></div><p>会激活一个窗口，选择你要上传的文件，选中确认，文件就会被上到服务的，保存文件的路径是当前命令行的工作路径。</p>
+<h3 id="高级">高级</h3>
+<p>基本上面的命令其实已经够用，如果你想了解更多，比如设置超时时间，修改文件名字，不妨:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rz -h
+</span></span><span style="display:flex;"><span>sz -h
+</span></span></code></pre></div><p>就酱!!!</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

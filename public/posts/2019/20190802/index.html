@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="原文地址: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+这篇文章将会教你在创建 pod 的时候如何正确从私有仓库获取镜像。
+开始之前 你需要有一个 K8S 集群，并且安装配置好了 kubectl ，命令行能够访问你的集群。如果你还没有安装好 K8S ，那么请使用 minikube 安装， 或者使用我们为你准备好的集群
+https://www.katacoda.com/courses/kubernetes/playground https://labs.play-with-k8s.com/ 检查版本信息 kubectl version, 在执行这个训练之前，你还需要有一个能登录 docker 私有仓库的账号。
+登录 docker 仓库 在你的本地机器，你必须先登录 docker 仓库，才能获得 pull 私有仓库镜像的权限。
+docker login {host} 会提示输入账号密码, 登录成功以后会更新 $HOME/.docker/config.json 配置文件。使用 cat 查看文件内容: cat ~/.docker/config.json 会输入类似如下的内容
+{ &#34;auths&#34;: { &#34;https://index.docker.io/v1/&#34;: { &#34;auth&#34;: &#34;c3R...zE2&#34; } } } 该文件中保存了登录的 token 信息。
+基于已经存在的 token 认证文件创建 K8S secret K8S 在 pull 镜像的时候会使用 docker 的登录认证信息来认证私有仓库的权限。如果你已经执行过 docker login ，并且登录成功，那么你可以将 token 信息复制到 K8S 集群中:">  
+
+  <title>
+    
+      【翻译】k8s 从私有仓库获取镜像
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-08-02 00:00:00 &#43;0000 UTC">
+            2019-08-02
+        </time>
+    </p>
+
+    <h1>【翻译】k8s 从私有仓库获取镜像</h1>
+
+    
+
+    <p>原文地址: <a href="https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/">https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/</a></p>
+<p>这篇文章将会教你在创建 pod 的时候如何正确从私有仓库获取镜像。</p>
+<h2 id="开始之前">开始之前</h2>
+<p>你需要有一个 K8S 集群，并且安装配置好了 kubectl ，命令行能够访问你的集群。如果你还没有安装好 K8S ，那么请使用 minikube 安装， 或者使用我们为你准备好的集群</p>
+<ul>
+<li><a href="https://www.katacoda.com/courses/kubernetes/playground">https://www.katacoda.com/courses/kubernetes/playground</a></li>
+<li><a href="https://labs.play-with-k8s.com/">https://labs.play-with-k8s.com/</a></li>
+</ul>
+<p>检查版本信息 <code>kubectl version</code>, 在执行这个训练之前，你还需要有一个能登录 docker 私有仓库的账号。</p>
+<h2 id="登录-docker-仓库">登录 docker 仓库</h2>
+<p>在你的本地机器，你必须先登录 docker 仓库，才能获得 pull 私有仓库镜像的权限。</p>
+<p><code>docker login {host}</code> 会提示输入账号密码, 登录成功以后会更新 <code>$HOME/.docker/config.json</code> 配置文件。使用 <code>cat</code> 查看文件内容:
+<code>cat  ~/.docker/config.json</code>
+会输入类似如下的内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    &#34;auths&#34;: {
+</span></span><span style="display:flex;"><span>        &#34;https://index.docker.io/v1/&#34;: {
+</span></span><span style="display:flex;"><span>            &#34;auth&#34;: &#34;c3R...zE2&#34;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>该文件中保存了登录的 token 信息。</p>
+<h2 id="基于已经存在的-token-认证文件创建-k8s-secret">基于已经存在的 token 认证文件创建 K8S secret</h2>
+<p>K8S 在 pull 镜像的时候会使用 docker 的登录认证信息来认证私有仓库的权限。如果你已经执行过 <code>docker login</code> ，并且登录成功，那么你可以将 token 信息复制到 K8S 集群中:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl create secret generic &lt;secret-name&gt; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --from-file<span style="color:#f92672">=</span>.dockerconfigjson<span style="color:#f92672">=</span>&lt;path/to/.docker/config.json&gt; <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --type<span style="color:#f92672">=</span>kubernetes.io/dockerconfigjson
+</span></span></code></pre></div><p>如果你想在创建 secret 的时候设置 namespace 或者 label , 那么你可以遵循一下步骤:</p>
+<ul>
+<li>设置数据项目的名称 .dockerconfigjson</li>
+<li>将配置文件的信息 base64 编码，并且复制粘贴在 data[.dockerconfigjson]中</li>
+<li>设置 secret 类型为 kubernetes.io/.dockerconfigjson</li>
+</ul>
+<p>例如:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Secret
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: myregistrykey
+</span></span><span style="display:flex;"><span>  namespace: awesomeapps
+</span></span><span style="display:flex;"><span>data:
+</span></span><span style="display:flex;"><span>  .dockerconfigjson: UmVhbGx5IHJlYWxseSByZWVlZWVlZWVlZWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGx5eXl5eXl5eXl5eXl5eXl5eXl5eSBsbGxsbGxsbGxsbGxsbG9vb29vb29vb29vb29vb29vb29vb29vb29vb25ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubmdnZ2dnZ2dnZ2dnZ2dnZ2dnZ2cgYXV0aCBrZXlzCg==
+</span></span><span style="display:flex;"><span>type: kubernetes.io/dockerconfigjson
+</span></span></code></pre></div><p>如果你看到了<code>error: no objects passed to create</code>错误，那么可能是 base64 编码的字符串不合法,如果你看到了 <code>Secret &quot;myregistrykey&quot; is invalid: data[.dockerconfigjson]: invalid value ...</code>,那么说明你的字符串 base64 编码没有问题，但是它不是一个合法的 <code>.docker/config.json</code> 文件。</p>
+<h2 id="使用账号密码创建-k8s-secret">使用账号密码创建 K8S secret</h2>
+<p>创建一个名字叫做<code>regcred</code>的 secret</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl create secret docker-registry regcred --docker-server<span style="color:#f92672">=</span>&lt;your-registry-server&gt; --docker-username<span style="color:#f92672">=</span>&lt;your-name&gt; --docker-password<span style="color:#f92672">=</span>&lt;your-pword&gt; --docker-email<span style="color:#f92672">=</span>&lt;your-email&gt;
+</span></span></code></pre></div><p>说明:</p>
+<ul>
+<li><code>&lt;your-registry-server&gt;</code> 　私有镜像仓库的域名和端口</li>
+<li><code>&lt;your-name&gt;</code>　　　　　　　　私有镜像仓库的登录用户用户名</li>
+<li><code>&lt;your-pword&gt;</code> 　　　　　　　私有登录仓库的登录密码</li>
+<li><code>&lt;your-email&gt;</code> 　　　　　　　你的仓库对应邮箱</li>
+</ul>
+<p>现在你已经成功的使用的你的账号密码在 K8S 中创建了一个叫做 <code>regcred</code> 的 secret</p>
+<blockquote>
+<p>在命令行创建 secret 的时候，你的账号和密码不会被隐藏，这意味这其他使用这台电脑的人通过 history  命令也能看到你的密码。</p>
+</blockquote>
+<h2 id="查看-k8s-secret-内容">查看 K8S secret 内容</h2>
+<p>查看刚刚创建的 secret , 通过如下命令将他格式化为 yml 格式:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get secret regcred --output<span style="color:#f92672">=</span>yaml
+</span></span></code></pre></div><p>输出内容类似如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Secret
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  ...
+</span></span><span style="display:flex;"><span>  name: regcred
+</span></span><span style="display:flex;"><span>  ...
+</span></span><span style="display:flex;"><span>data:
+</span></span><span style="display:flex;"><span>  .dockerconfigjson: eyJodHRwczovL2luZGV4L ... J0QUl6RTIifX0=
+</span></span><span style="display:flex;"><span>type: kubernetes.io/dockerconfigjson
+</span></span></code></pre></div><p><code>.dockerconfigjson</code> 的值是　｀~/.docker/config.json｀文件内容 base64 编码以后的结果。</p>
+<p>将它 base64 解码看一下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl get secret regcred --output<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;jsonpath={.data.\.dockerconfigjson}&#34;</span> | base64 --decode
+</span></span></code></pre></div><p>输出结果类似如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>{&#34;auths&#34;:{&#34;your.private.registry.example.com&#34;:{&#34;username&#34;:&#34;janedoe&#34;,&#34;password&#34;:&#34;xxxxxxxxxxx&#34;,&#34;email&#34;:&#34;jdoe@example.com&#34;,&#34;auth&#34;:&#34;c3R...zE2&#34;}}}
+</span></span></code></pre></div><p>为了理解 <code>auth</code> 字段的信息，将它 base64 解码:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;c3R...zE2&#34;</span> | base64 --decode
+</span></span></code></pre></div><p>输出是一个 <code>:</code> 分割的两个字符串，类似如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>janedoe:xxxxxxxxxxx
+</span></span></code></pre></div><p>这其实就是账号密码的的 base64 编码格式。</p>
+<h2 id="使用-secret-创建一个-pod">使用 secret 创建一个 pod</h2>
+<p>这里使用刚刚创建的 scret 来创建 pod 的配置文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Pod
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: private-reg
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  containers:
+</span></span><span style="display:flex;"><span>  - name: private-reg-container
+</span></span><span style="display:flex;"><span>    image: &lt;your-private-image&gt;
+</span></span><span style="display:flex;"><span>  imagePullSecrets:
+</span></span><span style="display:flex;"><span>  - name: regcred
+</span></span></code></pre></div><p>下载这个文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>wget -O my-private-reg-pod.yaml https://k8s.io/examples/pods/private-reg-pod.yaml
+</span></span></code></pre></div><p>里面的镜像仓库地址替换成我们的私有仓库的地址，执行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubectl apply -f my-private-reg-pod.yaml
+</span></span><span style="display:flex;"><span>kubectl get pod private-reg
+</span></span></code></pre></div><p>能看到已经成功获取到了镜像，并且成功创建了 pod 。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

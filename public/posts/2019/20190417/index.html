@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content=" k8s 中命令都是子命令的默认， 并且命令行选项特别多，不方便记忆，所以需要安装自动补全 echo &#34;source &lt;(kubectl completion bash)&#34; &gt;&gt; $HOME/.bashrc k8s 镜像安装的时候, 默认是用 k8s.gcr.io 下载镜像, 也可以配置你自己的镜像仓库 kubeadm init --image-repository ">  
+
+  <title>
+    
+      k8s 的一些小技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-04-17 00:00:00 &#43;0000 UTC">
+            2019-04-17
+        </time>
+    </p>
+
+    <h1>k8s 的一些小技巧</h1>
+
+    
+
+    <ol>
+<li>k8s 中命令都是子命令的默认， 并且命令行选项特别多，不方便记忆，所以需要安装自动补全</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;source &lt;(kubectl completion bash)&#34;</span> &gt;&gt; $HOME/.bashrc
+</span></span></code></pre></div><ol start="2">
+<li>k8s 镜像安装的时候, 默认是用 k8s.gcr.io 下载镜像, 也可以配置你自己的镜像仓库</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm init --image-repository
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

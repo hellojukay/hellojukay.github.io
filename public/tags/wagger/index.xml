@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Wagger on 润物细无声</title>
+    <link>http://localhost:1313/tags/wagger/</link>
+    <description>Recent content in Wagger on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 06 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/wagger/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>maven 生成 swagger.json</title>
+      <link>http://localhost:1313/posts/2020/20201206/</link>
+      <pubDate>Sun, 06 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201206/</guid>
+      <description>参考 demo : https://github.com/leanix/swagger-demo.git&#xA;执行编译命令，生成 wagger.json&#xA;mvn compile 执行上面命令后会在 target/classes/api-docs/ 目录生成 swagger.json 文件.</description>
+    </item>
+  </channel>
+</rss>

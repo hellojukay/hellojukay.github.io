@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="新安装的高可用 k8s 集群，有一个节点加入到集群以后，网络通讯一直不正常
+weave-net-bncrx 1/2 CrashLoopBackOff 8 11m 这个 pod 有2个容器，有一个容器无法启动，通过 kubect logs 查看日志
+[root@master01v runner]# kubectl logs weave-net-bncrx -c weave -n kube-system Network 192.168.0.0/16 overlaps with existing route 192.168.0.0/20 on host 服务器上已经存在了到 192.168 的路由信息，路由冲突了，到服务器上看一眼,docker0 网卡的 ip 子网似乎不正常
+[root@kuberntes05v licong]# ip a 1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN qlen 1000 link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00 inet 127.0.0.1/8 scope host lo valid_lft forever preferred_lft forever 2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000 link/ether fa:16:3e:8a:11:85 brd ff:ff:ff:ff:ff:ff .">  
+
+  <title>
+    
+      weave 插件 CrashLoopBackOff
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-07-02 00:00:00 &#43;0000 UTC">
+            2020-07-02
+        </time>
+    </p>
+
+    <h1>weave 插件 CrashLoopBackOff</h1>
+
+    
+
+    <p>新安装的高可用 k8s 集群，有一个节点加入到集群以后，网络通讯一直不正常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>weave-net-bncrx                                              1/2     CrashLoopBackOff   <span style="color:#ae81ff">8</span>          11m
+</span></span></code></pre></div><p>这个 pod 有2个容器，有一个容器无法启动，通过 kubect logs 查看日志</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@master01v runner<span style="color:#f92672">]</span><span style="color:#75715e"># kubectl logs weave-net-bncrx -c weave -n kube-system</span>
+</span></span><span style="display:flex;"><span>Network 192.168.0.0/16 overlaps with existing route 192.168.0.0/20 on host
+</span></span></code></pre></div><p>服务器上已经存在了到 192.168 的路由信息，路由冲突了，到服务器上看一眼,docker0 网卡的 ip 子网似乎不正常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>root@kuberntes05v licong<span style="color:#f92672">]</span><span style="color:#75715e"># ip a</span>
+</span></span><span style="display:flex;"><span>1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">65536</span> qdisc noqueue state UNKNOWN qlen <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</span></span><span style="display:flex;"><span>    inet 127.0.0.1/8 scope host lo
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">1500</span> qdisc pfifo_fast state UP qlen <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>    link/ether fa:16:3e:8a:11:85 brd ff:ff:ff:ff:ff:ff
+</span></span><span style="display:flex;"><span>            ... 删除内容 ...
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>3: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu <span style="color:#ae81ff">1500</span> qdisc noqueue state DOWN
+</span></span><span style="display:flex;"><span>    link/ether 02:42:20:e0:4f:6e brd ff:ff:ff:ff:ff:ff
+</span></span><span style="display:flex;"><span>    inet 192.168.0.1/20 brd 192.168.15.255 scope global docker0
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span></code></pre></div><p>于是我修改一下 docker0 的子网设置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl stop docker
+</span></span><span style="display:flex;"><span>ip link del docker0
+</span></span></code></pre></div><p>重新在 /etc/docker/daemon.json 中指定一些网络范围:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
+</span></span><span style="display:flex;"><span>  &#34;log-driver&#34;: &#34;json-file&#34;,
+</span></span><span style="display:flex;"><span>  &#34;log-opts&#34;: {
+</span></span><span style="display:flex;"><span>    &#34;max-size&#34;: &#34;100m&#34;
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  &#34;storage-driver&#34;: &#34;overlay2&#34;,
+</span></span><span style="display:flex;"><span>  &#34;bip&#34;: &#34;172.26.0.1/16&#34;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>重启 docker</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl start 
+</span></span></code></pre></div><p>然后重新加入节点，一切恢复正常。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

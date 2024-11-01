@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Perl on 润物细无声</title>
+    <link>http://localhost:1313/tags/perl/</link>
+    <description>Recent content in Perl on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/perl/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>perl one-liners 技巧</title>
+      <link>http://localhost:1313/posts/2020/20200624/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200624/</guid>
+      <description>本文持续更新。&#xA;perl 支持和 awk , sed 类似的单行命令。perl 的命令行数: -n 循环每一行 -e 指定单行命令 -p 循环每一行，并且输出符合条件的行（帮你多写个 print) -l 没一行默认自动添加换行符 -i 直接修改源文件，类似于 sed -i -F 对于每行设置分割符号，类似于 awk -F&#xA;了解了以上信息以后就能写一些简单的单行程序了。&#xA;获取 /bin/ 目录下的所有文件名字&#xA;find /bin/ | perl -ne &amp;#39;if (/\/bin\/(.*)/) {print &amp;#34;$1\n&amp;#34;}&amp;#39; 等价 awk 实现如下:&#xA;find /bin/ | awk -F &amp;#39;/&amp;#39; &amp;#39;{print $3}&amp;#39; 2020年07月08日更新 打印文本的指定行&#xA;# 打印文本的第十行 perl -ne &amp;#39;print if($. == 10)&amp;#39; file.txt 2020年07月30日更新 输出第一列&#xA;perl -alne &amp;#39;print $F[0]&amp;#39; 等价 awk&#xA;awk &amp;#39;{print $1}&amp;#39; </description>
+    </item>
+    <item>
+      <title>统计 tcp 连接数</title>
+      <link>http://localhost:1313/posts/2020/20200615-1/</link>
+      <pubDate>Mon, 15 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200615-1/</guid>
+      <description>直观看到服务器上各个进程链接 tcp 数量的情况&#xA;use strict; use warnings; my @lines = `ss -atp`; my %hash; for my $line (@lines) { if($line =~ /pid=(\d{1,9})/) { $hash{$1}++; } } printf &amp;#34;%s %10s %s\n&amp;#34;, &amp;#34;pid&amp;#34;,&amp;#34;tcp_count&amp;#34;,&amp;#34;cmdline&amp;#34;; for my $pid (keys %hash) { my $cmd = `cat /proc/$pid/cmdline`; printf &amp;#34;%5d %5d %s\n&amp;#34;, $pid,$hash{$pid},$cmd; } 执行结果&#xA;hellojukay@local ~ $ sudo perl ss.pl pid tcp_count cmdline 15026 1 /usr/lib/i386-linux-gnu/deepin-wine/./wineserver.real-p0 7907 2 /usr/sbin/vmware-authdlauncher 24113 1 /usr/sbin/smbd 9275 13 /opt/google/chrome/chrome --type=utility --field-trial-handle=2182854705504331656,15972359820735917946,131072 --lang=zh-CN --service-sandbox-type=network --disable-webrtc-apm-in-audio-service --shared-files 8150 3 /usr/lib/vmware/bin/vmware-hostd-a/etc/vmware/hostd/config.</description>
+    </item>
+    <item>
+      <title>观察指定进程的top输出</title>
+      <link>http://localhost:1313/posts/2020/20200611/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200611/</guid>
+      <description>在 linux 使用 top 输出很多的进程监控信息，大部分都是我们不需要的，我们可以用 top -p 来指定需要监控的进程，需要注意的是 -p 最多只能支持 20 个 pid , 用逗号隔开。为了观察系统上的微服务运行情况，我写了一段 perl 脚本，他能观察我指定文件夹的二进制程序。&#xA;#!/usr/bin/env perl my @bins = glob &amp;#34;/opt/nspm/*/bin/*&amp;#34;; my @process ; for $bin (@bins) { my @pids = `ps aux | grep $bin | grep -v grep | awk &amp;#39;{print \$2}&amp;#39;`; for $pid (@pids) { chomp $pid; push @process, $pid if $pid &amp;gt; 0; } } if(@process == 0 ) { exit(0); } # top 只支持最大同时指定 20 个进程 system(sprintf &amp;#34;top -c -p %s&amp;#34;,(join &amp;#39;,&amp;#39; ,@process[0.</description>
+    </item>
+    <item>
+      <title>解决公司 hosts 文件污染</title>
+      <link>http://localhost:1313/posts/2020/20200609/</link>
+      <pubDate>Tue, 09 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200609/</guid>
+      <description>公司的某个软件为了加速 DNS 解析速度，往 hosts 中写入了常用网址的 DNS 记录， 但是有个网址有时候有 ip 变更，没有来得更新系统，于是导致 hosts 中的记录是过期的,这个问题偶尔会出来一次恶心一下人。&#xA;于是我写个脚本，每分钟清理一次 hosts 文件。&#xA;sudo su root crontab -e 加入清理脚本&#xA;# 域名信息用 aaa, bbb 代替 * * * * * /usr/bin/perl -n -i -e &amp;#34;print unless /aaa|bbb/&amp;#34; /etc/hosts 2020年06月09日更新 看到一个 perl one line 的列表： https://github.com/vinian/perl1line.txt/blob/master/perl1line-ch.txt</description>
+    </item>
+    <item>
+      <title>perl 快速解决配置文件错误的问题</title>
+      <link>http://localhost:1313/posts/2020/20200605/</link>
+      <pubDate>Fri, 05 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200605/</guid>
+      <description>因为一些绑定 ip 地址配置错误，导致服务器的 rpm 包在迁移到别的机器以后无法启动，重新打包 rpm 需要等一段时间，所以我想到了用脚本来修改已经安装上的配置文件。基本思路是先用 grep 找到有问题的配置文件，然后逐一替换。&#xA;#!/usr/bin/env perl # 找到需要修改的配置文件 my @files = `grep &amp;#39;10.44.155&amp;#39; -rn /opt/nspm/ -l | grep -v etcd | grep -v bin`; foreach my $file (@files) { # 替换配置文件内容， sed 4.2.2 版本的正则有点 bug ,改用 perl chomp($file); printf &amp;#34;%s\n&amp;#34;,&amp;#34;perl -p -i -e &amp;#39;s/10.44.155.[0-9]{1,3}/127.0.0.1/g&amp;#39; $file&amp;#34;; system(&amp;#34;perl -p -i -e &amp;#39;s/10.44.155.[0-9]{1,3}/127.0.0.1/g&amp;#39; $file&amp;#34;); } # 批量重启服务 system(&amp;#34;check | awk &amp;#39;{print $1}&amp;#39; | grep nspm | xargs -I {} systemctl restart {}&amp;#34;); 执行脚本以后，果然服务都能启动成功啦。</description>
+    </item>
+  </channel>
+</rss>

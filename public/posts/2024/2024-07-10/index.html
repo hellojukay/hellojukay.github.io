@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="首先我们需要安装安装 artifactory 的命令行工具， jfrog cli , 网址是 https://github.com/jfrog/jfrog-cli 。
+我们需要写一个 artifactory 的查询脚本， 查询出所有的过期文件, 下面这个脚本是查询出 2016-10-18T21:26:52.000Z 之前的文件。
+{ &#34;files&#34;: [ { &#34;aql&#34;: { &#34;items.find&#34;: { &#34;repo&#34;: &#34;foobar&#34;, &#34;$or&#34;: [ { &#34;$and&#34;: [ { &#34;modified&#34;: { &#34;$lt&#34;: &#34;2016-10-18T21:26:52.000Z&#34;} } ] } ] } } } ] } 我们也可以使用相对日期
+&#34;modified&#34;: { &#34;$before&#34;:&#34;6mo&#34; } 然后我们使用 jfrog cli 命令行工具， 执行删除命令
+jf rt del --spec /tmp/foo.spec --dry-run 加上 &ndash;dry-run 参数， 执行删除命令的时候，不会真的删除文件。
+jf rt del --spec /tmp/foo.spec 还可以设置一下并发的线程数量，这样删除会快一点">  
+
+  <title>
+    
+      快速删除 artifactory 删的过期文件
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2024-07-10 00:00:00 &#43;0000 UTC">
+            2024-07-10
+        </time>
+    </p>
+
+    <h1>快速删除 artifactory 删的过期文件</h1>
+
+    
+
+    <p>首先我们需要安装安装 artifactory 的命令行工具， jfrog cli , 网址是 <a href="https://github.com/jfrog/jfrog-cli">https://github.com/jfrog/jfrog-cli</a> 。</p>
+<p>我们需要写一个 artifactory 的查询脚本， 查询出所有的过期文件, 下面这个脚本是查询出 2016-10-18T21:26:52.000Z 之前的文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  &#34;files&#34;: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      &#34;aql&#34;: {
+</span></span><span style="display:flex;"><span>        &#34;items.find&#34;: {
+</span></span><span style="display:flex;"><span>          &#34;repo&#34;: &#34;foobar&#34;,
+</span></span><span style="display:flex;"><span>          &#34;$or&#34;: [
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>              &#34;$and&#34;: [
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                  &#34;modified&#34;: { &#34;$lt&#34;: &#34;2016-10-18T21:26:52.000Z&#34;}
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>              ]
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>          ]
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>我们也可以使用相对日期</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>&#34;modified&#34;: { &#34;$before&#34;:&#34;6mo&#34; }
+</span></span></code></pre></div><p>然后我们使用 jfrog cli 命令行工具， 执行删除命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jf rt del --spec /tmp/foo.spec --dry-run
+</span></span></code></pre></div><p>加上 &ndash;dry-run 参数， 执行删除命令的时候，不会真的删除文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jf rt del --spec /tmp/foo.spec 
+</span></span></code></pre></div><p>还可以设置一下并发的线程数量，这样删除会快一点</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jf rt del --spec /tmp/foo.spec --threads<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span></code></pre></div><p>这样的删除会需要用户交互，我们可以加一个 &ndash;quiet 参数， 直接删除, 不会提示用户交互, 在 CI 或者自动化脚本的地方比较实用</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>jf rt del --spec /tmp/foo.spec --threads<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span> --quiet
+</span></span></code></pre></div><p>原文地址: <a href="https://stackoverflow.com/questions/40118550/artifactory-delete-all-artifacts-older-than-6-months">https://stackoverflow.com/questions/40118550/artifactory-delete-all-artifacts-older-than-6-months</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

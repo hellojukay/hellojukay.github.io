@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在linux上有非常多的工具，能在让你在排查问题多额时候获取有用的信息，这篇文件将会介绍一些network相关的troubleshot技巧。
+ifconfig ifconfig是linux上设置网卡信息的命令，他们启动网卡，禁止网卡，查看网卡的ip地址个mac地址等等.
+# 查看所有网卡的信息 ifconfig # 查看eth0网卡的信息 ifconfig eth0 # 设置 eth0 网卡的ip地址和子网掩码 ifconfig eth0 192.168.50.5 netmask 255.255.255.0 # 启用eth0网卡 ifup eth0 # 禁止eh0网卡 ifdown eth0 # 设置eth0网卡的最大通讯包大小 ifconfig eth0 mtu xxx ping ping是最常用的检查两个机器是否网络连通的方式，
+ping 192.168.1.1 ping baidu.com ping是基于ICMP协议，因为可以设置ICMP不响应，所以有时候这个方式不那么管用。 往/etc/sysctl.conf中加入net.ipv4.icmp_echo_ignore_all=1然后sysctl -p刷新就能禁止ping返回了,ping命令能够指定发送包的次数:
+# 发送五次 ping -c 5 baidu.com traceroute traceroute是检查网卡中数据包的ip路由情况的
+hellojukay@local:~/data/Code/github/blog$ traceroute baidu.com traceroute to baidu.com (220.181.57.216), 30 hops max, 60 byte packets 1 Hiwifi.lan (192.168.199.1) 0.393 ms 0.451 ms 0.">  
+
+  <title>
+    
+      linux上网络问题排查工具
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-12-08 00:00:00 &#43;0000 UTC">
+            2018-12-08
+        </time>
+    </p>
+
+    <h1>linux上网络问题排查工具</h1>
+
+    
+
+    <p>在linux上有非常多的工具，能在让你在排查问题多额时候获取有用的信息，这篇文件将会介绍一些network相关的troubleshot技巧。</p>
+<h2 id="ifconfig">ifconfig</h2>
+<p>ifconfig是linux上设置网卡信息的命令，他们启动网卡，禁止网卡，查看网卡的ip地址个mac地址等等.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 查看所有网卡的信息</span>
+</span></span><span style="display:flex;"><span>ifconfig
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 查看eth0网卡的信息</span>
+</span></span><span style="display:flex;"><span>ifconfig eth0
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 设置 eth0 网卡的ip地址和子网掩码</span>
+</span></span><span style="display:flex;"><span>ifconfig eth0 192.168.50.5 netmask 255.255.255.0
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 启用eth0网卡</span>
+</span></span><span style="display:flex;"><span>ifup eth0
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 禁止eh0网卡</span>
+</span></span><span style="display:flex;"><span>ifdown eth0
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 设置eth0网卡的最大通讯包大小</span>
+</span></span><span style="display:flex;"><span>ifconfig eth0 mtu xxx
+</span></span></code></pre></div><h2 id="ping">ping</h2>
+<p>ping是最常用的检查两个机器是否网络连通的方式，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ping 192.168.1.1
+</span></span><span style="display:flex;"><span>ping baidu.com
+</span></span></code></pre></div><p>ping是基于ICMP协议，因为可以设置ICMP不响应，所以有时候这个方式不那么管用。
+往<code>/etc/sysctl.conf</code>中加入<code>net.ipv4.icmp_echo_ignore_all=1</code>然后<code>sysctl -p</code>刷新就能禁止ping返回了,ping命令能够指定发送包的次数:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 发送五次</span>
+</span></span><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">5</span> baidu.com
+</span></span></code></pre></div><h2 id="traceroute">traceroute</h2>
+<p>traceroute是检查网卡中数据包的ip路由情况的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~/data/Code/github/blog$ traceroute baidu.com
+</span></span><span style="display:flex;"><span>traceroute to baidu.com <span style="color:#f92672">(</span>220.181.57.216<span style="color:#f92672">)</span>, <span style="color:#ae81ff">30</span> hops max, <span style="color:#ae81ff">60</span> byte packets
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">1</span>  Hiwifi.lan <span style="color:#f92672">(</span>192.168.199.1<span style="color:#f92672">)</span>  0.393 ms  0.451 ms  0.515 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">2</span>  192.168.1.1 <span style="color:#f92672">(</span>192.168.1.1<span style="color:#f92672">)</span>  1.730 ms  1.729 ms  1.740 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">3</span>  222.131.232.1 <span style="color:#f92672">(</span>222.131.232.1<span style="color:#f92672">)</span>  31.347 ms  31.431 ms  31.564 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">4</span>  61.51.246.93 <span style="color:#f92672">(</span>61.51.246.93<span style="color:#f92672">)</span>  4.611 ms  4.618 ms  4.662 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">5</span>  61.51.169.117 <span style="color:#f92672">(</span>61.51.169.117<span style="color:#f92672">)</span>  30.587 ms  30.601 ms 61.51.169.85 <span style="color:#f92672">(</span>61.51.169.85<span style="color:#f92672">)</span>  30.295 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">6</span>  202.96.12.33 <span style="color:#f92672">(</span>202.96.12.33<span style="color:#f92672">)</span>  30.314 ms  28.500 ms  27.731 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">7</span>  219.158.4.154 <span style="color:#f92672">(</span>219.158.4.154<span style="color:#f92672">)</span>  28.739 ms 219.158.3.70 <span style="color:#f92672">(</span>219.158.3.70<span style="color:#f92672">)</span>  28.018 ms  28.102 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">8</span>  219.158.44.110 <span style="color:#f92672">(</span>219.158.44.110<span style="color:#f92672">)</span>  27.593 ms  26.365 ms  28.378 ms
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">9</span>  202.97.57.121 <span style="color:#f92672">(</span>202.97.57.121<span style="color:#f92672">)</span>  33.824 ms 202.97.88.253 <span style="color:#f92672">(</span>202.97.88.253<span style="color:#f92672">)</span>  8.011 ms 202.97.88.241 <span style="color:#f92672">(</span>202.97.88.241<span style="color:#f92672">)</span>  5.855 ms
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>  * 36.110.244.18 <span style="color:#f92672">(</span>36.110.244.18<span style="color:#f92672">)</span>  5.428 ms *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">11</span>  * * 218.30.112.125 <span style="color:#f92672">(</span>218.30.112.125<span style="color:#f92672">)</span>  5.261 ms
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">12</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">13</span>  220.181.17.22 <span style="color:#f92672">(</span>220.181.17.22<span style="color:#f92672">)</span>  5.733 ms * 220.181.182.30 <span style="color:#f92672">(</span>220.181.182.30<span style="color:#f92672">)</span>  6.286 ms
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">14</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">15</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">16</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">17</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">18</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">19</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">20</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">21</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">22</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">23</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">24</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">25</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">26</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">27</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">28</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">29</span>  * * *
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">30</span>  * * *
+</span></span></code></pre></div><h2 id="netstat">netstat</h2>
+<p>netstat命令能够展示机器上网络链接信息，路由表信息</p>
+<p>查看路由表信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~/data/Code/github/blog$ netstat -r
+</span></span><span style="display:flex;"><span>Kernel IP routing table
+</span></span><span style="display:flex;"><span>Destination     Gateway         Genmask         Flags   MSS Window  irtt Iface
+</span></span><span style="display:flex;"><span>default         Hiwifi.lan      0.0.0.0         UG        <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span>          <span style="color:#ae81ff">0</span> enp30s0
+</span></span><span style="display:flex;"><span>172.17.0.0      0.0.0.0         255.255.0.0     U         <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span>          <span style="color:#ae81ff">0</span> docker0
+</span></span><span style="display:flex;"><span>192.168.199.0   0.0.0.0         255.255.255.0   U         <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span>          <span style="color:#ae81ff">0</span> enp30s0
+</span></span></code></pre></div><p>查看tcp链接信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~/data/Code/github/blog$ netstat -t
+</span></span><span style="display:flex;"><span>Active Internet connections <span style="color:#f92672">(</span>w/o servers<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:59736         185.225.12.35:26510     TIME_WAIT  
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:38490         111.206.23.145:https    ESTABLISHED
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:59712         185.225.12.35:26510     TIME_WAIT  
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:59704         185.225.12.35:26510     TIME_WAIT  
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:59780         185.225.12.35:26510     TIME_WAIT  
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> localhost:socks         localhost:51926         TIME_WAIT  
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:59772         185.225.12.35:26510     TIME_WAIT  
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:39646         192.0.73.2:https        ESTABLISHED
+</span></span><span style="display:flex;"><span>tcp      <span style="color:#ae81ff">391</span>      <span style="color:#ae81ff">0</span> localhost:51998         localhost:socks         CLOSE_WAIT 
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> local.lan:51000         a104-78-89-18.dep:https ESTABLISHED
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> localhost:socks         localhost:51958         TIME_WAIT 
+</span></span></code></pre></div><p>同理查看udp信息的命令是<code>netstat -u</code>，列出所有本地监听的tcp端口:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ netstat -lt
+</span></span><span style="display:flex;"><span>Active Internet connections <span style="color:#f92672">(</span>only servers<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> 0.0.0.0:netbios-ssn     0.0.0.0:*               LISTEN     
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> localhost:ipp           0.0.0.0:*               LISTEN     
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> localhost:socks         0.0.0.0:*               LISTEN     
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> 0.0.0.0:microsoft-ds    0.0.0.0:*               LISTEN     
+</span></span><span style="display:flex;"><span>tcp6       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:netbios-ssn        <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:*                  LISTEN     
+</span></span><span style="display:flex;"><span>tcp6       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> ip6-localhost:ipp       <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:*                  LISTEN     
+</span></span><span style="display:flex;"><span>tcp6       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:microsoft-ds       <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:*                  LISTEN   s
+</span></span></code></pre></div><p>这里只是展示了网络信息，如果还需要展示对应的进程信息,要查看更多的信息，往往需要使用sudo:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ sudo netstat -ltp
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>sudo<span style="color:#f92672">]</span> hellojukay 的密码：
+</span></span><span style="display:flex;"><span>Active Internet connections <span style="color:#f92672">(</span>only servers<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> 0.0.0.0:netbios-ssn     0.0.0.0:*               LISTEN      3487/smbd           
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> localhost:ipp           0.0.0.0:*               LISTEN      1895/cupsd          
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> localhost:socks         0.0.0.0:*               LISTEN      6228/shadowsocks-de 
+</span></span><span style="display:flex;"><span>tcp        <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> 0.0.0.0:microsoft-ds    0.0.0.0:*               LISTEN      3487/smbd           
+</span></span><span style="display:flex;"><span>tcp6       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:netbios-ssn        <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:*                  LISTEN      3487/smbd           
+</span></span><span style="display:flex;"><span>tcp6       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> ip6-localhost:ipp       <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:*                  LISTEN      1895/cupsd          
+</span></span><span style="display:flex;"><span>tcp6       <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span> <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:microsoft-ds       <span style="color:#f92672">[</span>::<span style="color:#f92672">]</span>:*                  LISTEN      3487/smbd  
+</span></span></code></pre></div><p>如果需要持续观察网络信息，可以使用<code>-c</code>命令，指定刷新的时间比如:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 每隔5秒钟展示一次tcp监听的信息</span>
+</span></span><span style="display:flex;"><span>sudo netstat -tl -c <span style="color:#ae81ff">5</span>
+</span></span></code></pre></div><p>展示网卡信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo netstat -i
+</span></span></code></pre></div><h2 id="dig">dig</h2>
+<p>dig命令是用来查看DNS解析情况的命令,举例子：我们查看当前网络是怎么解析<code>www.baidu.com</code>的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ dig www.baidu.com
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>; &lt;&lt;&gt;&gt; DiG 9.11.3-1-Debian &lt;&lt;&gt;&gt; www.baidu.com
+</span></span><span style="display:flex;"><span>;; global options: +cmd
+</span></span><span style="display:flex;"><span>;; Got answer:
+</span></span><span style="display:flex;"><span>;; -&gt;&gt;HEADER<span style="color:#e6db74">&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style="color:#ae81ff">52721</span>
+</span></span><span style="display:flex;"><span>;; flags: qr rd ra; QUERY: 1, ANSWER: 3, AUTHORITY: 0, ADDITIONAL: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>;; OPT PSEUDOSECTION:
+</span></span><span style="display:flex;"><span>; EDNS: version: 0, flags:; udp: <span style="color:#ae81ff">4096</span>
+</span></span><span style="display:flex;"><span>;; QUESTION SECTION:
+</span></span><span style="display:flex;"><span>;www.baidu.com.			IN	A
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>;; ANSWER SECTION:
+</span></span><span style="display:flex;"><span>www.baidu.com.		746	IN	CNAME	www.a.shifen.com.
+</span></span><span style="display:flex;"><span>www.a.shifen.com.	9	IN	A	61.135.169.125
+</span></span><span style="display:flex;"><span>www.a.shifen.com.	9	IN	A	61.135.169.121
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>;; Query time: <span style="color:#ae81ff">0</span> msec
+</span></span><span style="display:flex;"><span>;; SERVER: 192.168.199.1#53<span style="color:#f92672">(</span>192.168.199.1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>;; WHEN: Sat Dec <span style="color:#ae81ff">08</span> 19:00:53 CST <span style="color:#ae81ff">2018</span>
+</span></span><span style="display:flex;"><span>;; MSG SIZE  rcvd: <span style="color:#ae81ff">104</span>
+</span></span></code></pre></div><h2 id="nslookup">nslookup</h2>
+<p>nslookup也是用来解析DNS的命令:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ nslookup www.baidu.com
+</span></span><span style="display:flex;"><span>Server:		192.168.199.1
+</span></span><span style="display:flex;"><span>Address:	192.168.199.1#53
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Non-authoritative answer:
+</span></span><span style="display:flex;"><span>www.baidu.com	canonical name <span style="color:#f92672">=</span> www.a.shifen.com.
+</span></span><span style="display:flex;"><span>Name:	www.a.shifen.com
+</span></span><span style="display:flex;"><span>Address: 61.135.169.125
+</span></span><span style="display:flex;"><span>Name:	www.a.shifen.com
+</span></span><span style="display:flex;"><span>Address: 61.135.169.121
+</span></span></code></pre></div><h2 id="host">host</h2>
+<p>host命令是用来查询DNS信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ host baidu.com
+</span></span><span style="display:flex;"><span>baidu.com has address 220.181.57.216
+</span></span><span style="display:flex;"><span>baidu.com has address 123.125.115.110
+</span></span><span style="display:flex;"><span>baidu.com mail is handled by <span style="color:#ae81ff">20</span> mx50.baidu.com.
+</span></span><span style="display:flex;"><span>baidu.com mail is handled by <span style="color:#ae81ff">20</span> jpmx.baidu.com.
+</span></span><span style="display:flex;"><span>baidu.com mail is handled by <span style="color:#ae81ff">20</span> mx1.baidu.com.
+</span></span><span style="display:flex;"><span>baidu.com mail is handled by <span style="color:#ae81ff">15</span> mx.n.shifen.com.
+</span></span><span style="display:flex;"><span>baidu.com mail is handled by <span style="color:#ae81ff">10</span> mx.maillb.baidu.com.
+</span></span></code></pre></div><h2 id="route">route</h2>
+<p>route命令是用来查看本地路由表的，当然也，它也能修改路由表信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 查看路由表</span>
+</span></span><span style="display:flex;"><span>hellojukay@local:~$ route
+</span></span><span style="display:flex;"><span>Kernel IP routing table
+</span></span><span style="display:flex;"><span>Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+</span></span><span style="display:flex;"><span>default         Hiwifi.lan      0.0.0.0         UG    <span style="color:#ae81ff">100</span>    <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> enp30s0
+</span></span><span style="display:flex;"><span>172.17.0.0      0.0.0.0         255.255.0.0     U     <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> docker0
+</span></span><span style="display:flex;"><span>192.168.199.0   0.0.0.0         255.255.255.0   U     <span style="color:#ae81ff">100</span>    <span style="color:#ae81ff">0</span>        <span style="color:#ae81ff">0</span> enp30s0
+</span></span></code></pre></div><p>添加一条路由信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>route add -net 10.10.10.0/24 gw 192.168.0.1
+</span></span></code></pre></div><p>删除一条路由信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># route del -net 10.10.10.0/24 gw 192.168.0.1</span>
+</span></span></code></pre></div><p>添加默认网关</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>route add default gw 192.168.0.1
+</span></span></code></pre></div><h2 id="nc">nc</h2>
+<p>nc是非常的hacks的网络工具，能够绑定本地端口，也能链接远程端口，并发送指定数据,我也经常使用<code>nc ip port</code>的方式来检查是否能够链接服务器的某个端口</p>
+<p>将本地的文件发送到远程服务器的80端口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc 192.168.1.199.177 <span style="color:#ae81ff">80</span> &lt; data.txt
+</span></span></code></pre></div><p>本地本地端口，将接受的的数据重定向到本地文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>nc -l <span style="color:#ae81ff">8080</span> &gt; data.txt
+</span></span></code></pre></div><p>所有通过nc命令是可以传送文件的。</p>
+<h2 id="telnet">telnet</h2>
+<p>有时候我也是用telnet来检查网络是否可以链接</p>
+<h2 id="curl">curl</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl http://ip:port -v
+</span></span></code></pre></div><p>虽然不是http服务，但是我们也可以通过返回的错误信息，查看是否网络可以链接，</p>
+<h2 id="lsof">lsof</h2>
+<p>lsof也就是list stystem opened files,列出系统中打开的所有文件，因为在linux上一切都是文件，打开tcp端口也是打开文件，所以我要看程序打开了那些文件可以这样:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo lsof -p <span style="color:#ae81ff">7978</span>
+</span></span></code></pre></div><p>查看22端口被谁占用了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local:~$ sudo lsof -i:22
+</span></span><span style="display:flex;"><span>COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+</span></span><span style="display:flex;"><span>sshd    <span style="color:#ae81ff">24816</span> root    3u  IPv4 <span style="color:#ae81ff">593637</span>      0t0  TCP *:ssh <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>sshd    <span style="color:#ae81ff">24816</span> root    4u  IPv6 <span style="color:#ae81ff">593639</span>      0t0  TCP *:ssh <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>hellojukay@local:~$ 
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

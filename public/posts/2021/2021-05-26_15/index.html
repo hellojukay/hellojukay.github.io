@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="今天盼哥问我说怎么看每个服务的版本，我说可以通过 kubectl describe pod 看，盼哥表示太麻烦了，于是我用 perl 写 了一个脚本，如下:
+#!/bin/perl use strict; use warnings; use Getopt::Long qw( GetOptions :config no_ignore_case); sub usage ($); GetOptions(&#34;n|namnespace=s&#34;, \(my $namespace), &#34;h|help&#34;, \(my $help)) or usage(1); if($help){ usage(0); } if(not $namespace) { $namespace = &#34;default&#34;; } sub get_deployment(@){ my $namespace = $_[0]; my @deployments = `kubectl get deployments -n $namespace | grep -v NAME | awk &#39;{print \$1}&#39;`; return @deployments; } sub print_version(@){ my $namespace = $_[0]; my $deployment = $_[1]; $deployment =~ s/^\s&#43;|\s&#43;$//g; my @image = `kubectl describe deploy $deployment -n $namespace | grep Image | awk &#39;{print \$2}&#39;`; my $image_str = join &#34;, &#34;, @image; $image_str =~ s/^\s&#43;|\n&#43;?">  
+
+  <title>
+    
+      列出 kubernetes 上 deployment apps 的镜像
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-05-26 00:00:00 &#43;0000 UTC">
+            2021-05-26
+        </time>
+    </p>
+
+    <h1>列出 kubernetes 上 deployment apps 的镜像</h1>
+
+    
+
+    <p>今天盼哥问我说怎么看每个服务的版本，我说可以通过 kubectl describe pod 看，盼哥表示太麻烦了，于是我用 perl 写
+了一个脚本，如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/perl</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> strict;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> warnings;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> Getopt::Long <span style="color:#e6db74">qw( GetOptions :config no_ignore_case)</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">usage</span> ($);
+</span></span><span style="display:flex;"><span>GetOptions(<span style="color:#e6db74">&#34;n|namnespace=s&#34;</span>,    <span style="color:#f92672">\</span>(<span style="color:#66d9ef">my</span> $namespace),
+</span></span><span style="display:flex;"><span>           <span style="color:#e6db74">&#34;h|help&#34;</span>,            <span style="color:#f92672">\</span>(<span style="color:#66d9ef">my</span> $help))
+</span></span><span style="display:flex;"><span>   <span style="color:#f92672">or</span> usage(<span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>($help){
+</span></span><span style="display:flex;"><span>	usage(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#f92672">not</span> $namespace) {
+</span></span><span style="display:flex;"><span>	$namespace <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;default&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">get_deployment</span>(@){
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">my</span> $namespace <span style="color:#f92672">=</span> $_[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">my</span> @deployments <span style="color:#f92672">=</span> <span style="color:#e6db74">`kubectl get deployments -n $namespace | grep -v NAME | awk &#39;{print \$1}&#39;`</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> @deployments;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">print_version</span>(@){
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">my</span> $namespace <span style="color:#f92672">=</span> $_[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">my</span> $deployment <span style="color:#f92672">=</span> $_[<span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>	$deployment <span style="color:#f92672">=~</span> <span style="color:#e6db74">s/^\s+|\s+$//g</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">my</span> @image <span style="color:#f92672">=</span> <span style="color:#e6db74">`kubectl describe deploy $deployment -n $namespace | grep Image | awk &#39;{print \$2}&#39;`</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">my</span> $image_str <span style="color:#f92672">=</span> join <span style="color:#e6db74">&#34;, &#34;</span>, @image;
+</span></span><span style="display:flex;"><span>	$image_str <span style="color:#f92672">=~</span> <span style="color:#e6db74">s/^\s+|\n+?//g</span>;
+</span></span><span style="display:flex;"><span>	$image_str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;[&#34;</span> <span style="color:#f92672">.</span> $image_str <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;]&#34;</span>;
+</span></span><span style="display:flex;"><span>	printf <span style="color:#e6db74">&#34;%-25s =&gt; %s\n&#34;</span>, $deployment,$image_str;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> @deployments <span style="color:#f92672">=</span> get_deployment $namespace;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> <span style="color:#66d9ef">my</span> $deployment (@deployments) {
+</span></span><span style="display:flex;"><span>	chomp $deployment;
+</span></span><span style="display:flex;"><span>	print_version <span style="color:#e6db74">&#34;test&#34;</span>, $deployment;
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">usage</span> ($) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">my</span> $rc <span style="color:#f92672">=</span> shift;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">my</span> $msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&lt;&lt;&#39;</span><span style="color:#e6db74">_EOC_</span><span style="color:#e6db74">&#39;;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">check [options] list deployment image version
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Options:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    -n NAMESPACE
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    --namespae               kubernetes namespace.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    -h
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    --help                Print this help.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">Copyright (C) QAX (DAYU) .
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"></span><span style="color:#e6db74">_EOC_</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ($rc <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">print</span> $msg;
+</span></span><span style="display:flex;"><span>        exit(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    warn $msg;
+</span></span><span style="display:flex;"><span>    exit($rc);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>命名为 check, 执行 check -h 可以看到帮助信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>check [options] list kubernetes deployment image version.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Options:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    -n NAMESPACE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    --namespae               kubernetes namespace.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    -h
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    --help                Print this help.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Copyright (C) QAX (DAYU) .
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

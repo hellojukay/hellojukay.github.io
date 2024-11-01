@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="本文介绍使用 MYSYS2 在 windows 上安装 rust 开发环境，首先我们需要安装 rustup,这个可以参见官网：https://www.rust-lang.org/
+然后安装号 MYSYS2 ，直接双击 exe 文件安装即可，安装好了以后在 MYSYS2 中安装好 gcc 环境:
+pacman -S mingw-w64-x86_64-gcc 安装好了之后配置好 cargo 的配置文件 C:\Users\Administrator.cargo ， 配置内容如下:
+[source.crates-io] registry = &#34;https://github.com/rust-lang/crates.io-index&#34; replace-with = &#39;ustc&#39; [source.ustc] registry = &#34;git://http://mirrors.ustc.edu.cn/crates.io-index&#34; [target.x86_64-pc-windows-gnu] linker = &#34;E:/msys64/mingw64/bin/gcc.exe&#34; ar = &#34;E:/msys64/mingw64/bin/ar.exe&#34; 然后执行如下命令：
+rustup toolchain install stable-x86_64-pc-windows-gnu rustup default stable-x86_64-pc-windows-gnu 执行完毕以后就能编译 rust 代码了
+PS E:\code&gt; cargo new aaa --bin Created binary (application) `aaa` package PS E:\code&gt; cd aaa PS E:\code\aaa&gt; cargo run Compiling aaa v0.">  
+
+  <title>
+    
+      windows 搭建 rust 开发环境【免安装 VS Studio】
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-04-09 00:00:00 &#43;0000 UTC">
+            2021-04-09
+        </time>
+    </p>
+
+    <h1>windows 搭建 rust 开发环境【免安装 VS Studio】</h1>
+
+    
+
+    <p>本文介绍使用 MYSYS2 在 windows 上安装 rust 开发环境，首先我们需要安装 rustup,这个可以参见官网：https://www.rust-lang.org/</p>
+<p>然后安装号 MYSYS2 ，直接双击 exe 文件安装即可，安装好了以后在 MYSYS2 中安装好 gcc 环境:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span> pacman -S mingw-w64-x86_64-gcc
+</span></span></code></pre></div><p>安装好了之后配置好 cargo 的配置文件 C:\Users\Administrator.cargo ， 配置内容如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>[source.crates-io]
+</span></span><span style="display:flex;"><span>registry = &#34;https://github.com/rust-lang/crates.io-index&#34;
+</span></span><span style="display:flex;"><span>replace-with = &#39;ustc&#39;
+</span></span><span style="display:flex;"><span>[source.ustc]
+</span></span><span style="display:flex;"><span>registry = &#34;git://http://mirrors.ustc.edu.cn/crates.io-index&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>[target.x86_64-pc-windows-gnu]
+</span></span><span style="display:flex;"><span>linker = &#34;E:/msys64/mingw64/bin/gcc.exe&#34;
+</span></span><span style="display:flex;"><span>ar = &#34;E:/msys64/mingw64/bin/ar.exe&#34;
+</span></span></code></pre></div><p>然后执行如下命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>rustup toolchain install stable-x86_64-pc-windows-gnu
+</span></span><span style="display:flex;"><span>rustup default stable-x86_64-pc-windows-gnu
+</span></span></code></pre></div><p>执行完毕以后就能编译 rust 代码了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>PS E:<span style="color:#ae81ff">\c</span>ode&gt; cargo new aaa --bin
+</span></span><span style="display:flex;"><span>     Created binary <span style="color:#f92672">(</span>application<span style="color:#f92672">)</span> <span style="color:#e6db74">`</span>aaa<span style="color:#e6db74">`</span> package
+</span></span><span style="display:flex;"><span>PS E:<span style="color:#ae81ff">\c</span>ode&gt; cd aaa
+</span></span><span style="display:flex;"><span>PS E:<span style="color:#ae81ff">\c</span>ode<span style="color:#ae81ff">\a</span>aa&gt; cargo run
+</span></span><span style="display:flex;"><span>   Compiling aaa v0.1.0 <span style="color:#f92672">(</span>E:<span style="color:#ae81ff">\c</span>ode<span style="color:#ae81ff">\a</span>aa<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    Finished dev <span style="color:#f92672">[</span>unoptimized + debuginfo<span style="color:#f92672">]</span> target<span style="color:#f92672">(</span>s<span style="color:#f92672">)</span> in 1.04s
+</span></span><span style="display:flex;"><span>     Running <span style="color:#e6db74">`</span>target<span style="color:#ae81ff">\d</span>ebug<span style="color:#ae81ff">\a</span>aa.exe<span style="color:#e6db74">`</span>
+</span></span><span style="display:flex;"><span>Hello, world!
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

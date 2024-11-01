@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在 Jenkinsfile 中如果要执行 awk :
+sh(&#34;ls -al | awk &#39;{print $3}&#39;&#34;) 这么写可能会报错， 因为 $3 被 groovy 认为是要替换字符传， 当前上下文中并没有 3 这个变量，所以会报错。
+解决这个问题的方式如下:
+sh &#34;&#34;&#34; ls -al | awk &#39;{print \$3}&#39; &#34;&#34;&#34; 2020年01月15日更新 有同学的docker用户名中包含了 $ 符号，也可以用相同的方法来解决
+sh &#34;&#34;&#34; echo ${PASSWD} | docker -u \$xxx --password-stdin &#34;&#34;&#34; 参考文档:
+https://blog.isntall.us/node/34 https://stackoverflow.com/questions/43451380/right-syntax-using-command-sh-in-jenkinsfile ">  
+
+  <title>
+    
+      在 Jenkinsfile 的 sh 中执行 awk
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-05-08 00:00:00 &#43;0000 UTC">
+            2019-05-08
+        </time>
+    </p>
+
+    <h1>在 Jenkinsfile 的 sh 中执行 awk</h1>
+
+    
+
+    <p>在 Jenkinsfile 中如果要执行 awk :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>sh<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;ls -al | awk &#39;{print $3}&#39;&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>这么写可能会报错， 因为 <code>$3</code> 被 groovy 认为是要替换字符传， 当前上下文中并没有 3 这个变量，所以会报错。</p>
+<p>解决这个问题的方式如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  ls -al | awk &#39;{print \$3}&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span></code></pre></div><h1 id="2020年01月15日更新">2020年01月15日更新</h1>
+<p>有同学的docker用户名中包含了 $ 符号，也可以用相同的方法来解决</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span>sh <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">echo ${PASSWD} | docker -u \$xxx --password-stdin 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span></code></pre></div><p>参考文档:</p>
+<ul>
+<li><a href="https://blog.isntall.us/node/34">https://blog.isntall.us/node/34</a></li>
+<li><a href="https://stackoverflow.com/questions/43451380/right-syntax-using-command-sh-in-jenkinsfile">https://stackoverflow.com/questions/43451380/right-syntax-using-command-sh-in-jenkinsfile</a></li>
+</ul>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

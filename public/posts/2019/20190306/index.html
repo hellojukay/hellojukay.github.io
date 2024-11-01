@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="从昨天开始，研发和测试的同学就在群里一直反馈服务器经常卡死，服务不可用，服务日志也看不到任何异常信息，让研发同学一顿查找原因，找不到原因，最后让我给解决一下。
+我首先登录到服务器，容器是没有退出的
+docker logs snc-fw-gateway 查看标准输出的内容，没有异常，通过浏览器发送请求，也没有新的日志产生，所以我怀疑是不是JAVA进程退出了，容器没有退出，但是好像不可能，因为进程退出以后，容器一定也会退出。
+-bash-4.2$ docker exec -it snc-fw-gateway sh /app $ jps 5 app.jar 7340 Jps /app $ 通过jsp命令，发现进程是存在的。
+我怀疑是不是进程在哪里Hang住了
+-bash-4.2$ docker exec -it snc-fw-gateway jstack 5 &gt; jstack.log -bash-4.2$ ls jstack.log -bash-4.2$ 看线程状态
+hellojukay@local ~ $ grep Thread.State jstack.log java.lang.Thread.State: RUNNABLE java.lang.Thread.State: WAITING (parking) java.lang.Thread.State: TIMED_WAITING (parking) java.lang.Thread.State: TIMED_WAITING (parking) java.lang.Thread.State: WAITING (on object monitor) java.lang.Thread.State: BLOCKED (on object monitor) java.lang.Thread.State: RUNNABLE java.lang.Thread.State: BLOCKED (on object monitor) java.">  
+
+  <title>
+    
+      记录一次JAVA死锁分析过程
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2019-03-06 00:00:00 &#43;0000 UTC">
+            2019-03-06
+        </time>
+    </p>
+
+    <h1>记录一次JAVA死锁分析过程</h1>
+
+    
+
+    <p>从昨天开始，研发和测试的同学就在群里一直反馈服务器经常卡死，服务不可用，服务日志也看不到任何异常信息，让研发同学一顿查找原因，找不到原因，最后让我给解决一下。</p>
+<p>我首先登录到服务器，容器是没有退出的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>docker logs snc-fw-gateway
+</span></span></code></pre></div><p>查看标准输出的内容，没有异常，通过浏览器发送请求，也没有新的日志产生，所以我怀疑是不是JAVA进程退出了，容器没有退出，但是好像不可能，因为进程退出以后，容器一定也会退出。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-bash-4.2$ docker exec -it snc-fw-gateway sh
+</span></span><span style="display:flex;"><span>/app $ jps
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5</span> app.jar
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">7340</span> Jps
+</span></span><span style="display:flex;"><span>/app $ 
+</span></span></code></pre></div><p>通过jsp命令，发现进程是存在的。</p>
+<p>我怀疑是不是进程在哪里Hang住了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-bash-4.2$ docker exec -it snc-fw-gateway jstack <span style="color:#ae81ff">5</span> &gt; jstack.log
+</span></span><span style="display:flex;"><span>-bash-4.2$ ls
+</span></span><span style="display:flex;"><span>jstack.log
+</span></span><span style="display:flex;"><span>-bash-4.2$ 
+</span></span></code></pre></div><p>看线程状态</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>  hellojukay@local ~ $ grep Thread.State jstack.log 
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>sleeping<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: TIMED_WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>parking<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: WAITING <span style="color:#f92672">(</span>on object monitor<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>hellojukay@local ~ $ grep Thread.State jstack.log  | wc -l
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">49</span>
+</span></span><span style="display:flex;"><span>hellojukay@local ~ $ ^C
+</span></span></code></pre></div><p>我们看一下被阻塞的线程正在干什么</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@local ~ $ grep BLOCKED jstack.log  -C <span style="color:#ae81ff">3</span>
+</span></span></code></pre></div><p>得到的结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>&#34;XNIO-1 task-4&#34; #38 prio=5 os_prio=0 tid=0x000056181f8fa800 nid=0x68 waiting for monitor entry [0x00002b8e60c99000]
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED (on object monitor)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.implNextBytes(NativePRNG.java:543)
+</span></span><span style="display:flex;"><span>	- waiting to lock &lt;0x0000000083fd1800&gt; (a java.lang.Object)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.access$400(NativePRNG.java:331)
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>	at java.lang.Thread.run(Thread.java:748)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&#34;XNIO-1 task-3&#34; #37 prio=5 os_prio=0 tid=0x000056181e3f7800 nid=0x61 waiting for monitor entry [0x00002b8e606f9000]
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED (on object monitor)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.implNextBytes(NativePRNG.java:544)
+</span></span><span style="display:flex;"><span>	- waiting to lock &lt;0x0000000083fd1800&gt; (a java.lang.Object)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.access$400(NativePRNG.java:331)
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>	at java.lang.Thread.run(Thread.java:748)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>&#34;XNIO-1 task-2&#34; #36 prio=5 os_prio=0 tid=0x0000561820216000 nid=0x5a waiting for monitor entry [0x00002b8e603ac000]
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: BLOCKED (on object monitor)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.implNextBytes(NativePRNG.java:543)
+</span></span><span style="display:flex;"><span>	- waiting to lock &lt;0x0000000083fd1800&gt; (a java.lang.Object)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.access$400(NativePRNG.java:331)
+</span></span><span style="display:flex;"><span>--
+</span></span><span style="display:flex;"><span>	at java.lang.Thread.run(Thread.java:748)
+</span></span></code></pre></div><p>都是在等待lock 一个对象<code>0x0000000083fd1800</code>,看下这个兑现现在被谁lock了，最有发现有一个线程已经lock了这个兑现，一直没有释放</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>&#34;XNIO-1 task-15&#34; #49 prio=5 os_prio=0 tid=0x000056181ff12800 nid=0xb6 runnable [0x00002b8e617a4000]
+</span></span><span style="display:flex;"><span>   java.lang.Thread.State: RUNNABLE
+</span></span><span style="display:flex;"><span>	at java.io.FileInputStream.readBytes(Native Method)
+</span></span><span style="display:flex;"><span>	at java.io.FileInputStream.read(FileInputStream.java:255)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.readFully(NativePRNG.java:424)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.ensureBufferValid(NativePRNG.java:525)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.implNextBytes(NativePRNG.java:544)
+</span></span><span style="display:flex;"><span>	- locked &lt;0x0000000083fd1800&gt; (a java.lang.Object)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$RandomIO.access$400(NativePRNG.java:331)
+</span></span><span style="display:flex;"><span>	at sun.security.provider.NativePRNG$Blocking.engineNextBytes(NativePRNG.java:268)
+</span></span><span style="display:flex;"><span>	at java.security.SecureRandom.nextBytes(SecureRandom.java:468)
+</span></span><span style="display:flex;"><span>	at java.security.SecureRandom.next(SecureRandom.java:491)
+</span></span><span style="display:flex;"><span>	at java.util.Random.nextInt(Random.java:390)
+</span></span></code></pre></div><p>涉及公司的隐私的源码我没有放上来，最后通过上述堆栈信息定位了问题代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vo.setName<span style="color:#f92672">(</span>vo.getName<span style="color:#f92672">()</span> + this.random.nextInt<span style="color:#f92672">(</span>100<span style="color:#f92672">)</span> + 1<span style="color:#f92672">)</span>;
+</span></span></code></pre></div><p>这里<code>nextInt</code>方法是线程安全的，他会锁住当前对象中的<code>random</code>对象。也就是这个属性</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>    private Random random <span style="color:#f92672">=</span> SecureRandom.getInstanceStrong<span style="color:#f92672">()</span>;
+</span></span></code></pre></div><p>SecureRandom这个类在某些时候存在很严重的性能问题，会导致<code>nextInt</code>卡死不返回。解决办法参考:<a href="https://blog.csdn.net/iteye_11910/article/details/82655175">https://blog.csdn.net/iteye_11910/article/details/82655175</a>。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Runit on 润物细无声</title>
+    <link>http://localhost:1313/tags/runit/</link>
+    <description>Recent content in Runit on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 28 Mar 2018 11:43:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/runit/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>gitlab从卸载到放弃</title>
+      <link>http://localhost:1313/posts/2018/20180328/</link>
+      <pubDate>Wed, 28 Mar 2018 11:43:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180328/</guid>
+      <description>最近要调用gitlab-ci，正好测试环境的huanggai这机器上，安装了gitlab，但是使用起来总有一些问题，应该安装时候的问题吧。决定重装gitlab,首先，我关闭gitlab服务&#xA;gitlab-ctl stop 但是执行关了这个命令以后，还是有一些gitlab的进程存在&#xA;[deploy@huanggai /opt/gitlab/sv/unicorn]$ ps aux | grep gitlab root 3499 0.0 0.0 11420 1296 ? Ss 12:34 0:00 /bin/sh /opt/gitlab/embedded/bin/gitlab-logrotate-wrapper root 11996 0.0 0.0 35516 3136 ? Ss 13:10 0:00 /opt/gitlab/embedded/sbin/nginx -p /var/opt/gitlab/nginx git 12016 0.0 0.0 11428 1376 ? Ss 13:10 0:00 /bin/bash /opt/gitlab/embedded/bin/gitlab-unicorn-wrapper deploy 12054 0.0 0.0 103416 888 pts/1 S+ 13:10 0:00 grep gitlab root 84470 0.0 0.0 4176 460 ? Ss 11:34 0:02 runsvdir -P /opt/gitlab/service log: to lock directory: /var/log/gitlab/redis-exporter: temporary failure?</description>
+    </item>
+  </channel>
+</rss>

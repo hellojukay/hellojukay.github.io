@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="本文持续更新。
+perl 支持和 awk , sed 类似的单行命令。perl 的命令行数: -n 循环每一行 -e 指定单行命令 -p 循环每一行，并且输出符合条件的行（帮你多写个 print) -l 没一行默认自动添加换行符 -i 直接修改源文件，类似于 sed -i -F 对于每行设置分割符号，类似于 awk -F
+了解了以上信息以后就能写一些简单的单行程序了。
+获取 /bin/ 目录下的所有文件名字
+find /bin/ | perl -ne &#39;if (/\/bin\/(.*)/) {print &#34;$1\n&#34;}&#39; 等价 awk 实现如下:
+find /bin/ | awk -F &#39;/&#39; &#39;{print $3}&#39; 2020年07月08日更新 打印文本的指定行
+# 打印文本的第十行 perl -ne &#39;print if($. == 10)&#39; file.txt 2020年07月30日更新 输出第一列
+perl -alne &#39;print $F[0]&#39; 等价 awk
+awk &#39;{print $1}&#39; ">  
+
+  <title>
+    
+      perl one-liners 技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-06-24 00:00:00 &#43;0000 UTC">
+            2020-06-24
+        </time>
+    </p>
+
+    <h1>perl one-liners 技巧</h1>
+
+    
+
+    <p>本文持续更新。</p>
+<p>perl 支持和  awk , sed 类似的单行命令。perl 的命令行数:
+-n 循环每一行
+-e 指定单行命令
+-p 循环每一行，并且输出符合条件的行（帮你多写个 print)
+-l 没一行默认自动添加换行符
+-i 直接修改源文件，类似于 sed -i
+-F 对于每行设置分割符号，类似于 awk -F</p>
+<p>了解了以上信息以后就能写一些简单的单行程序了。</p>
+<p>获取 /bin/ 目录下的所有文件名字</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>find /bin/ | perl -ne <span style="color:#e6db74">&#39;if (/\/bin\/(.*)/) {print &#34;$1\n&#34;}&#39;</span>
+</span></span></code></pre></div><p>等价 awk 实现如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>find /bin/  | awk -F <span style="color:#e6db74">&#39;/&#39;</span> <span style="color:#e6db74">&#39;{print $3}&#39;</span>
+</span></span></code></pre></div><h2 id="2020年07月08日更新">2020年07月08日更新</h2>
+<p>打印文本的指定行</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#75715e"># 打印文本的第十行</span>
+</span></span><span style="display:flex;"><span>perl <span style="color:#f92672">-</span><span style="color:#f92672">ne</span> <span style="color:#e6db74">&#39;print if($. == 10)&#39;</span> file<span style="color:#f92672">.</span>txt
+</span></span></code></pre></div><h2 id="2020年07月30日更新">2020年07月30日更新</h2>
+<p>输出第一列</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>perl -alne <span style="color:#e6db74">&#39;print $F[0]&#39;</span>
+</span></span></code></pre></div><p>等价 awk</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>awk <span style="color:#e6db74">&#39;{print $1}&#39;</span>
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

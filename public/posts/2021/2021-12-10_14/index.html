@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="原文地址 https://tengine.taobao.org/nginx_docs/cn/docs/http/configuring_https_servers.html
+配置HTTPS主机，必须在server配置块中打开SSL协议，还需要指定服务器端证书和密钥文件的位置：
+server { listen 443; server_name www.example.com; ssl on; ssl_certificate www.example.com.crt; ssl_certificate_key www.example.com.key; ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2; ssl_ciphers HIGH:!aNULL:!MD5; ... } 服务器证书是公开的，会被传送到每一个连接到服务器的客户端。而私钥不是公开的，需要存放在访问受限的文件中，当然，nginx主进程必须有读取密钥的权限。私钥和证书可以存放在同一个文件中：
+ssl_certificate www.example.com.cert; ssl_certificate_key www.example.com.cert; 这种情况下，证书文件同样得设置访问限制。当然，虽然证书和密钥存放在同一个文件，只有证书会发送给客户端，密钥不会发送。
+ssl_protocols和ssl_ciphers指令可以用来强制用户连接只能引入SSL/TLS那些强壮的协议版本和强大的加密算法。从1.0.5版本开始，nginx默认使用“ssl_protocols SSLv3 TLSv1”和“ssl_ciphers HIGH:!aNULL:!MD5”，所以只有在之前的版本，明确地配置它们才是有意义的。从1.1.13和1.0.12版本开始，nginx默认使用“ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2”。
+CBC模式的加密算法容易受到一些攻击，尤其是BEAST攻击（参见CVE-2011-3389）。可以通过下面配置调整为优先使用RC4-SHA加密算法：
+ssl_ciphers RC4:HIGH:!aNULL:!MD5; ssl_prefer_server_ciphers on; HTTPS服务器优化 SSL操作需要消耗CPU资源，所以在多处理器的系统，需要启动多个工作进程，而且数量需要不少于可用CPU的个数。最消耗CPU资源的SSL操作是SSL握手，有两种方法可以将每个客户端的握手操作数量降到最低：第一种是保持客户端长连接，在一个SSL连接发送多个请求，第二种是在并发的连接或者后续的连接中重用SSL会话参数，这样可以避免SSL握手的操作。会话缓存用于保存SSL会话，这些缓存在工作进程间共享，可以使用ssl_session_cache指令进行配置。1M缓存可以存放大约4000个会话。默认的缓存超时是5分钟，可以使用ssl_session_timeout加大它。下面是一个针对4核系统的配置优化的例子，使用10M的共享会话缓存：
+worker_processes 4; http { ssl_session_cache shared:SSL:10m; ssl_session_timeout 10m; server { listen 443; server_name www.example.com; keepalive_timeout 70; ssl on; ssl_certificate www.example.com.crt; ssl_certificate_key www.example.com.key; ssl_protocols SSLv3 TLSv1 TLSv1.">  
+
+  <title>
+    
+      【转载】 nginx 的 https 相关知识
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-12-10 00:00:00 &#43;0000 UTC">
+            2021-12-10
+        </time>
+    </p>
+
+    <h1>【转载】 nginx 的 https 相关知识</h1>
+
+    
+
+    <p>原文地址 <a href="https://tengine.taobao.org/nginx_docs/cn/docs/http/configuring_https_servers.html">https://tengine.taobao.org/nginx_docs/cn/docs/http/configuring_https_servers.html</a></p>
+<p>配置HTTPS主机，必须在server配置块中打开SSL协议，还需要指定服务器端证书和密钥文件的位置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen              443;
+</span></span><span style="display:flex;"><span>    server_name         www.example.com;
+</span></span><span style="display:flex;"><span>    ssl                 on;
+</span></span><span style="display:flex;"><span>    ssl_certificate     www.example.com.crt;
+</span></span><span style="display:flex;"><span>    ssl_certificate_key www.example.com.key;
+</span></span><span style="display:flex;"><span>    ssl_protocols       SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+</span></span><span style="display:flex;"><span>    ssl_ciphers         HIGH:!aNULL:!MD5;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>服务器证书是公开的，会被传送到每一个连接到服务器的客户端。而私钥不是公开的，需要存放在访问受限的文件中，当然，nginx主进程必须有读取密钥的权限。私钥和证书可以存放在同一个文件中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>ssl_certificate     www.example.com.cert;
+</span></span><span style="display:flex;"><span>ssl_certificate_key www.example.com.cert;
+</span></span></code></pre></div><p>这种情况下，证书文件同样得设置访问限制。当然，虽然证书和密钥存放在同一个文件，只有证书会发送给客户端，密钥不会发送。</p>
+<p>ssl_protocols和ssl_ciphers指令可以用来强制用户连接只能引入SSL/TLS那些强壮的协议版本和强大的加密算法。从1.0.5版本开始，nginx默认使用“ssl_protocols SSLv3 TLSv1”和“ssl_ciphers HIGH:!aNULL:!MD5”，所以只有在之前的版本，明确地配置它们才是有意义的。从1.1.13和1.0.12版本开始，nginx默认使用“ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2”。</p>
+<p>CBC模式的加密算法容易受到一些攻击，尤其是BEAST攻击（参见CVE-2011-3389）。可以通过下面配置调整为优先使用RC4-SHA加密算法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>    ssl_ciphers RC4:HIGH:!aNULL:!MD5;
+</span></span><span style="display:flex;"><span>    ssl_prefer_server_ciphers on;
+</span></span></code></pre></div><p>HTTPS服务器优化
+SSL操作需要消耗CPU资源，所以在多处理器的系统，需要启动多个工作进程，而且数量需要不少于可用CPU的个数。最消耗CPU资源的SSL操作是SSL握手，有两种方法可以将每个客户端的握手操作数量降到最低：第一种是保持客户端长连接，在一个SSL连接发送多个请求，第二种是在并发的连接或者后续的连接中重用SSL会话参数，这样可以避免SSL握手的操作。会话缓存用于保存SSL会话，这些缓存在工作进程间共享，可以使用ssl_session_cache指令进行配置。1M缓存可以存放大约4000个会话。默认的缓存超时是5分钟，可以使用ssl_session_timeout加大它。下面是一个针对4核系统的配置优化的例子，使用10M的共享会话缓存：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>worker_processes  4;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>http {
+</span></span><span style="display:flex;"><span>    ssl_session_cache    shared:SSL:10m;
+</span></span><span style="display:flex;"><span>    ssl_session_timeout  10m;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    server {
+</span></span><span style="display:flex;"><span>        listen              443;
+</span></span><span style="display:flex;"><span>        server_name         www.example.com;
+</span></span><span style="display:flex;"><span>        keepalive_timeout   70;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ssl                 on;
+</span></span><span style="display:flex;"><span>        ssl_certificate     www.example.com.crt;
+</span></span><span style="display:flex;"><span>        ssl_certificate_key www.example.com.key;
+</span></span><span style="display:flex;"><span>        ssl_protocols       SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+</span></span><span style="display:flex;"><span>        ssl_ciphers         HIGH:!aNULL:!MD5;
+</span></span><span style="display:flex;"><span>        ...
+</span></span></code></pre></div><p>SSL证书链
+有些浏览器不接受那些众所周知的证书认证机构签署的证书，而另外一些浏览器却接受它们。这是由于证书签发使用了一些中间认证机构，这些中间机构被众所周知的证书认证机构授权代为签发证书，但是它们自己却不被广泛认知，所以有些客户端不予识别。针对这种情况，证书认证机构提供一个证书链的包裹，用来声明众所周知的认证机构和自己的关系，需要将这个证书链包裹与服务器证书合并成一个文件。在这个文件里，服务器证书需要出现在认证方证书链的前面：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cat www.example.com.crt bundle.crt &gt; www.example.com.chained.crt
+</span></span></code></pre></div><p>这个文件需要使用ssl_certificate指令来引用：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen              443;
+</span></span><span style="display:flex;"><span>    server_name         www.example.com;
+</span></span><span style="display:flex;"><span>    ssl                 on;
+</span></span><span style="display:flex;"><span>    ssl_certificate     www.example.com.chained.crt;
+</span></span><span style="display:flex;"><span>    ssl_certificate_key www.example.com.key;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如果服务器证书和认证方证书链合并时顺序弄错了，nginx就不能正常启动，而且会显示下面的错误信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>SSL_CTX_use_PrivateKey_file(&#34; ... /www.example.com.key&#34;) failed
+</span></span><span style="display:flex;"><span>   (SSL: error:0B080074:x509 certificate routines:
+</span></span><span style="display:flex;"><span>    X509_check_private_key:key values mismatch)
+</span></span></code></pre></div><p>因为nginx首先需要用私钥去解密服务器证书，而遇到的却是认证方的证书。</p>
+<p>浏览器通常会将那些被受信的认证机构认证的中间认证机构保存下来，那么这些浏览器以后在遇到使用这些中间认证机构但不包含证书链的情况时，因为已经保存了这些中间认证机构的信息，所以不会报错。可以使用openssl命令行工具来确认服务器发送了完整的证书链：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ openssl s_client -connect www.godaddy.com:443
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>Certificate chain
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">0</span> s:/C<span style="color:#f92672">=</span>US/ST<span style="color:#f92672">=</span>Arizona/L<span style="color:#f92672">=</span>Scottsdale/1.3.6.1.4.1.311.60.2.1.3<span style="color:#f92672">=</span>US
+</span></span><span style="display:flex;"><span>     /1.3.6.1.4.1.311.60.2.1.2<span style="color:#f92672">=</span>AZ/O<span style="color:#f92672">=</span>GoDaddy.com, Inc
+</span></span><span style="display:flex;"><span>     /OU<span style="color:#f92672">=</span>MIS Department/CN<span style="color:#f92672">=</span>www.GoDaddy.com
+</span></span><span style="display:flex;"><span>     /serialNumber<span style="color:#f92672">=</span>0796928-7/2.5.4.15<span style="color:#f92672">=</span>V1.0, Clause 5.<span style="color:#f92672">(</span>b<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   i:/C<span style="color:#f92672">=</span>US/ST<span style="color:#f92672">=</span>Arizona/L<span style="color:#f92672">=</span>Scottsdale/O<span style="color:#f92672">=</span>GoDaddy.com, Inc.
+</span></span><span style="display:flex;"><span>     /OU<span style="color:#f92672">=</span>http://certificates.godaddy.com/repository
+</span></span><span style="display:flex;"><span>     /CN<span style="color:#f92672">=</span>Go Daddy Secure Certification Authority
+</span></span><span style="display:flex;"><span>     /serialNumber<span style="color:#f92672">=</span><span style="color:#ae81ff">07969287</span>
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">1</span> s:/C<span style="color:#f92672">=</span>US/ST<span style="color:#f92672">=</span>Arizona/L<span style="color:#f92672">=</span>Scottsdale/O<span style="color:#f92672">=</span>GoDaddy.com, Inc.
+</span></span><span style="display:flex;"><span>     /OU<span style="color:#f92672">=</span>http://certificates.godaddy.com/repository
+</span></span><span style="display:flex;"><span>     /CN<span style="color:#f92672">=</span>Go Daddy Secure Certification Authority
+</span></span><span style="display:flex;"><span>     /serialNumber<span style="color:#f92672">=</span><span style="color:#ae81ff">07969287</span>
+</span></span><span style="display:flex;"><span>   i:/C<span style="color:#f92672">=</span>US/O<span style="color:#f92672">=</span>The Go Daddy Group, Inc.
+</span></span><span style="display:flex;"><span>     /OU<span style="color:#f92672">=</span>Go Daddy Class <span style="color:#ae81ff">2</span> Certification Authority
+</span></span><span style="display:flex;"><span> <span style="color:#ae81ff">2</span> s:/C<span style="color:#f92672">=</span>US/O<span style="color:#f92672">=</span>The Go Daddy Group, Inc.
+</span></span><span style="display:flex;"><span>     /OU<span style="color:#f92672">=</span>Go Daddy Class <span style="color:#ae81ff">2</span> Certification Authority
+</span></span><span style="display:flex;"><span>   i:/L<span style="color:#f92672">=</span>ValiCert Validation Network/O<span style="color:#f92672">=</span>ValiCert, Inc.
+</span></span><span style="display:flex;"><span>     /OU<span style="color:#f92672">=</span>ValiCert Class <span style="color:#ae81ff">2</span> Policy Validation Authority
+</span></span><span style="display:flex;"><span>     /CN<span style="color:#f92672">=</span>http://www.valicert.com//emailAddress<span style="color:#f92672">=</span>info@valicert.com
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>在这个例子中，www.GoDaddy.com的服务器证书（#0）的受签者（“s”）是被签发机构（“i”）签名的，而这个签发机构又是证书（#1）的受签者，接着证书（#1）的签发机构又是证书（#2）的受签者，最后证书（#2）是被众所周知的签发机构ValiCert, Inc签发。ValiCert, Inc的证书内嵌在浏览器中，被浏览器自动识别（这段话神似英国诗《在Jack盖的房子里》里面的内容）。</p>
+<p>如果没有加入认证方证书链，就只会显示服务器证书（#0）。</p>
+<p>合并HTTP/HTTPS主机
+如果HTTP和HTTPS虚拟主机的功能是一致的，可以配置一个虚拟主机，既处理HTTP请求，又处理HTTPS请求。 配置的方法是删除ssl on的指令，并在*:443端口添加参数ssl：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen              80;
+</span></span><span style="display:flex;"><span>    listen              443 ssl;
+</span></span><span style="display:flex;"><span>    server_name         www.example.com;
+</span></span><span style="display:flex;"><span>    ssl_certificate     www.example.com.crt;
+</span></span><span style="display:flex;"><span>    ssl_certificate_key www.example.com.key;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在0.8.21版本以前，只有添加了default参数的监听端口才能添加ssl参数：
+listen  443  default ssl;
+基于名字的HTTPS主机
+如果在同一个IP上配置多个HTTPS主机，会出现一个很普遍的问题：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen          443;
+</span></span><span style="display:flex;"><span>    server_name     www.example.com;
+</span></span><span style="display:flex;"><span>    ssl             on;
+</span></span><span style="display:flex;"><span>    ssl_certificate www.example.com.crt;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen          443;
+</span></span><span style="display:flex;"><span>    server_name     www.example.org;
+</span></span><span style="display:flex;"><span>    ssl             on;
+</span></span><span style="display:flex;"><span>    ssl_certificate www.example.org.crt;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用上面的配置，不论浏览器请求哪个主机，都只会收到默认主机www.example.com的证书。这是由SSL协议本身的行为引起的——先建立SSL连接，再发送HTTP请求，所以nginx建立SSL连接时不知道所请求主机的名字，因此，它只会返回默认主机的证书。</p>
+<p>最古老的也是最稳定的解决方法就是每个HTTPS主机使用不同的IP地址：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen          192.168.1.1:443;
+</span></span><span style="display:flex;"><span>    server_name     www.example.com;
+</span></span><span style="display:flex;"><span>    ssl             on;
+</span></span><span style="display:flex;"><span>    ssl_certificate www.example.com.crt;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen          192.168.1.2:443;
+</span></span><span style="display:flex;"><span>    server_name     www.example.org;
+</span></span><span style="display:flex;"><span>    ssl             on;
+</span></span><span style="display:flex;"><span>    ssl_certificate www.example.org.crt;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>带有多个主机名的SSL证书
+也有其他一些方法可以实现多个HTTPS主机共享一个IP地址，但都有不足。其中一种方法是使用在“SubjectAltName”字段中存放多个名字的证书，比如www.example.com和www.example.org。但是，“SubjectAltName”字段的长度有限制。</p>
+<p>另一种方式是使用主机名中含有通配符的证书，比如*.example.org。这个证书匹配www.example.org，但是不匹配example.org和www.sub.example.org。这两种方法可以结合在一起——使用在“SubjectAltName”字段中存放的多个名字的证书，这些名字既可以是确切的名字，也可以是通配符，比如example.org和*.example.org。</p>
+<p>最好将带有多个名字的证书和它的密钥文件配置在http配置块中，这样可以只保存一份内容拷贝，所有主机的配置都从中继承：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>ssl_certificate      common.crt;
+</span></span><span style="display:flex;"><span>ssl_certificate_key  common.key;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen          443;
+</span></span><span style="display:flex;"><span>    server_name     www.example.com;
+</span></span><span style="display:flex;"><span>    ssl             on;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    listen          443;
+</span></span><span style="display:flex;"><span>    server_name     www.example.org;
+</span></span><span style="display:flex;"><span>    ssl             on;
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>主机名指示
+在一个IP上运行多个HTTPS主机的更通用的方案是TLS主机名指示扩展（SNI，RFC6066），它允许浏览器和服务器进行SSL握手时，将请求的主机名传递给服务器，因此服务器可以知道使用哪一个证书来服务这个连接。但SNI只得到有限的浏览器的支持。下面列举支持SNI的浏览器最低版本和平台信息：</p>
+<p>Opera 8.0；
+MSIE 7.0（仅在Windows Vista操作系统及后续操作系统）；
+Firefox 2.0和使用Mozilla平台1.8.1版本的其他浏览器；
+Safari 3.2.1（Windows版需要最低Vista操作系统）；
+Chrome（Windows版需要最低Vista操作系统）。
+通过SNI只能传递域名，但是，当请求中包含可读的IP地址时，某些浏览器将服务器的IP地址作为服务器的名字进行了传送。这是一个错误，大家不应该依赖于这个。
+为了在nginx中使用SNI，那么无论是在编译nginx时使用的OpenSSL类库，还是在运行nginx时使用的OpenSSL运行库，都必须支持SNI。从0.9.8f版本开始，OpenSSL通过“&ndash;enable-tlsext”配置选项加入SNI支持，从0.9.8j版本开始，此选项成为默认选项。当nginx被编译成支持SNI时，在使用“-V”选项运行时会显示如下信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ nginx -V
+</span></span><span style="display:flex;"><span>...
+</span></span><span style="display:flex;"><span>TLS SNI support enabled
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>但是，当开启SNI支持的nginx被动态链接到不支持SNI的OpenSSL库上时，nginx会显示如下警告：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>nginx was built with SNI support, however, now it is linked
+</span></span><span style="display:flex;"><span>dynamically to an OpenSSL library which has no tlsext support,
+</span></span><span style="display:flex;"><span>therefore SNI is not available
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

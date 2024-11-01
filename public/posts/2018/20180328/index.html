@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="最近要调用gitlab-ci，正好测试环境的huanggai这机器上，安装了gitlab，但是使用起来总有一些问题，应该安装时候的问题吧。决定重装gitlab,首先，我关闭gitlab服务
+gitlab-ctl stop 但是执行关了这个命令以后，还是有一些gitlab的进程存在
+[deploy@huanggai /opt/gitlab/sv/unicorn]$ ps aux | grep gitlab root 3499 0.0 0.0 11420 1296 ? Ss 12:34 0:00 /bin/sh /opt/gitlab/embedded/bin/gitlab-logrotate-wrapper root 11996 0.0 0.0 35516 3136 ? Ss 13:10 0:00 /opt/gitlab/embedded/sbin/nginx -p /var/opt/gitlab/nginx git 12016 0.0 0.0 11428 1376 ? Ss 13:10 0:00 /bin/bash /opt/gitlab/embedded/bin/gitlab-unicorn-wrapper deploy 12054 0.0 0.0 103416 888 pts/1 S&#43; 13:10 0:00 grep gitlab root 84470 0.0 0.0 4176 460 ? Ss 11:34 0:02 runsvdir -P /opt/gitlab/service log: to lock directory: /var/log/gitlab/redis-exporter: temporary failure?">  
+
+  <title>
+    
+      gitlab从卸载到放弃
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-03-28 11:43:00 &#43;0000 UTC">
+            2018-03-28
+        </time>
+    </p>
+
+    <h1>gitlab从卸载到放弃</h1>
+
+    
+
+    <p>最近要调用gitlab-ci，正好测试环境的huanggai这机器上，安装了gitlab，但是使用起来总有一些问题，应该安装时候的问题吧。决定重装gitlab,首先，我关闭gitlab服务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>gitlab-ctl stop
+</span></span></code></pre></div><p>但是执行关了这个命令以后，还是有一些gitlab的进程存在</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt/gitlab/sv/unicorn<span style="color:#f92672">]</span>$ ps aux | grep gitlab
+</span></span><span style="display:flex;"><span>root       <span style="color:#ae81ff">3499</span>  0.0  0.0  <span style="color:#ae81ff">11420</span>  <span style="color:#ae81ff">1296</span> ?        Ss   12:34   0:00 /bin/sh /opt/gitlab/embedded/bin/gitlab-logrotate-wrapper
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">11996</span>  0.0  0.0  <span style="color:#ae81ff">35516</span>  <span style="color:#ae81ff">3136</span> ?        Ss   13:10   0:00 /opt/gitlab/embedded/sbin/nginx -p /var/opt/gitlab/nginx
+</span></span><span style="display:flex;"><span>git       <span style="color:#ae81ff">12016</span>  0.0  0.0  <span style="color:#ae81ff">11428</span>  <span style="color:#ae81ff">1376</span> ?        Ss   13:10   0:00 /bin/bash /opt/gitlab/embedded/bin/gitlab-unicorn-wrapper
+</span></span><span style="display:flex;"><span>deploy    <span style="color:#ae81ff">12054</span>  0.0  0.0 <span style="color:#ae81ff">103416</span>   <span style="color:#ae81ff">888</span> pts/1    S+   13:10   0:00 grep gitlab
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84470</span>  0.0  0.0   <span style="color:#ae81ff">4176</span>   <span style="color:#ae81ff">460</span> ?        Ss   11:34   0:02 runsvdir -P /opt/gitlab/service log: to lock directory: /var/log/gitlab/redis-exporter: temporary failure?svlogd: fatal: no functional log directories.?svlogd: warning: unable to lock directory: /var/log/gitlab/postgres-exporter: temporary failure?svlogd: fatal: no functional log directories.?svlogd: warning: unable to lock directory: /var/log/gitlab/node-exporter: temporary failure?svlogd: fatal: no functional log directories.?
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84471</span>  0.0  0.0   <span style="color:#ae81ff">4024</span>   <span style="color:#ae81ff">404</span> ?        Ss   11:34   0:02 runsv gitlab-workhorse
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84477</span>  0.0  0.0   <span style="color:#ae81ff">4024</span>   <span style="color:#ae81ff">404</span> ?        Ss   11:34   0:02 runsv gitlab-monitor
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84483</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">520</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/gitlab-workhorse
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84487</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">520</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/sidekiq
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84488</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">524</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/prometheus
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84489</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">524</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/registry
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84491</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">520</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/gitlab-monitor
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84492</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">524</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/redis
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84496</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">524</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/gitaly
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84498</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">520</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/postgresql
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84643</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">520</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/unicorn
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">84796</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">524</span> ?        S    11:34   0:00 svlogd -tt /var/log/gitlab/nginx
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">490</span>       <span style="color:#ae81ff">88143</span>  0.0  0.0 <span style="color:#ae81ff">125980</span>  <span style="color:#ae81ff">5488</span> ?        Ssl  11:34   0:00 /opt/gitlab/embedded/bin/node_exporter -web.listen-address<span style="color:#f92672">=</span>localhost:9100 -collector.textfile.directory<span style="color:#f92672">=</span>/var/opt/gitlab/node-exporter/textfile_collector
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">491</span>       <span style="color:#ae81ff">93239</span>  0.0  0.0 <span style="color:#ae81ff">121308</span>  <span style="color:#ae81ff">4280</span> ?        Ssl  11:12   0:00 /opt/gitlab/embedded/bin/postgres_exporter -web.listen-address<span style="color:#f92672">=</span>localhost:9187 -extend.query-path<span style="color:#f92672">=</span>/var/opt/gitlab/postgres-exporter/queries.yaml
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">93241</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">536</span> ?        S    11:12   0:00 svlogd -tt /var/log/gitlab/node-exporter
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">93244</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">536</span> ?        S    11:12   0:00 svlogd -tt /var/log/gitlab/redis-exporter
+</span></span><span style="display:flex;"><span>root      <span style="color:#ae81ff">93245</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">540</span> ?        S    11:12   0:00 svlogd -tt /var/log/gitlab/postgres-exporter
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">490</span>       <span style="color:#ae81ff">93247</span>  0.0  0.0 <span style="color:#ae81ff">202560</span>  <span style="color:#ae81ff">5892</span> ?        Ssl  11:12   0:00 /opt/gitlab/embedded/bin/node_exporter -web.listen-address<span style="color:#f92672">=</span>localhost:9100 -collector.textfile.directory<span style="color:#f92672">=</span>/var/opt/gitlab/node-exporter/textfile_collector
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">492</span>       <span style="color:#ae81ff">93249</span>  0.0  0.0  <span style="color:#ae81ff">44856</span>  <span style="color:#ae81ff">3900</span> ?        Ssl  11:12   0:00 /opt/gitlab/embedded/bin/redis_exporter -web.listen-address<span style="color:#f92672">=</span>localhost:9121 -redis.addr<span style="color:#f92672">=</span>unix:///var/opt/gitlab/redis/redis.socket
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">492</span>      <span style="color:#ae81ff">124573</span>  0.0  0.0  <span style="color:#ae81ff">44856</span>  <span style="color:#ae81ff">3516</span> ?        Ssl  11:35   0:00 /opt/gitlab/embedded/bin/redis_exporter -web.listen-address<span style="color:#f92672">=</span>localhost:9121 -redis.addr<span style="color:#f92672">=</span>unix:///var/opt/gitlab/redis/redis.socket
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">491</span>      <span style="color:#ae81ff">127359</span>  0.0  0.0 <span style="color:#ae81ff">121308</span>  <span style="color:#ae81ff">4008</span> ?        Ssl  11:36   0:00 /opt/gitlab/embedded/bin/postgres_exporter -web.listen-address<span style="color:#f92672">=</span>localhost:9187 -extend.query-path<span style="color:#f92672">=</span>/var/opt/gitlab/postgres-exporter/queries.yaml
+</span></span><span style="display:flex;"><span>root     <span style="color:#ae81ff">140336</span>  0.0  0.0   <span style="color:#ae81ff">4168</span>   <span style="color:#ae81ff">444</span> ?        S    12:12   0:00 svlogd -tt /var/log/gitlab/logrotate
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt/gitlab/sv/unicorn<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>于是我决定把这些进程都杀掉，然后删除gitlab相关的问题,这样就算彻底卸载完成了吧.我用awk过滤出这些进程的Pid,然后调用kill -9 杀掉.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt/gitlab/sv/unicorn<span style="color:#f92672">]</span>$ ps aux | grep gitlab | awk <span style="color:#e6db74">&#39;{print $2}&#39;</span> | xargs kill -9
+</span></span><span style="display:flex;"><span>kill 3499: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 72338: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 72389: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 72491: No such process
+</span></span><span style="display:flex;"><span>kill 84470: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84471: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84477: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84483: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84487: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84488: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84489: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84491: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84492: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84496: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84498: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84643: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 84796: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 88143: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 93239: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 93241: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 93244: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 93245: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 93247: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 93249: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 124573: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 127359: Operation not permitted
+</span></span><span style="display:flex;"><span>kill 140336: Operation not permitted
+</span></span></code></pre></div><p>这里提示权限不够，原因是gitlab是root用户启动的,我给他加上root权限在执行kill -9</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt/gitlab/sv/unicorn<span style="color:#f92672">]</span>$ ps aux | grep gitlab | awk <span style="color:#e6db74">&#39;{print $2}&#39;</span> | xargs sudo kill -9
+</span></span><span style="display:flex;"><span>kill 92992: No such process
+</span></span></code></pre></div><p>这里有提示进程不存在了，这回我就纳闷了，怎么会进程不存在了呢，92992这个进程并不是上面awk过滤出来的，试了好久，查了很多资料都没有找到这样原因，我想那就手动kill -9 一个一个的杀掉这些进程，当时执行了大概4次kill命令以后，我发现这些经常的个数并没有减少，每次杀到以他又重新启动起来了，让找网上的说法，是杀掉守护进程，就是pid为93032的这个</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>root      <span style="color:#ae81ff">93032</span>  0.0  0.0   <span style="color:#ae81ff">4176</span>   <span style="color:#ae81ff">456</span> ?        Ss   13:14   0:00 runsvdir -P /opt/gitlab/service log: to lock directory: /var/log/gitlab/node-exporter: temporary failure?svlogd: fatal: no functional log directories.?svlogd: warning: unable to lock directory: /var/log/gitlab/postgres-exporter: temporary failure?svlogd: fatal: no functional log directories.?svlogd: warning: unable to lock directory: /var/log/gitlab/redis-exporter: temporary failure?svlogd: fatal: no functional log directories.?
+</span></span></code></pre></div><p>于是我sudo kill -9 93032杀掉这个进程，我在ps aux | greo gitlab一看，这样经常还在，而且创建时间就是刚才，我注意到了这个进程的启动命令前面有一个runsvdir命令,我man runsvdir并没有找到这个命令的说明，于是我上网查了下，找到了这货的<a href="http://smarden.org/runit/runsvdir.8.html">说明</a>,他的是用方式是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>runsvdir <span style="color:#f92672">[</span>-P<span style="color:#f92672">]</span> dir <span style="color:#f92672">[</span> log <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>这不就是咋们上面的gitlab命令行的启动方式吗，所以这里我已经大概命令了，gitlab服务的进程被runsvdir管理着，每次我kill了进程，他有会立马他进程给启动起来,与这货关联的还有一个<a href="http://smarden.org/runit/index.html">runit</a>,这里我就先不讲这个runit了，下一篇文章再来好好说说他。咋们在回到gitlab卸载的事情上，我进入了/opt/gitlab/service目录,ls 看一下里面都有些啥</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt/gitlab/service<span style="color:#f92672">]</span>$ ls -al
+</span></span><span style="display:flex;"><span>total <span style="color:#ae81ff">8</span>
+</span></span><span style="display:flex;"><span>drwxr-xr-x  <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">4096</span> Oct <span style="color:#ae81ff">19</span> 11:14 .
+</span></span><span style="display:flex;"><span>drwxr-xr-x <span style="color:#ae81ff">10</span> root root <span style="color:#ae81ff">4096</span> Oct <span style="color:#ae81ff">17</span> 12:49 ..
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">21</span> Oct <span style="color:#ae81ff">17</span> 12:50 gitaly -&gt; /opt/gitlab/sv/gitaly
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">29</span> Oct <span style="color:#ae81ff">17</span> 12:50 gitlab-monitor -&gt; /opt/gitlab/sv/gitlab-monitor
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">31</span> Oct <span style="color:#ae81ff">17</span> 12:50 gitlab-workhorse -&gt; /opt/gitlab/sv/gitlab-workhorse
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">24</span> Oct <span style="color:#ae81ff">17</span> 12:50 logrotate -&gt; /opt/gitlab/sv/logrotate
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">20</span> Oct <span style="color:#ae81ff">17</span> 12:50 nginx -&gt; /opt/gitlab/sv/nginx
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">28</span> Oct <span style="color:#ae81ff">17</span> 12:50 node-exporter -&gt; /opt/gitlab/sv/node-exporter
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">32</span> Oct <span style="color:#ae81ff">17</span> 12:50 postgres-exporter -&gt; /opt/gitlab/sv/postgres-exporter
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">25</span> Oct <span style="color:#ae81ff">17</span> 12:49 postgresql -&gt; /opt/gitlab/sv/postgresql
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">25</span> Oct <span style="color:#ae81ff">17</span> 12:50 prometheus -&gt; /opt/gitlab/sv/prometheus
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">20</span> Oct <span style="color:#ae81ff">17</span> 12:49 redis -&gt; /opt/gitlab/sv/redis
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">29</span> Oct <span style="color:#ae81ff">17</span> 12:50 redis-exporter -&gt; /opt/gitlab/sv/redis-exporter
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">23</span> Oct <span style="color:#ae81ff">19</span> 11:14 registry -&gt; /opt/gitlab/sv/registry
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">22</span> Oct <span style="color:#ae81ff">17</span> 12:49 sidekiq -&gt; /opt/gitlab/sv/sidekiq
+</span></span><span style="display:flex;"><span>lrwxrwxrwx  <span style="color:#ae81ff">1</span> root root   <span style="color:#ae81ff">22</span> Oct <span style="color:#ae81ff">17</span> 12:49 unicorn -&gt; /opt/gitlab/sv/unicorn
+</span></span></code></pre></div><p>都是link,那就进入到gitlab-monitor这个link指向的文件夹看看吧</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt/gitlab/service/gitlab-monitor<span style="color:#f92672">]</span>$ ls -l
+</span></span><span style="display:flex;"><span>total <span style="color:#ae81ff">12</span>
+</span></span><span style="display:flex;"><span>drwxr-xr-x <span style="color:#ae81ff">4</span> root root <span style="color:#ae81ff">4096</span> Oct <span style="color:#ae81ff">30</span> 18:25 log
+</span></span><span style="display:flex;"><span>-rwxr-xr-x <span style="color:#ae81ff">1</span> root root  <span style="color:#ae81ff">152</span> Oct <span style="color:#ae81ff">17</span> 12:50 run
+</span></span><span style="display:flex;"><span>drwxr-xr-x <span style="color:#ae81ff">2</span> root root <span style="color:#ae81ff">4096</span> Mar <span style="color:#ae81ff">28</span> 13:38 supervise
+</span></span></code></pre></div><p>我有看看了其他的文件，基本都是这个目录结构，三个文件,log, run ,supervise。这个run文件是可执行的，cat看一下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/sh
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>exec 2&gt;&amp;<span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>umask <span style="color:#ae81ff">077</span>
+</span></span><span style="display:flex;"><span>exec chpst -P -U git -u git /opt/gitlab/embedded/bin/gitlab-mon web -c /var/opt/gitlab/gitlab-monitor/gitlab-monitor.yml
+</span></span></code></pre></div><p>搜一下，确实有gitlab-mon这个进程，那么现在我把/opt/gitlab这个文件夹删除，然后在杀掉那些进程，应该就不会在被重新启动起来了吧.删除之前看一下这个文件夹下面有那些文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt<span style="color:#f92672">]</span>$ tree -L <span style="color:#ae81ff">2</span> gitlab
+</span></span><span style="display:flex;"><span>gitlab
+</span></span><span style="display:flex;"><span>├── bin
+</span></span><span style="display:flex;"><span>│   ├── gitlab-ctl
+</span></span><span style="display:flex;"><span>│   ├── gitlab-geo-psql
+</span></span><span style="display:flex;"><span>│   ├── gitlab-healthcheck
+</span></span><span style="display:flex;"><span>│   ├── gitlab-psql
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails
+</span></span><span style="display:flex;"><span>│   └── gitlab-rake
+</span></span><span style="display:flex;"><span>├── dependency_licenses.json
+</span></span><span style="display:flex;"><span>├── embedded
+</span></span><span style="display:flex;"><span>│   ├── bin
+</span></span><span style="display:flex;"><span>│   ├── client_body_temp
+</span></span><span style="display:flex;"><span>│   ├── conf
+</span></span><span style="display:flex;"><span>│   ├── cookbooks
+</span></span><span style="display:flex;"><span>│   ├── etc
+</span></span><span style="display:flex;"><span>│   ├── fastcgi_temp
+</span></span><span style="display:flex;"><span>│   ├── html
+</span></span><span style="display:flex;"><span>│   ├── include
+</span></span><span style="display:flex;"><span>│   ├── lib
+</span></span><span style="display:flex;"><span>│   ├── libexec
+</span></span><span style="display:flex;"><span>│   ├── logs
+</span></span><span style="display:flex;"><span>│   ├── man
+</span></span><span style="display:flex;"><span>│   ├── nodes
+</span></span><span style="display:flex;"><span>│   ├── postgresql
+</span></span><span style="display:flex;"><span>│   ├── proxy_temp
+</span></span><span style="display:flex;"><span>│   ├── sbin
+</span></span><span style="display:flex;"><span>│   ├── scgi_temp
+</span></span><span style="display:flex;"><span>│   ├── selinux
+</span></span><span style="display:flex;"><span>│   ├── service
+</span></span><span style="display:flex;"><span>│   ├── share
+</span></span><span style="display:flex;"><span>│   ├── ssl
+</span></span><span style="display:flex;"><span>│   └── uwsgi_temp
+</span></span><span style="display:flex;"><span>├── etc
+</span></span><span style="display:flex;"><span>│   ├── gitaly
+</span></span><span style="display:flex;"><span>│   ├── gitlab-healthcheck-rc
+</span></span><span style="display:flex;"><span>│   ├── gitlab-psql-rc
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails
+</span></span><span style="display:flex;"><span>│   ├── gitlab.rb.template
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse
+</span></span><span style="display:flex;"><span>│   └── postgres-exporter
+</span></span><span style="display:flex;"><span>├── init
+</span></span><span style="display:flex;"><span>│   ├── gitaly -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── logrotate -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── nginx -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── node-exporter -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── postgresql -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── prometheus -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── redis -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── registry -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── sidekiq -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   └── unicorn -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>├── LICENSE
+</span></span><span style="display:flex;"><span>├── LICENSES
+</span></span><span style="display:flex;"><span>│   ├── bundler-LICENSE.md
+</span></span><span style="display:flex;"><span>│   ├── bzip2-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── cacerts-index.815ca599c9df.txt
+</span></span><span style="display:flex;"><span>│   ├── chef-gem-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── chef-zero-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── config_guess-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── consul-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── curl-COPYING
+</span></span><span style="display:flex;"><span>│   ├── gitaly-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── git-COPYING
+</span></span><span style="display:flex;"><span>│   ├── gitlab-config-template-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-cookbooks-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-ctl-ee-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-ctl-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-elasticsearch-indexer-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-geo-psql-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-healthcheck-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-psql-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails-gitlab-gem-licenses
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-scripts-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-selinux-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-shell-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── jemalloc-COPYING
+</span></span><span style="display:flex;"><span>│   ├── krb5-NOTICE
+</span></span><span style="display:flex;"><span>│   ├── libedit-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libevent-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── libffi-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── libiconv-COPYING.LIB
+</span></span><span style="display:flex;"><span>│   ├── libicu-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── liblzma-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libossp-uuid-README
+</span></span><span style="display:flex;"><span>│   ├── libre2-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── libtool-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libxml2-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libxslt-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libyaml-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── logrotate-COPYING
+</span></span><span style="display:flex;"><span>│   ├── makedepend-COPYING
+</span></span><span style="display:flex;"><span>│   ├── mattermost-GITLAB-MATTERMOST-COMPILED-LICENSE.txt
+</span></span><span style="display:flex;"><span>│   ├── mixlib-log-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── mysql-client-COPYING
+</span></span><span style="display:flex;"><span>│   ├── ncurses-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── nginx-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── node-exporter-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── ohai-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── omnibus-ctl-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── openssl-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── package-scripts-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── pcre-LICENCE
+</span></span><span style="display:flex;"><span>│   ├── pgbouncer-COPYRIGHT
+</span></span><span style="display:flex;"><span>│   ├── pkg-config-lite-COPYING
+</span></span><span style="display:flex;"><span>│   ├── popt-COPYING
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── postgresql-COPYRIGHT
+</span></span><span style="display:flex;"><span>│   ├── prometheus-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── python3-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── python-docutils-COPYING.txt
+</span></span><span style="display:flex;"><span>│   ├── rb-readline-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── redis-COPYING
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── registry-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── repmgr-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── rsync-COPYING
+</span></span><span style="display:flex;"><span>│   ├── ruby-BSDL
+</span></span><span style="display:flex;"><span>│   ├── ruby-COPYING
+</span></span><span style="display:flex;"><span>│   ├── rubygems-LICENSE.txt
+</span></span><span style="display:flex;"><span>│   ├── ruby-LEGAL
+</span></span><span style="display:flex;"><span>│   ├── runit-COPYING
+</span></span><span style="display:flex;"><span>│   ├── unzip-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── util-macros-COPYING
+</span></span><span style="display:flex;"><span>│   ├── xproto-COPYING
+</span></span><span style="display:flex;"><span>│   └── zlib-README
+</span></span><span style="display:flex;"><span>├── service
+</span></span><span style="display:flex;"><span>│   ├── gitaly -&gt; /opt/gitlab/sv/gitaly
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor -&gt; /opt/gitlab/sv/gitlab-monitor
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse -&gt; /opt/gitlab/sv/gitlab-workhorse
+</span></span><span style="display:flex;"><span>│   ├── logrotate -&gt; /opt/gitlab/sv/logrotate
+</span></span><span style="display:flex;"><span>│   ├── nginx -&gt; /opt/gitlab/sv/nginx
+</span></span><span style="display:flex;"><span>│   ├── node-exporter -&gt; /opt/gitlab/sv/node-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter -&gt; /opt/gitlab/sv/postgres-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgresql -&gt; /opt/gitlab/sv/postgresql
+</span></span><span style="display:flex;"><span>│   ├── prometheus -&gt; /opt/gitlab/sv/prometheus
+</span></span><span style="display:flex;"><span>│   ├── redis -&gt; /opt/gitlab/sv/redis
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter -&gt; /opt/gitlab/sv/redis-exporter
+</span></span><span style="display:flex;"><span>│   ├── registry -&gt; /opt/gitlab/sv/registry
+</span></span><span style="display:flex;"><span>│   ├── sidekiq -&gt; /opt/gitlab/sv/sidekiq
+</span></span><span style="display:flex;"><span>│   └── unicorn -&gt; /opt/gitlab/sv/unicorn
+</span></span><span style="display:flex;"><span>├── sv
+</span></span><span style="display:flex;"><span>│   ├── gitaly
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse
+</span></span><span style="display:flex;"><span>│   ├── logrotate
+</span></span><span style="display:flex;"><span>│   ├── nginx
+</span></span><span style="display:flex;"><span>│   ├── node-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgresql
+</span></span><span style="display:flex;"><span>│   ├── prometheus
+</span></span><span style="display:flex;"><span>│   ├── redis
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter
+</span></span><span style="display:flex;"><span>│   ├── registry
+</span></span><span style="display:flex;"><span>│   ├── sidekiq
+</span></span><span style="display:flex;"><span>│   └── unicorn
+</span></span><span style="display:flex;"><span>├── var
+</span></span><span style="display:flex;"><span>│   └── unicorn
+</span></span><span style="display:flex;"><span>├── version-manifest.json
+</span></span><span style="display:flex;"><span>└── version-manifest.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">63</span> directories, <span style="color:#ae81ff">102</span> files
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt<span style="color:#f92672">]</span>$
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt<span style="color:#f92672">]</span>$ pwd
+</span></span><span style="display:flex;"><span>/opt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai /opt<span style="color:#f92672">]</span>$ tree -L <span style="color:#ae81ff">2</span> /opt/gitlab
+</span></span><span style="display:flex;"><span>/opt/gitlab
+</span></span><span style="display:flex;"><span>├── bin
+</span></span><span style="display:flex;"><span>│   ├── gitlab-ctl
+</span></span><span style="display:flex;"><span>│   ├── gitlab-geo-psql
+</span></span><span style="display:flex;"><span>│   ├── gitlab-healthcheck
+</span></span><span style="display:flex;"><span>│   ├── gitlab-psql
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails
+</span></span><span style="display:flex;"><span>│   └── gitlab-rake
+</span></span><span style="display:flex;"><span>├── dependency_licenses.json
+</span></span><span style="display:flex;"><span>├── embedded
+</span></span><span style="display:flex;"><span>│   ├── bin
+</span></span><span style="display:flex;"><span>│   ├── client_body_temp
+</span></span><span style="display:flex;"><span>│   ├── conf
+</span></span><span style="display:flex;"><span>│   ├── cookbooks
+</span></span><span style="display:flex;"><span>│   ├── etc
+</span></span><span style="display:flex;"><span>│   ├── fastcgi_temp
+</span></span><span style="display:flex;"><span>│   ├── html
+</span></span><span style="display:flex;"><span>│   ├── include
+</span></span><span style="display:flex;"><span>│   ├── lib
+</span></span><span style="display:flex;"><span>│   ├── libexec
+</span></span><span style="display:flex;"><span>│   ├── logs
+</span></span><span style="display:flex;"><span>│   ├── man
+</span></span><span style="display:flex;"><span>│   ├── nodes
+</span></span><span style="display:flex;"><span>│   ├── postgresql
+</span></span><span style="display:flex;"><span>│   ├── proxy_temp
+</span></span><span style="display:flex;"><span>│   ├── sbin
+</span></span><span style="display:flex;"><span>│   ├── scgi_temp
+</span></span><span style="display:flex;"><span>│   ├── selinux
+</span></span><span style="display:flex;"><span>│   ├── service
+</span></span><span style="display:flex;"><span>│   ├── share
+</span></span><span style="display:flex;"><span>│   ├── ssl
+</span></span><span style="display:flex;"><span>│   └── uwsgi_temp
+</span></span><span style="display:flex;"><span>├── etc
+</span></span><span style="display:flex;"><span>│   ├── gitaly
+</span></span><span style="display:flex;"><span>│   ├── gitlab-healthcheck-rc
+</span></span><span style="display:flex;"><span>│   ├── gitlab-psql-rc
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails
+</span></span><span style="display:flex;"><span>│   ├── gitlab.rb.template
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse
+</span></span><span style="display:flex;"><span>│   └── postgres-exporter
+</span></span><span style="display:flex;"><span>├── init
+</span></span><span style="display:flex;"><span>│   ├── gitaly -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── logrotate -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── nginx -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── node-exporter -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── postgresql -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── prometheus -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── redis -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── registry -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   ├── sidekiq -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>│   └── unicorn -&gt; /opt/gitlab/embedded/bin/sv
+</span></span><span style="display:flex;"><span>├── LICENSE
+</span></span><span style="display:flex;"><span>├── LICENSES
+</span></span><span style="display:flex;"><span>│   ├── bundler-LICENSE.md
+</span></span><span style="display:flex;"><span>│   ├── bzip2-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── cacerts-index.815ca599c9df.txt
+</span></span><span style="display:flex;"><span>│   ├── chef-gem-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── chef-zero-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── config_guess-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── consul-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── curl-COPYING
+</span></span><span style="display:flex;"><span>│   ├── gitaly-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── git-COPYING
+</span></span><span style="display:flex;"><span>│   ├── gitlab-config-template-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-cookbooks-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-ctl-ee-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-ctl-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-elasticsearch-indexer-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-geo-psql-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-healthcheck-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-psql-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails-gitlab-gem-licenses
+</span></span><span style="display:flex;"><span>│   ├── gitlab-rails-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-scripts-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-selinux-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-shell-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── jemalloc-COPYING
+</span></span><span style="display:flex;"><span>│   ├── krb5-NOTICE
+</span></span><span style="display:flex;"><span>│   ├── libedit-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libevent-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── libffi-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── libiconv-COPYING.LIB
+</span></span><span style="display:flex;"><span>│   ├── libicu-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── liblzma-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libossp-uuid-README
+</span></span><span style="display:flex;"><span>│   ├── libre2-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── libtool-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libxml2-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libxslt-COPYING
+</span></span><span style="display:flex;"><span>│   ├── libyaml-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── logrotate-COPYING
+</span></span><span style="display:flex;"><span>│   ├── makedepend-COPYING
+</span></span><span style="display:flex;"><span>│   ├── mattermost-GITLAB-MATTERMOST-COMPILED-LICENSE.txt
+</span></span><span style="display:flex;"><span>│   ├── mixlib-log-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── mysql-client-COPYING
+</span></span><span style="display:flex;"><span>│   ├── ncurses-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── nginx-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── node-exporter-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── ohai-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── omnibus-ctl-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── openssl-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── package-scripts-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── pcre-LICENCE
+</span></span><span style="display:flex;"><span>│   ├── pgbouncer-COPYRIGHT
+</span></span><span style="display:flex;"><span>│   ├── pkg-config-lite-COPYING
+</span></span><span style="display:flex;"><span>│   ├── popt-COPYING
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── postgresql-COPYRIGHT
+</span></span><span style="display:flex;"><span>│   ├── prometheus-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── python3-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── python-docutils-COPYING.txt
+</span></span><span style="display:flex;"><span>│   ├── rb-readline-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── redis-COPYING
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── registry-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── repmgr-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── rsync-COPYING
+</span></span><span style="display:flex;"><span>│   ├── ruby-BSDL
+</span></span><span style="display:flex;"><span>│   ├── ruby-COPYING
+</span></span><span style="display:flex;"><span>│   ├── rubygems-LICENSE.txt
+</span></span><span style="display:flex;"><span>│   ├── ruby-LEGAL
+</span></span><span style="display:flex;"><span>│   ├── runit-COPYING
+</span></span><span style="display:flex;"><span>│   ├── unzip-LICENSE
+</span></span><span style="display:flex;"><span>│   ├── util-macros-COPYING
+</span></span><span style="display:flex;"><span>│   ├── xproto-COPYING
+</span></span><span style="display:flex;"><span>│   └── zlib-README
+</span></span><span style="display:flex;"><span>├── service
+</span></span><span style="display:flex;"><span>│   ├── gitaly -&gt; /opt/gitlab/sv/gitaly
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor -&gt; /opt/gitlab/sv/gitlab-monitor
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse -&gt; /opt/gitlab/sv/gitlab-workhorse
+</span></span><span style="display:flex;"><span>│   ├── logrotate -&gt; /opt/gitlab/sv/logrotate
+</span></span><span style="display:flex;"><span>│   ├── nginx -&gt; /opt/gitlab/sv/nginx
+</span></span><span style="display:flex;"><span>│   ├── node-exporter -&gt; /opt/gitlab/sv/node-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter -&gt; /opt/gitlab/sv/postgres-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgresql -&gt; /opt/gitlab/sv/postgresql
+</span></span><span style="display:flex;"><span>│   ├── prometheus -&gt; /opt/gitlab/sv/prometheus
+</span></span><span style="display:flex;"><span>│   ├── redis -&gt; /opt/gitlab/sv/redis
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter -&gt; /opt/gitlab/sv/redis-exporter
+</span></span><span style="display:flex;"><span>│   ├── registry -&gt; /opt/gitlab/sv/registry
+</span></span><span style="display:flex;"><span>│   ├── sidekiq -&gt; /opt/gitlab/sv/sidekiq
+</span></span><span style="display:flex;"><span>│   └── unicorn -&gt; /opt/gitlab/sv/unicorn
+</span></span><span style="display:flex;"><span>├── sv
+</span></span><span style="display:flex;"><span>│   ├── gitaly
+</span></span><span style="display:flex;"><span>│   ├── gitlab-monitor
+</span></span><span style="display:flex;"><span>│   ├── gitlab-workhorse
+</span></span><span style="display:flex;"><span>│   ├── logrotate
+</span></span><span style="display:flex;"><span>│   ├── nginx
+</span></span><span style="display:flex;"><span>│   ├── node-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgres-exporter
+</span></span><span style="display:flex;"><span>│   ├── postgresql
+</span></span><span style="display:flex;"><span>│   ├── prometheus
+</span></span><span style="display:flex;"><span>│   ├── redis
+</span></span><span style="display:flex;"><span>│   ├── redis-exporter
+</span></span><span style="display:flex;"><span>│   ├── registry
+</span></span><span style="display:flex;"><span>│   ├── sidekiq
+</span></span><span style="display:flex;"><span>│   └── unicorn
+</span></span><span style="display:flex;"><span>├── var
+</span></span><span style="display:flex;"><span>│   └── unicorn
+</span></span><span style="display:flex;"><span>├── version-manifest.json
+</span></span><span style="display:flex;"><span>└── version-manifest.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">63</span> directories, <span style="color:#ae81ff">102</span> files
+</span></span></code></pre></div><p>下次再研究下每个文件的功能. 这回再次kill，没有问题，没有启动了.再次访问gitlab的页面，居然还能访问，显示404，说明还有进程没有关闭</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>deploy@huanggai ~<span style="color:#f92672">]</span>$ sudo lsof -i:7201
+</span></span><span style="display:flex;"><span>COMMAND   PID       USER   FD   TYPE     DEVICE SIZE/OFF NODE NAME
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48663</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48664</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48665</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48666</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48667</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48669</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48671</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48672</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48673</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48674</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48675</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48676</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48677</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48678</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48679</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48680</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48681</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48684</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48685</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48695</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48697</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48699</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48702</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48703</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48704</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48706</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48708</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48708</span> gitlab-www   26u  IPv4 <span style="color:#ae81ff">2935749941</span>      0t0  TCP huanggai:dlip-&gt;shawujing:25189 <span style="color:#f92672">(</span>ESTABLISHED<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48709</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48710</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48711</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48712</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>nginx   <span style="color:#ae81ff">48713</span> gitlab-www    9u  IPv4 <span style="color:#ae81ff">2916601470</span>      0t0  TCP *:dlip <span style="color:#f92672">(</span>LISTEN<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>好家伙，这货还在</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo lsof -i:7201 | awk <span style="color:#e6db74">&#39;{print $2}&#39;</span> |xargs sudo kill -9
+</span></span></code></pre></div><p>再访问，这回终于停了，至此gitlab已经彻底卸载。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

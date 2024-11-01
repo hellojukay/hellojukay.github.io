@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="golang开发在依赖管理一直不太方便，主要有一下问题：
+golang.org包下载不方便 如果不提前下载好所有依赖，glide install速度慢 golang.org被墙的问题可以通过设置glide 的mirror来解决，glide install下载慢的问题也可以通过提前下的来解决。但是,但是服务器上进行CI就不方便，如果需要每次都重新下载依赖，显然编译速度慢，导致集成速度慢，这不是我想要的。
+我们的所有的golang项目都是在golang的容器里面编译，所以，我们可以通过这里来下手，尽可能的降我们会用到的依赖安装在容器的GOPATH中，这样glide在安装依赖的不需要从github重新下载代码了，国内网络连接github还是挺慢的，这样做能节约不少构建时间, 还有一个好处就是如果是用的github上的某个包，被作者删除了，也不会影响你的正常编译。
+FROM golang RUN apt-get update &amp;&amp; apt-get -y upgrade RUN apt-get install -y ca-certificates git build-essential &amp;&amp; rm -rf /var/lib/apt/lists/* RUN go get -u github.com/Masterminds/glide RUN go get -u github.com/jstemmer/go-junit-report RUN go get -u github.com/go-bindata/go-bindata/... RUN go get -u github.com/golang/dep/cmd/dep RUN go get -u golang.org/x/crypto RUN go get -u golang.org/x/net RUN go get -u golang.org/x/tools RUN go get -u golang.org/x/text RUN go get -u golang.">  
+
+  <title>
+    
+      使用Docker来管理golang的编译依赖
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-12-01 00:00:00 &#43;0000 UTC">
+            2018-12-01
+        </time>
+    </p>
+
+    <h1>使用Docker来管理golang的编译依赖</h1>
+
+    
+
+    <p>golang开发在依赖管理一直不太方便，主要有一下问题：</p>
+<ul>
+<li>golang.org包下载不方便</li>
+<li>如果不提前下载好所有依赖，glide install速度慢</li>
+</ul>
+<p>golang.org被墙的问题可以通过设置glide 的mirror来解决，glide install下载慢的问题也可以通过提前下的来解决。但是,但是服务器上进行CI就不方便，如果需要每次都重新下载依赖，显然编译速度慢，导致集成速度慢，这不是我想要的。</p>
+<p>我们的所有的golang项目都是在golang的容器里面编译，所以，我们可以通过这里来下手，尽可能的降我们会用到的依赖安装在容器的GOPATH中，这样glide在安装依赖的不需要从github重新下载代码了，国内网络连接github还是挺慢的，这样做能节约不少构建时间, 还有一个好处就是如果是用的github上的某个包，被作者删除了，也不会影响你的正常编译。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>FROM golang
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>RUN apt-get update <span style="color:#f92672">&amp;&amp;</span> apt-get -y upgrade
+</span></span><span style="display:flex;"><span>RUN apt-get install -y ca-certificates git build-essential <span style="color:#f92672">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*
+</span></span><span style="display:flex;"><span>RUN go get -u github.com/Masterminds/glide
+</span></span><span style="display:flex;"><span>RUN go get -u github.com/jstemmer/go-junit-report
+</span></span><span style="display:flex;"><span>RUN go get -u github.com/go-bindata/go-bindata/...
+</span></span><span style="display:flex;"><span>RUN go get -u github.com/golang/dep/cmd/dep
+</span></span><span style="display:flex;"><span>RUN go get -u golang.org/x/crypto
+</span></span><span style="display:flex;"><span>RUN go get -u golang.org/x/net
+</span></span><span style="display:flex;"><span>RUN go get -u golang.org/x/tools
+</span></span><span style="display:flex;"><span>RUN go get -u golang.org/x/text
+</span></span><span style="display:flex;"><span>RUN go get -u golang.org/x/image
+</span></span><span style="display:flex;"><span>RUN go get -u golang.org/x/sys
+</span></span><span style="display:flex;"><span>RUN go get -u github.com/gin-gonic/gin
+</span></span></code></pre></div><p>比如，这里我安装了golang.org的包，同理，我还以安装其他的包。我们将这个Dockerfile推送到github上，让后关联到DockerHub就能自动编译出一个属于我自己的golang编译器容器了</p>
+<p>利用这个容器，我们可以我们的项目代码，例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ipackage main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>import <span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>func main<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	router :<span style="color:#f92672">=</span> gin.Default<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	router.GET<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/&#34;</span>, func<span style="color:#f92672">(</span>c *gin.Context<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		c.String<span style="color:#f92672">(</span>http.StatusOK, <span style="color:#e6db74">&#34;%s&#34;</span>, <span style="color:#e6db74">&#34;Hello World&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>	router.Run<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这是我们的源码，是一个gin框架的web项目。我们已经为这个项目生产了glide的文件，glide.yaml和glide.lock文件。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>FROM  golang:mygolang as builder
+</span></span><span style="display:flex;"><span>RUN mkdir /golang/src/golang-example
+</span></span><span style="display:flex;"><span>WORKDIR /golang/src/golang-example
+</span></span><span style="display:flex;"><span>COPY . .
+</span></span><span style="display:flex;"><span>RUN glide install
+</span></span><span style="display:flex;"><span>RUN go build -o main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>FROM alpine:v3.8
+</span></span><span style="display:flex;"><span>RUN mkdir /app/main
+</span></span><span style="display:flex;"><span>RUN adduser -S -D -H -h /app appuser
+</span></span><span style="display:flex;"><span>COPY --from<span style="color:#f92672">=</span>builder  /golang/src/golang-example/main /app/main
+</span></span><span style="display:flex;"><span>USER appuser
+</span></span><span style="display:flex;"><span>WORKDIR /app
+</span></span><span style="display:flex;"><span>CMD <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;./main&#34;</span> <span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>这里我们使用多步骤编译的方式来来编译我们的镜像，这样编译出来的镜像是不包含golang编译和glide等编译期间依赖，体积非常小。同事应为不在需要从网络下载依赖，编译速度也变快了不少。</p>
+<h1 id="说明">说明</h1>
+<p>文中提搞的golang:mygolang这自定义的镜像应该放在自己的私有仓库，这样我们就能在任何地方我们的项目了，并且迁移方便，不管你是使用gitlab ci还是Jenkins ci。并且，编译好了的镜像应该加入到私有仓库。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

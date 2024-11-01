@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="&amp;bnsp; 今天同事向我抱怨，服务上的python版本太低了，他想把python版本升级到2.7.10，但是他没有root权限，使用yum更新python是需要root权限。求人不如求自己,所以自己动手，我告诉它用源码安装，它说源码安装以后会覆盖当前的默认python,我告诉它，可以单独源码安装python，不需要覆盖默认的Python，可以两个版本并存。这里记录一下安装的过程，这里我们以安装Python 3.4为例子。
+下载Python-3.4.0a4.tar.xz 解压 tar -xvf Python-3.4.0a4.tar.xz 生成makefile文件,这里我们设置python安装到 /home/hellojukay/Data/Bin/python这个目录中 # 这不操作可能需要半分钟左右 ./configure --prefix=/home/hellojukay/Data/Bin/python/ 生成了Makefile文件，我们来编译python # 这里时间也会比较长，C、C&#43;&#43;语言编译大型项目都比较慢,这个是个梗了 hellojukay@deepin:~/Data/Bin/Python-3.4.0a4$ make 安装编译好的python到之前设置的目录。 hellojukay@deepin:~/Data/Bin/Python-3.4.0a4$ make install 这里我们已经安装好了，可以到对应目录看一下。
+hellojukay@deepin:~/Data/Bin/python$ ll 总用量 24 drwxr-sr-x 6 hellojukay hellojukay 4096 5月 10 22:17 . drwxr-sr-x 8 hellojukay hellojukay 4096 5月 10 22:11 .. drwxr-sr-x 2 hellojukay hellojukay 4096 5月 10 22:17 bin drwxr-sr-x 3 hellojukay hellojukay 4096 5月 10 22:17 include drwxr-sr-x 4 hellojukay hellojukay 4096 5月 10 22:17 lib drwxr-sr-x 3 hellojukay hellojukay 4096 5月 10 22:17 share hellojukay@deepin:~/Data/Bin/python$ 把bin目录加入到path中，我们就能正常使用了。">  
+
+  <title>
+    
+      源码安装Python
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-05-10 21:57:00 &#43;0000 UTC">
+            2018-05-10
+        </time>
+    </p>
+
+    <h1>源码安装Python</h1>
+
+    
+
+    <p>&amp;bnsp;   今天同事向我抱怨，服务上的python版本太低了，他想把python版本升级到2.7.10，但是他没有root权限，使用yum更新python是需要root权限。求人不如求自己,所以自己动手，我告诉它用源码安装，它说源码安装以后会覆盖当前的默认python,我告诉它，可以单独源码安装python，不需要覆盖默认的Python，可以两个版本并存。这里记录一下安装的过程，这里我们以安装Python 3.4为例子。</p>
+<ol>
+<li>下载Python-3.4.0a4.tar.xz</li>
+<li>解压 tar -xvf Python-3.4.0a4.tar.xz</li>
+<li>生成makefile文件,这里我们设置python安装到 /home/hellojukay/Data/Bin/python这个目录中</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 这不操作可能需要半分钟左右</span>
+</span></span><span style="display:flex;"><span> ./configure --prefix<span style="color:#f92672">=</span>/home/hellojukay/Data/Bin/python/
+</span></span></code></pre></div><ol start="4">
+<li>生成了Makefile文件，我们来编译python</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 这里时间也会比较长，C、C++语言编译大型项目都比较慢,这个是个梗了</span>
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~/Data/Bin/Python-3.4.0a4$ make
+</span></span></code></pre></div><ol start="5">
+<li>安装编译好的python到之前设置的目录。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:~/Data/Bin/Python-3.4.0a4$ make install
+</span></span></code></pre></div><p>这里我们已经安装好了，可以到对应目录看一下。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:~/Data/Bin/python$ ll
+</span></span><span style="display:flex;"><span>总用量 <span style="color:#ae81ff">24</span>
+</span></span><span style="display:flex;"><span>drwxr-sr-x <span style="color:#ae81ff">6</span> hellojukay hellojukay <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 22:17 .
+</span></span><span style="display:flex;"><span>drwxr-sr-x <span style="color:#ae81ff">8</span> hellojukay hellojukay <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 22:11 ..
+</span></span><span style="display:flex;"><span>drwxr-sr-x <span style="color:#ae81ff">2</span> hellojukay hellojukay <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 22:17 bin
+</span></span><span style="display:flex;"><span>drwxr-sr-x <span style="color:#ae81ff">3</span> hellojukay hellojukay <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 22:17 include
+</span></span><span style="display:flex;"><span>drwxr-sr-x <span style="color:#ae81ff">4</span> hellojukay hellojukay <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 22:17 lib
+</span></span><span style="display:flex;"><span>drwxr-sr-x <span style="color:#ae81ff">3</span> hellojukay hellojukay <span style="color:#ae81ff">4096</span> 5月  <span style="color:#ae81ff">10</span> 22:17 share
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~/Data/Bin/python$ 
+</span></span></code></pre></div><p>把bin目录加入到path中，我们就能正常使用了。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>hellojukay@deepin:~$ source .bashrc 
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~$ python
+</span></span><span style="display:flex;"><span>python             python2.7          python3.4          python3.4m         python3.5          python3-config     
+</span></span><span style="display:flex;"><span>python2            python3            python3.4-config   python3.4m-config  python3.5m         python3m           
+</span></span><span style="display:flex;"><span>hellojukay@deepin:~$ python
+</span></span></code></pre></div><p>这里可以直接tab补全出python3.4了，如果你不想覆盖当前用户的python，那就不要将python直接加入到path中，可以使用python的全路径配置PATHONPATH环境变量来使用python。</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

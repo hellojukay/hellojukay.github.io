@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ansible on 润物细无声</title>
+    <link>http://localhost:1313/tags/ansible/</link>
+    <description>Recent content in Ansible on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 26 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/ansible/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ansible 主机多网卡情况下获取IP地址</title>
+      <link>http://localhost:1313/posts/2020/20201226/</link>
+      <pubDate>Sat, 26 Dec 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20201226/</guid>
+      <description>这里有一个错误用法是获取受控机器的网卡的信息，但是有多个网卡的情况下就会获取到其它的网卡地址，正确的做法如下：&#xA;vagrant@archlinux k8s-install $ ansible -i inventory -m debug -a &amp;#34;var=ansible_ssh_host&amp;#34; all -u vagrant -k SSH password: [WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details 127.0.0.1 | SUCCESS =&amp;gt; { &amp;#34;ansible_ssh_host&amp;#34;: &amp;#34;127.0.0.1&amp;#34; } 192.168.0.10 | SUCCESS =&amp;gt; { &amp;#34;ansible_ssh_host&amp;#34;: &amp;#34;192.168.0.10&amp;#34; } 192.168.0.11 | SUCCESS =&amp;gt; { &amp;#34;ansible_ssh_host&amp;#34;: &amp;#34;192.168.0.11&amp;#34; } 192.168.0.12 | SUCCESS =&amp;gt; { &amp;#34;ansible_ssh_host&amp;#34;: &amp;#34;192.168.0.12&amp;#34; } 使用 ansible_ssh_host 这个内置变量.</description>
+    </item>
+    <item>
+      <title>记 ansible 遇到的两个问题</title>
+      <link>http://localhost:1313/posts/2020/20200617/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2020/20200617/</guid>
+      <description>问题1： docker 容器中无法通过 ansible 链接到远程服务器，但是在宿主机器上是可以的,错误信息如下:&#xA;@fatal: [target]: UNREACHABLE! =&amp;gt; {&amp;#34;changed&amp;#34;: false, &amp;#34;msg&amp;#34;: &amp;#34;Failed to connect to the host via ssh: Warning: Permanently added &amp;#39;xxxx&amp;#39; (ECDSA) to the list of known hosts.\r\nControl socket connect(/root/.ansible/cp/6d853b47a1): Connection refused\r\nFailed to connect to new control master&amp;#34;, &amp;#34;unreachable&amp;#34;: true} 问题很奇怪，解决方案也很奇怪，没有找到原因，上网搜索到答案是: 修改 ansible 的 ansible.cfg , 设置 controll path&#xA;control_path_dir=/dev/shm/ansible_control_path 问题2：也是在 docker 中进行 ansible 操作，宿主机器执行 ansible 网络能通过，容器内部执行 ssh 网络能通过，但是容器内部执行 ansible 网络就不通过，我是配置了 ssh proxy 的，通过条跳板机器到目标机器，显然 ansible 没有读取我的 ~/.ssh/config, 解决方式在 ansible 的 hosts 文件中设置 proxy,如下:</description>
+    </item>
+    <item>
+      <title>记一次服务部署失败</title>
+      <link>http://localhost:1313/posts/2018/20180316/</link>
+      <pubDate>Fri, 16 Mar 2018 21:28:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180316/</guid>
+      <description>最有golang服务部署一直失败，服务被启动起来以后，打印了两行启动日志，然后立马就自动退出了，没有panic日志，而且在老版本的部署系统上部署是没有这个问题的。而且吧部署系统的使用的命令行复制出来，直接在服务器上执行，进程也能正常启动，并且退出登录以后，程序也不会挂掉，所以我确认我的启动方式是没有问题的，之前那么多的golang服务启动也没有问题，后来下载代码下来看发现代码。这个golang服务监听了SIGHUP信号，收到这个号信号以后程序会调用os.Exit(1)自动退出，然后我用老版本的部署系统启动进程,手动给这个进程发送SIGHUP信号，果然程序自动退出了。于是我想起来了，通知相关的开发人员收到这个信号以后忽略掉。再次部署，一气呵成。事情还没有完，因为我想到了之前部署node服务的时候也发生了这样的问题，一直没有找到原因，不得已放弃nohup的形式，改用pm2来管理进程，所以我怀疑node是不是默认监听了SIGHUP型号，并且收到型号以后自动退出。于是我验证了下，手写了最简单的服务，手动启动，发送SIGHUP型号，果然程序退出了。那么手动忽略这个型号是不是就ok了呢&#xA;var http = require(&amp;#39;http&amp;#39;); var hostname = &amp;#39;127.0.0.1&amp;#39;; var port = 3000; var server = http.createServer(function(req, res) { res.statusCode = 200; res.setHeader(&amp;#39;Content-Type&amp;#39;, &amp;#39;text/html&amp;#39;); res.write(&amp;#39;&amp;lt;head&amp;gt;&amp;lt;meta charset=&amp;#34;utf-8&amp;#34;/&amp;gt;&amp;lt;/head&amp;gt;&amp;#39;); var htmlDiv = &amp;#39;&amp;lt;div style=&amp;#34;width: 200px;height: 200px;background-color: #f0f;&amp;#34;&amp;gt;div&amp;lt;/div&amp;gt;&amp;#39;; res.write(&amp;#39;&amp;lt;b&amp;gt;亲爱的，你慢慢飞，小心前面带刺的玫瑰...&amp;lt;/b&amp;gt;&amp;#39;); res.write(htmlDiv); res.end(&amp;#39;&amp;lt;h1&amp;gt;Hello world!&amp;lt;/h1&amp;gt;&amp;#39;); }); process.on(&amp;#39;SIGHUP&amp;#39;, (err) =&amp;gt; { console.info(err) }); server.listen(port, hostname, function() { console.log(&amp;#39;Server running at http://%s:%s&amp;#39;, hostname, port); }); jukay@localhost ~/C/W/blog(20.5)&amp;gt; lsof -i:3000 五 3/16 17:21:20 2018 COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME node 85016 jukay 13u IPv4 0xd088754a58137eaf 0t0 TCP localhost:hbci (LISTEN) jukay@localhost ~/C/W/blog(20.</description>
+    </item>
+  </channel>
+</rss>

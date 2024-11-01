@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="实用函数 # 删除字符串左右空格 sub trim ($) { my $s = shift; $s =~ s/^\s&#43;|\s&#43;$//g; return $s } perl 多线程消费 参考文档: https://metacpan.org/pod/Thread::Queue use threads; use Thread::Queue; my $q = Thread::Queue-&gt;new(); sub work ($) { while(my $task = $q-&gt;dequeue()){ # if $task is undef, it means the queue end last unless($task); # do somthing } } # enqueue async { foreach(0..10) { $q-&gt;enqueue($_) } # Signal that there is no more work to be sent $q-&gt;end(); } # create threads foreach(0.">  
+
+  <title>
+    
+      perl 小技巧
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2021-10-15 00:00:00 &#43;0000 UTC">
+            2021-10-15
+        </time>
+    </p>
+
+    <h1>perl 小技巧</h1>
+
+    
+
+    <ol>
+<li>实用函数</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#75715e"># 删除字符串左右空格</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">trim</span> ($) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">my</span> $s <span style="color:#f92672">=</span> shift;
+</span></span><span style="display:flex;"><span>    $s <span style="color:#f92672">=~</span> <span style="color:#e6db74">s/^\s+|\s+$//g</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> $s
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li>perl 多线程消费
+参考文档: <a href="https://metacpan.org/pod/Thread::Queue">https://metacpan.org/pod/Thread::Queue</a></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> threads;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> Thread::Queue;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> $q <span style="color:#f92672">=</span> Thread::Queue<span style="color:#f92672">-&gt;</span><span style="color:#66d9ef">new</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">sub</span> <span style="color:#a6e22e">work</span> ($) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span>(<span style="color:#66d9ef">my</span> $task <span style="color:#f92672">=</span> $q<span style="color:#f92672">-&gt;</span>dequeue()){
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># if $task is undef, it means the queue end</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">last</span> <span style="color:#66d9ef">unless</span>($task);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># do somthing</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># enqueue</span>
+</span></span><span style="display:flex;"><span>async {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">foreach</span>(<span style="color:#ae81ff">0</span><span style="color:#f92672">..</span><span style="color:#ae81ff">10</span>) {
+</span></span><span style="display:flex;"><span>        $q<span style="color:#f92672">-&gt;</span>enqueue($_)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Signal that there is no more work to be sent</span>
+</span></span><span style="display:flex;"><span>    $q<span style="color:#f92672">-&gt;</span>end();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># create threads</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span>(<span style="color:#ae81ff">0</span><span style="color:#f92672">..</span><span style="color:#ae81ff">4</span>) {
+</span></span><span style="display:flex;"><span>    threads<span style="color:#f92672">-&gt;</span>create(<span style="color:#f92672">\&amp;</span>work);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># wait all thread finish</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span>(threads<span style="color:#f92672">-&gt;</span>list()) {
+</span></span><span style="display:flex;"><span>    $_<span style="color:#f92672">-&gt;</span>join();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="3">
+<li>统计 ip 访问，倒序结果</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#66d9ef">my</span> %hash;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">while</span>(<span style="color:#f92672">&lt;&gt;</span>){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#e6db74">/(\d+\.\d+\.\d+\.\d+)/</span>){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">my</span> $value <span style="color:#f92672">=</span> $hash{$1} ? $hash{$1} : <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        $hash{$1} <span style="color:#f92672">=</span> $value <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">my</span> @keys <span style="color:#f92672">=</span> sort { $hash{$a} <span style="color:#e6db74">&lt;=&gt;</span> $hash{$b} } keys(%hash);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> <span style="color:#66d9ef">my</span> $key (reverse @keys) {
+</span></span><span style="display:flex;"><span>    printf(<span style="color:#e6db74">&#34;%-15s%s\n&#34;</span>,$key,$hash{$key});
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="3">
+<li>一些实用的 Perl 内置变量</li>
+</ol>
+<p><a href="https://www.runoob.com/perl/perl-special-variables.html">https://www.runoob.com/perl/perl-special-variables.html</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>$_	默认输入和模式匹配内容。
+</span></span><span style="display:flex;"><span>$ARG
+</span></span><span style="display:flex;"><span>$.	前一次读的文件句柄的当前行号
+</span></span><span style="display:flex;"><span>$NR
+</span></span><span style="display:flex;"><span>$/	输入记录分隔符,默认是新行字符。如用undef这个变量,将读到文件结尾。
+</span></span><span style="display:flex;"><span>$RS
+</span></span><span style="display:flex;"><span>$,	输出域分隔符
+</span></span><span style="display:flex;"><span>$OFS
+</span></span><span style="display:flex;"><span>$\	输出记录分隔符
+</span></span><span style="display:flex;"><span>$ORS
+</span></span><span style="display:flex;"><span>$&#34;	该变量同 $,类似，但应用于向双引号引起的字符串(或类似的内插字符串)中内插数组和切片值的场合。默认为一个空格。
+</span></span><span style="display:flex;"><span>$LIST_SEPARATOR
+</span></span><span style="display:flex;"><span>$;	在仿真多维数组时使用的分隔符。默认为 &#34;\034&#34;。
+</span></span><span style="display:flex;"><span>$SUBSCRIPT_SEPARATOR
+</span></span><span style="display:flex;"><span>$^L	发送到输出通道的走纸换页符。默认为 &#34;\f&#34;.
+</span></span><span style="display:flex;"><span>$FORMAT_FORMFEED
+</span></span><span style="display:flex;"><span>$:	The current set of characters after which a string may be broken to fill continuation fields (starting with ^) in a format. Default is &#34;\n&#34;&#34;.
+</span></span><span style="display:flex;"><span>$FORMAT_LINE_BREAK_CHARACTERS
+</span></span><span style="display:flex;"><span>$^A	打印前用于保存格式化数据的变量
+</span></span><span style="display:flex;"><span>$ACCUMULATOR
+</span></span><span style="display:flex;"><span>$#	打印数字时默认的数字输出格式（已废弃）。
+</span></span><span style="display:flex;"><span>$OFMT
+</span></span><span style="display:flex;"><span>$?	返回上一个外部命令的状态
+</span></span><span style="display:flex;"><span>$CHILD_ERROR
+</span></span><span style="display:flex;"><span>$!	这个变量的数字值是errno的值,字符串值是对应的系统错误字符串
+</span></span><span style="display:flex;"><span>$OS_ERROR or $ERRNO
+</span></span><span style="display:flex;"><span>$@	命令eval的错误消息.如果为空,则表示上一次eval命令执行成功
+</span></span><span style="display:flex;"><span>$EVAL_ERROR
+</span></span><span style="display:flex;"><span>$$	运行当前Perl脚本程序的进程号
+</span></span><span style="display:flex;"><span>$PROCESS_ID or $PID
+</span></span><span style="display:flex;"><span>$&lt;	当前进程的实际用户号
+</span></span><span style="display:flex;"><span>$REAL_USER_ID or $UID
+</span></span><span style="display:flex;"><span>$&gt;	当前进程的有效用户号
+</span></span><span style="display:flex;"><span>$EFFECTIVE_USER_ID or $EUID
+</span></span><span style="display:flex;"><span>$(	当前进程的实际组用户号
+</span></span><span style="display:flex;"><span>$REAL_GROUP_ID or $GID
+</span></span><span style="display:flex;"><span>$)	当前进程的有效组用户号
+</span></span><span style="display:flex;"><span>$EFFECTIVE_GROUP_ID or $EGID
+</span></span><span style="display:flex;"><span>$0	包含正在执行的脚本的文件名
+</span></span><span style="display:flex;"><span>$PROGRAM_NAME
+</span></span><span style="display:flex;"><span>$[	数组的数组第一个元素的下标,默认是 0。
+</span></span><span style="display:flex;"><span>$]	Perl的版本号
+</span></span><span style="display:flex;"><span>$PERL_VERSION
+</span></span><span style="display:flex;"><span>$^D	调试标志的值
+</span></span><span style="display:flex;"><span>$DEBUGGING
+</span></span><span style="display:flex;"><span>$^E	在非UNIX环境中的操作系统扩展错误信息
+</span></span><span style="display:flex;"><span>$EXTENDED_OS_ERROR
+</span></span><span style="display:flex;"><span>$^F	最大的文件捆述符数值
+</span></span><span style="display:flex;"><span>$SYSTEM_FD_MAX
+</span></span><span style="display:flex;"><span>$^H	由编译器激活的语法检查状态
+</span></span><span style="display:flex;"><span>$^I	内置控制编辑器的值
+</span></span><span style="display:flex;"><span>$INPLACE_EDIT
+</span></span><span style="display:flex;"><span>$^M	备用内存池的大小
+</span></span><span style="display:flex;"><span>$^O	操作系统名
+</span></span><span style="display:flex;"><span>$OSNAME
+</span></span><span style="display:flex;"><span>$^P	指定当前调试值的内部变量
+</span></span><span style="display:flex;"><span>$PERLDB
+</span></span><span style="display:flex;"><span>$^T	从新世纪开始算起,脚步本以秒计算的开始运行的时间
+</span></span><span style="display:flex;"><span>$BASETIME
+</span></span><span style="display:flex;"><span>$^W	警告开关的当前值
+</span></span><span style="display:flex;"><span>$WARNING
+</span></span><span style="display:flex;"><span>$^X	Perl二进制可执行代码的名字
+</span></span><span style="display:flex;"><span>$EXECUTABLE_NAME
+</span></span><span style="display:flex;"><span>$ARGV	从默认的文件句柄中读取时的当前文件名
+</span></span><span style="display:flex;"><span>全局数组特殊变量
+</span></span><span style="display:flex;"><span>@ARGV	传给脚本的命令行参数列表
+</span></span><span style="display:flex;"><span>@INC	在导入模块时需要搜索的目录列表
+</span></span><span style="display:flex;"><span>@F	命令行的数组输入
+</span></span><span style="display:flex;"><span>全局哈希特殊变量
+</span></span><span style="display:flex;"><span>%INC
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>散列表%INC包含所有用do或require语句包含的文件.关键字是文件名,值是这个文件的路径
+</span></span><span style="display:flex;"><span>%ENV
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>包含当前环境变量
+</span></span><span style="display:flex;"><span>%SIG
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>信号列表及其处理方式
+</span></span><span style="display:flex;"><span>全局特殊文件句柄
+</span></span><span style="display:flex;"><span>ARGV
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>遍历数组变量@ARGV中的所有文件名的特殊文件句柄
+</span></span><span style="display:flex;"><span>STDERR
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>标准错误输出句柄
+</span></span><span style="display:flex;"><span>STDIN
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>标准输入句柄
+</span></span><span style="display:flex;"><span>STDOUT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>标准输出句柄
+</span></span><span style="display:flex;"><span>DATA
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>特殊文件句柄引用了在文件中 __END__ 标志后的任何内容包含脚本内容。或者引用一个包含文件中__DATA__ 标志后的所有内容，只要你在同一个包有读取数据，__DATA__ 就存在。
+</span></span><span style="display:flex;"><span>_ (下划线)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>特殊的文件句柄用于缓存文件信息(fstat、stat和lstat)。
+</span></span><span style="display:flex;"><span>全局特殊常量
+</span></span><span style="display:flex;"><span>__END__
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>脚本的逻辑结束，忽略后面的文本。
+</span></span><span style="display:flex;"><span>__FILE__
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前文件名
+</span></span><span style="display:flex;"><span>__LINE__
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前行号
+</span></span><span style="display:flex;"><span>__PACKAGE__
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前包名，默认的包名是main。
+</span></span><span style="display:flex;"><span>正则表达式特殊变量
+</span></span><span style="display:flex;"><span>$n
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>包含上次模式匹配的第n个子串
+</span></span><span style="display:flex;"><span>$&amp;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>前一次成功模式匹配的字符串
+</span></span><span style="display:flex;"><span>$MATCH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$`
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>前次匹配成功的子串之前的内容
+</span></span><span style="display:flex;"><span>$PREMATCH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$&#39;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>前次匹配成功的子串之后的内容
+</span></span><span style="display:flex;"><span>$POSTMATCH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$+
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>与上个正则表达式搜索格式匹配的最后一个括号。例如：
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>/Version: (.*)|Revision: (.*)/ &amp;&amp; ($rev = $+);
+</span></span><span style="display:flex;"><span>$LAST_PAREN_MATCH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>文件句柄特殊变量
+</span></span><span style="display:flex;"><span>$|
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>如果设置为零,在每次调用函数write或print后，自动调用函数fflush,将所写内容写回文件
+</span></span><span style="display:flex;"><span>$OUTPUT_AUTOFLUSH
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$%
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前输出页号
+</span></span><span style="display:flex;"><span>$FORMAT_PAGE_NUMBER
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$=
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前每页长度。默认为 60。
+</span></span><span style="display:flex;"><span>$FORMAT_LINES_PER_PAGE
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$-
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前页剩余的行数
+</span></span><span style="display:flex;"><span>$FORMAT_LINES_LEFT
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$~
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前报表输出格式的名称。默认值是文件句柄名。
+</span></span><span style="display:flex;"><span>$FORMAT_NAME
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$^
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>当前报表输出表头格式的名称。默认值是带后缀&#34;_TOP&#34;的文件句柄名。
+</span></span><span style="display:flex;"><span>$FORMAT_TOP_NAME
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

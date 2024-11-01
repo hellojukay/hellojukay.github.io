@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="docker 容器最终还是运行在内核上的一个进程, 我们在容器中无法访问外部资源是因为 namespace 的隔离作用, 主要隔离的有:
+pid # 进程 networkd # 网络 mount # 文件系统 pid 默认情况下在容器内部是无法访问外部的, 可以可以在运行容器的时候加上 &ndash;pid=host 参数让容器中的进程和宿主机器上的进程相互可见
+vagrant@archlinux ~ $ docker run -it --pid=host rust:latest bash root@bb8d7e679d1d:/# ps aux USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND root 1 0.0 0.1 29196 11860 ? Ss Nov19 0:04 /sbin/init root 2 0.0 0.0 0 0 ? S Nov19 0:00 [kthreadd] root 3 0.0 0.0 0 0 ?">  
+
+  <title>
+    
+      docker 的 namespace
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2020-11-20 00:00:00 &#43;0000 UTC">
+            2020-11-20
+        </time>
+    </p>
+
+    <h1>docker 的 namespace</h1>
+
+    
+
+    <p>docker 容器最终还是运行在内核上的一个进程, 我们在容器中无法访问外部资源是因为 namespace 的隔离作用, 主要隔离的有:</p>
+<ul>
+<li>pid      # 进程</li>
+<li>networkd # 网络</li>
+<li>mount    # 文件系统</li>
+</ul>
+<h1 id="pid">pid</h1>
+<p>默认情况下在容器内部是无法访问外部的, 可以可以在运行容器的时候加上 &ndash;pid=host 参数让容器中的进程和宿主机器上的进程相互可见</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vagrant@archlinux ~ $ docker run -it --pid<span style="color:#f92672">=</span>host rust:latest bash
+</span></span><span style="display:flex;"><span>root@bb8d7e679d1d:/# ps aux
+</span></span><span style="display:flex;"><span>USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">1</span>  0.0  0.1  <span style="color:#ae81ff">29196</span> <span style="color:#ae81ff">11860</span> ?        Ss   Nov19   0:04 /sbin/init
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">2</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>kthreadd<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">3</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        I&lt;   Nov19   0:00 <span style="color:#f92672">[</span>rcu_gp<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">4</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        I&lt;   Nov19   0:00 <span style="color:#f92672">[</span>rcu_par_gp<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">6</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        I&lt;   Nov19   0:00 <span style="color:#f92672">[</span>kworker/0:0H-kblockd<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">8</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        I&lt;   Nov19   0:00 <span style="color:#f92672">[</span>mm_percpu_wq<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">9</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>ksoftirqd/0<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">10</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>rcuc/0<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">11</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        I    Nov19   0:03 <span style="color:#f92672">[</span>rcu_preempt<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">12</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>rcub/0<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">13</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>migration/0<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">14</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>idle_inject/0<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">16</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>cpuhp/0<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>root          <span style="color:#ae81ff">17</span>  0.0  0.0      <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span> ?        S    Nov19   0:00 <span style="color:#f92672">[</span>cpuhp/1<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>可以看到非常多的进程，而默认情况是看不到宿主机的进程的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>vagrant@archlinux ~ $ docker run -it  rust:latest bash
+</span></span><span style="display:flex;"><span>root@2800b475d7c6:/# ps aux
+</span></span><span style="display:flex;"><span>USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">1</span> 26.0  0.0   <span style="color:#ae81ff">3872</span>  <span style="color:#ae81ff">3260</span> pts/0    Ss   09:13   0:00 bash
+</span></span><span style="display:flex;"><span>root           <span style="color:#ae81ff">6</span>  0.0  0.0   <span style="color:#ae81ff">7644</span>  <span style="color:#ae81ff">2784</span> pts/0    R+   09:13   0:00 ps aux
+</span></span><span style="display:flex;"><span>root@2800b475d7c6:/#
+</span></span></code></pre></div><h1 id="network">network</h1>
+<p>默认情况下容器内部使用的是一层虚拟的网卡和网络，通过 docker0 这个虚拟机网卡桥接在宿主机的网卡上，是看到外部的网络流量情况的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>root@ccb540ada1f1:/# ss
+</span></span><span style="display:flex;"><span>Netid           State           Recv-Q            Send-Q                       Local Address:Port                       Peer Address:Port
+</span></span><span style="display:flex;"><span>root@ccb540ada1f1:/# exit
+</span></span></code></pre></div><p>可以通过在运行容器的时候加上 &ndash;network=host 的方式来让容器也宿主机器使用同一个网卡和网络空间</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>root@archlinux:/# ip a
+</span></span><span style="display:flex;"><span>1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">65536</span> qdisc noqueue state UNKNOWN group default qlen <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+</span></span><span style="display:flex;"><span>    inet 127.0.0.1/8 scope host lo
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>    inet6 ::1/128 scope host
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span style="color:#ae81ff">1500</span> qdisc fq_codel state UP group default qlen <span style="color:#ae81ff">1000</span>
+</span></span><span style="display:flex;"><span>    link/ether 08:00:27:8f:83:2c brd ff:ff:ff:ff:ff:ff
+</span></span><span style="display:flex;"><span>    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+</span></span><span style="display:flex;"><span>       valid_lft 58933sec preferred_lft 58933sec
+</span></span><span style="display:flex;"><span>    inet6 fe80::a00:27ff:fe8f:832c/64 scope link
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>3: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu <span style="color:#ae81ff">1500</span> qdisc noqueue state DOWN group default
+</span></span><span style="display:flex;"><span>    link/ether 02:42:6d:bc:a4:1f brd ff:ff:ff:ff:ff:ff
+</span></span><span style="display:flex;"><span>    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>    inet6 fe80::42:6dff:febc:a41f/64 scope link
+</span></span><span style="display:flex;"><span>       valid_lft forever preferred_lft forever
+</span></span><span style="display:flex;"><span>root@archlinux:/# ss
+</span></span><span style="display:flex;"><span>Netid State      Recv-Q Send-Q                                                                            Local Address:Port      Peer Address:Port
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                                             * <span style="color:#ae81ff">27099</span>                * <span style="color:#ae81ff">27100</span>
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                   /run/dbus/system_bus_socket <span style="color:#ae81ff">16263</span>                * <span style="color:#ae81ff">16262</span>
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                                             * <span style="color:#ae81ff">16262</span>                * <span style="color:#ae81ff">16263</span>
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                                             * <span style="color:#ae81ff">27100</span>                * <span style="color:#ae81ff">27099</span>
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                                             * <span style="color:#ae81ff">68566</span>                * <span style="color:#ae81ff">68565</span>
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                                             * <span style="color:#ae81ff">68565</span>                * <span style="color:#ae81ff">68566</span>
+</span></span><span style="display:flex;"><span>u_str ESTAB      <span style="color:#ae81ff">0</span>      <span style="color:#ae81ff">0</span>                                                                                             * <span style="color:#ae81ff">68539</span>                * <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>这样就能看到宿主机器上的网卡信息了.</p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>

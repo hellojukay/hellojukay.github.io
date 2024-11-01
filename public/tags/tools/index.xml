@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tools on 润物细无声</title>
+    <link>http://localhost:1313/tags/tools/</link>
+    <description>Recent content in Tools on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 24 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>几种替代 grep  的文本搜索工具</title>
+      <link>http://localhost:1313/posts/2019/20191024/</link>
+      <pubDate>Thu, 24 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191024/</guid>
+      <description>gun grep 是大部分机器上都安装了的程序，最近也发现了一些比运行速度更快的文本搜索工具。&#xA;git grep : git 自带 rg : ripgrep rust 实现的 grep https://github.com/BurntSushi/ripgrep ag : https://github.com/ggreer/the_silver_searcher ack : https://github.com/beyondgrep/ack2 </description>
+    </item>
+    <item>
+      <title>dash 的免费替代品</title>
+      <link>http://localhost:1313/posts/2019/20190808/</link>
+      <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20190808/</guid>
+      <description>Zeal 是一款免费的夸平台文档工具，可以用来替代 Mac OSX 下的 dash， 它的网址是： https://zealdocs.org/</description>
+    </item>
+    <item>
+      <title>这可能是局域网内分享文件的最佳方案</title>
+      <link>http://localhost:1313/posts/2018/20180525/</link>
+      <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180525/</guid>
+      <description>标题中说是局域网，但是并没有限制你在公网上使用这种方式来单向传出文件，只要是HTTP协议能够正常工作的网络就行。通常发送文件给同事，都是用钉钉，QQ，微信或者的别的社交软件，或者是U盘(很少用到)。使用社交软件传文件的坏处就是这个文件要先发送到服务器，然后对人从服务器上下载，可能文件挺大的，速度慢，也不支持断点传输，也可能是机密文件，你不想被第三方获取。使用U盘缺点是，你要先把文件拷贝到U盘，然后从U盘拷贝到对方的电脑，速度慢，问题是我根本就没有U盘，或者文件在一台U盘无法工作阿里云服务器。所以我这里给出的解决方案是Python内置的HTTP服务器，优点是*nix都自带了python，所需不需要安装任何依赖。即便是widnows，安装python也非常的简单。同事让我发个什么文件给他，我都懒得发，都是把这个进程打开，让他自己下载。&#xA;python 2.x&#xA;// 默认是8000端口 python -m SimpleHTTPServer // 设置为80端口 python -m SimpleHTTPServer 80 [deploy@baochai ~]$ python -m SimpleHTTPServer Serving HTTP on 0.0.0.0 port 8000 ... 192.168.1.46 - - [25/May/2018 09:11:50] code 501, message Unsupported method (&amp;#39;OPTIONS&amp;#39;) 192.168.1.46 - - [25/May/2018 09:11:50] &amp;#34;OPTIONS / HTTP/1.1&amp;#34; 501 - 192.168.1.46 - - [25/May/2018 09:12:53] &amp;#34;GET / HTTP/1.1&amp;#34; 200 - 192.168.1.46 - - [25/May/2018 09:12:54] code 404, message File not found 192.168.1.46 - - [25/May/2018 09:12:54] &amp;#34;GET /favicon.</description>
+    </item>
+  </channel>
+</rss>

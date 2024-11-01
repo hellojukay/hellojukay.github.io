@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="开源项目中非常流行使用Makefile来处理构建的问题，我比较喜欢使用Makefile来给命令行分组。Makefile文件前面的缩进不是空格，这个写Makefile前一定要明确的问题。
+[jukay@mac-pro]~/Desktop$ cat Makefile test: echo Hello World [jukay@mac-pro]~/Desktop$ make echo Hello World Hello World [jukay@mac-pro]~/Desktop$ make命令会自动寻找当前目录下面的名字叫做Makefile的文件，可能使用make -f filename来指定其他文件，找到了文件以后构建你指定的产物，如果没有指定产物，那么会默认构建第一个产物，如果产物已经存在了，那么不会执行构建流水了。例如，当前目录下面已经存在了一个名字为 test 文件，那么执行 make test 是不会执行构建的。
+[infra@dev ~]$ ls Makefile test [infra@dev ~]$ make test make: “test”是最新的。 [infra@dev ~]$ make make: “test”是最新的。 [infra@dev ~]$ 这里在shell命令前面加上@符号，是表示在指定当前命令的会后，不要打印这条命令的指定过程。如果当前的目标产物存在了，但是构建目标产物还需要其他依赖,那么还是会重新构建当前目标产物的
+[infra@dev ~]$ ls Makefile test [infra@dev ~]$ cat Makefile test: dev @echo Hello World dev: @echo dev [infra@dev ~]$ make test dev Hello World [infra@dev ~]$ make也是可以一次构建两个产物的">  
+
+  <title>
+    
+      Makefile相关知识点
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-08-22 00:00:00 &#43;0000 UTC">
+            2018-08-22
+        </time>
+    </p>
+
+    <h1>Makefile相关知识点</h1>
+
+    
+
+    <p>开源项目中非常流行使用<code>Makefile</code>来处理构建的问题，我比较喜欢使用<code>Makefile</code>来给命令行分组。<code>Makefile</code>文件前面的缩进不是空格，这个写<code>Makefile</code>前一定要明确的问题。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~/Desktop$ cat Makefile
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	echo Hello World
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~/Desktop$ make
+</span></span><span style="display:flex;"><span>echo Hello World
+</span></span><span style="display:flex;"><span>Hello World
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>jukay@mac-pro<span style="color:#f92672">]</span>~/Desktop$
+</span></span></code></pre></div><p>make命令会自动寻找当前目录下面的名字叫做<code>Makefile</code>的文件，可能使用<code>make -f filename</code>来指定其他文件，找到了文件以后构建你指定的产物，如果没有指定产物，那么会默认构建第一个产物，如果产物已经存在了，那么不会执行构建流水了。例如，当前目录下面已经存在了一个名字为 test 文件，那么执行 <code>make test</code> 是不会执行构建的。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ ls
+</span></span><span style="display:flex;"><span>Makefile  test
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make test
+</span></span><span style="display:flex;"><span>make: “test”是最新的。
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make
+</span></span><span style="display:flex;"><span>make: “test”是最新的。
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>这里在<code>shell</code>命令前面加上<code>@</code>符号，是表示在指定当前命令的会后，不要打印这条命令的指定过程。如果当前的目标产物存在了，但是构建目标产物还需要其他依赖,那么还是会重新构建当前目标产物的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ ls
+</span></span><span style="display:flex;"><span>Makefile  test
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>test: dev
+</span></span><span style="display:flex;"><span>	@echo Hello World
+</span></span><span style="display:flex;"><span>dev:
+</span></span><span style="display:flex;"><span>	@echo dev
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make test
+</span></span><span style="display:flex;"><span>dev
+</span></span><span style="display:flex;"><span>Hello World
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>make也是可以一次构建两个产物的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	@echo Hello World
+</span></span><span style="display:flex;"><span>dev:
+</span></span><span style="display:flex;"><span>	@echo dev
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make test dev
+</span></span><span style="display:flex;"><span>Hello World
+</span></span><span style="display:flex;"><span>dev
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p><code>Makefile</code>执行<code>shell</code>的过程中，如果当前的命令返回了非0值，那么当前的整个构建就会报错终止，但是也有忽略报错的方法：在命令行的前面加上<code>-</code>符号。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	@echo begin
+</span></span><span style="display:flex;"><span>	-exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>	@echo end
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make test
+</span></span><span style="display:flex;"><span>begin
+</span></span><span style="display:flex;"><span>exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>make: <span style="color:#f92672">[</span>test<span style="color:#f92672">]</span> 错误 <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>忽略<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>end
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>同时加上<code>-</code>和<code>@</code>符号，既不会打印当前命令，也不会因为报错终止构建,并且两个符号没有顺序要求。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	@echo begin
+</span></span><span style="display:flex;"><span>	@-exit <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>	@echo end
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p><code>Makefile</code>中支持使用变量</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#66d9ef">$(</span>name<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make name<span style="color:#f92672">=</span>jukay
+</span></span><span style="display:flex;"><span>jukay
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p>也能预先定义这个变量，给变量附一个默认值</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>name :<span style="color:#f92672">=</span> hello
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#66d9ef">$(</span>name<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make
+</span></span><span style="display:flex;"><span>hello
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ make name<span style="color:#f92672">=</span>jukay
+</span></span><span style="display:flex;"><span>jukay
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div><p><code>Makfile</code>支持在一个文件中使用<code>include</code>导入另外一个文件,并且可以直接构建被导入的文件的中目标</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$ cat Makefile
+</span></span><span style="display:flex;"><span>include common
+</span></span><span style="display:flex;"><span>name :<span style="color:#f92672">=</span> hello
+</span></span><span style="display:flex;"><span>test:
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#66d9ef">$(</span>name<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>infra@dev ~<span style="color:#f92672">]</span>$
+</span></span></code></pre></div>
+</article>
+
+            </div>
+        </main>
+    </body></html>

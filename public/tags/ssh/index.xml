@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ssh on 润物细无声</title>
+    <link>http://localhost:1313/tags/ssh/</link>
+    <description>Recent content in Ssh on 润物细无声</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 17 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>shell 使用同一个 ssh-agent</title>
+      <link>http://localhost:1313/posts/2019/20191217/</link>
+      <pubDate>Tue, 17 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2019/20191217/</guid>
+      <description>将下列代码加入到 .bashrc&#xA;SSH_ENV=$HOME/.ssh/environment function start_agent { echo &amp;#34;Initialising new SSH agent...&amp;#34; /usr/bin/ssh-agent | sed &amp;#39;s/^echo/#echo/&amp;#39; &amp;gt; ${SSH_ENV} echo succeeded chmod 600 ${SSH_ENV} . ${SSH_ENV} &amp;gt; /dev/null /usr/bin/ssh-add; } # Source SSH settings, if applicable if [ -f &amp;#34;${SSH_ENV}&amp;#34; ]; then . ${SSH_ENV} &amp;gt; /dev/null #ps ${SSH_AGENT_PID} doesn&amp;#39;t work under cywgin ps -efp ${SSH_AGENT_PID} | grep ssh-agent$ &amp;gt; /dev/null || { start_agent; } else start_agent; fi 然后&#xA;source .bashrc </description>
+    </item>
+    <item>
+      <title>【翻译】OpenSSH Client 配置指南</title>
+      <link>http://localhost:1313/posts/2018/20181122/</link>
+      <pubDate>Thu, 22 Nov 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20181122/</guid>
+      <description>一个局部或者全局的ssh配置能够加速你通过访问ssh server的速度，能够为你的ssh client定制快捷登录方式。让我们来一起看一下openssh的配置例子吧。&#xA;系统级别的openssh client配置 1.0 /etc/ssh/ssh_config: 这个文件是ssh client连接ssh server使用的配置，做个文件的权限必须是所有用户都能读取的。&#xA;用户级别的ssh client配置 1.0 $HOME/.ssh/config: 这个是对当前用户有效的ssh client的配置，它能够覆盖全局的ssh client配置。&#xA;~/.ssh/config规则 此文件配置规则如下：&#xA;每一行一条配置信息，分别对应的是配置项的名字和对应的值，语法如下: config value config1 value1 value2 你也可以使用等于号来替代上面的空格 config=value config1=value1 value2 空行会被忽略 #符号开头的行会被忽略 配置项参数名字不区分大小写，但是配置项的值严格区分大小写 一个小技巧：如果你从来没有使用过ssh命令，没有生成~/.ssh文件夹，你可以使用命令手动创建他,mkdir -p $HOME/.ssh &amp;amp;&amp;amp; chmod 0700 $HOME/.ssh&#xA;例子 我们接下来的例子配置如下：&#xA;本地客户端是MAC OSX或者ubunutu linux 远程服务端是unix-OpenBSD或者其他运行最新版本OpenSSH server的服务器 远程的OpenSSH server的地址是: 75.126.153.206 远程的OpenSSH server的端口是: 4242 本地私钥文件的地址是: /nfs/shared/users/nixcraft/keys/server1/id_rsa 基于以上条件，我们的ssh登录命令如下:&#xA;ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p 4242 nixcraft@server1.cyberciti.biz 或者是&#xA;ssh -i /nfs/shared/users/nixcraft/keys/server1/id_rsa -p 4242 -l nixcraft server1.cyberciti.biz 每次登录都要敲这么长的命令，是无法接受的。</description>
+    </item>
+    <item>
+      <title>ssh相关的若干技巧</title>
+      <link>http://localhost:1313/posts/2018/20180514/</link>
+      <pubDate>Mon, 14 May 2018 17:05:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180514/</guid>
+      <description>写在前面的废话。&#xA;明天就是5月15日了，锤子科技的新手机即将发布，现在这个手机已经用了一年半了，老化严重，我已经迫不及待要想换手机了。&#xA;ssh的基本操作 ssh分为ssh客户端和服务端，服务端的程序通常名字叫做sshd,服务端的配置文件一般都是/etc/ssh/sshd_config，可以配置大概有一下内容:&#xA;是否允许明码登录 是否允许远程主机登录 绑定端口号 进程id所在文件(通常不改) 是否保持长连接 是否允许端口转发 公钥所在文件 修改之后一般执行systemctl restart sshd 或者service restart sshd(这两个命令有什么区别，请自行google)重启就能更新配置，重启过程中当前的会话不会断开(自行思考为什么不会断开)。一下是几种常规的用法:&#xA;deploy登录39.106.10.228，默认端口22&#xA;// root 登录同理 ssh deploy@39.106.10.228 deploy登录39.106.10.228,远程端口8099&#xA;ssh -p 8099 deploy@39.106.10.228 当前用户登录39.106.10.228&#xA;ssh 39.106.10.228 ssh免密码登录 ssh免密码登录需要生产一对私钥和公钥&#xA;ssh-keygen -t rsa 将公钥复制远程服务端的 .ssh/authorized_keys 文件中(默认是这个文件，上面讲了，这个也是可以配置的),记得配置这个文件的权限，chmod u+600,登录使用ssh -i 指定私钥文件路径，如下:&#xA;ssh -p 33339 -i licong_simulate.rsa licong@211.100.49.107 复制公钥的时候可以使使用ssh-copy-id这个命令来copy，避免了手动在远处服务器上修改或者创建文件的麻烦&#xA;ssh-copy-id -i hack.pub root@hacking #输入密码就完事了 ssh设置默认秘钥文件和端口 本地的~/.ssh目录下面创建config文件，文件内容格式如下&#xA;Host aliyun Hostname Port 22 Username hellojukay IdentityFile ~/.ssh/myaliyun 这里指定登录远程ssh的端口是22，也可以修改成别的端口。这里同时指定登录aliyun这台机器的默认秘钥文件为~/.ssh/myaliyun。&#xA;使用ssh来进行内网穿透 ssh功能非常非常强大，和frp一样，它也能用来做内网穿透。什么是内网穿透呢，打个比方，就是我本地局域网内的一台机器能访问互联网，能够主动socket连接阿里云上的一台机器，但是因为nat的原因，阿里云上的那台机器不能主动连接我本机的机器。让局域网内的机器暴露在公网上，这个的操作就是内网穿透。比如你需要远程操作你家里的空调，小米电视机，这些都需要内网穿透。ssh内网穿透的命令如下:&#xA;ssh -fNR 7000:localhost:4000 root@aliyun 这样就把本地的4000端口暴露在aliyun的7000端口上了，访问aliyun:7000的流量会被导入到内网机器的4000端口。</description>
+    </item>
+    <item>
+      <title>记一次&#34;hack&#34;公司ssh</title>
+      <link>http://localhost:1313/posts/2018/20180310/</link>
+      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2018/20180310/</guid>
+      <description>今天总算解决了在家无法登录公司测试服务器的问题。因为不知道的什么原因，公司是不允许在外部网络登录测试服务，虽然有vpn，但是运维禁止了vpn登录ssh,要登录测试服务，必须要申请权限，而且每次登录最长只能保持15分钟，过期了有要再次登录。所以我想能不能自己想办法绕过这个坑，我试了下，到跳板机的连接是ping的同的，说明网络是没有问题。我要的做的只是监听一个端口，把这个端口的输入和输出都同步到跳板机的ssh端口就可以了，代码如下&#xA;https://github.com/hellojukay/ssh_proxy 登录到jenkins，部署，然后登录到部署系统，部署，本地连接完美登录成功。&#xA;jukay@MP ~/.ssh(18.9)&amp;gt; ssh -p 7013 -i licong_testing.rsa licong@huanggai 六 3/10 10:26:42 2018 key_load_public: invalid format Last login: Sat Mar 10 09:44:48 2018 from 192.168.1.197 [licong@xiangyun ~]$ 这行命令太长了，写在一个文件里面吧&#xA;jukay@MP ~/.ssh(18.9)&amp;gt; cat huanggai 六 3/10 10:28:07 2018 #!/bin/bash cd /Users/jukay/.ssh ssh -p 7013 -i licong_testing.rsa licong@huanggai jukay@MP ~/.ssh(18.9)&amp;gt; 每次登录都要~/.ssh目录下执行huanggai，太麻烦了，取一个全局额别名吧,我用的shell是fish，直接在fish的配置里面加上&#xA;alias huanggai=&amp;#34;sh /Users/jukay/.ssh/huanggai&amp;#34; 以后就可以在本地的任何目录执行huanggai，就能登录测试环境，以后要加班就不要去公司了。</description>
+    </item>
+  </channel>
+</rss>

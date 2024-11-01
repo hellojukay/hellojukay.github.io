@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+   <meta name="description" content="在reddit上看到一个热门帖子，内容是：一人给一个你相见恨晚的Linux命令。
+disown 这是一个bash内置命令，如果你需要将当前程序在后台运行的时候，有两个方式，1.让当前程序在新的session中运行。2.程序内部处理SIGUP信号，nohup就只这种工作方式。disown这个命令也能达到相同的功能。更多内容参考: https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/
+touch log gdb -p 22499 (gdb) p close(1) # This closes the stdout of the running process (gdb) p open(&#34;/home/.../log&#34;, 1) # This will open the log-file with O_WRITE (gdb) c 这是一种非常hack的方式来将一个已经正在运行的程序的标准输出重定向到文件。更多内容参考: https://github.com/nelhage/reptyr
+cat ~/.ssh/id_dsa.pub | ssh me@remotebox &#34;cat &gt;&gt; ~/.ssh/authorized_keys&#34; 通过ssh连接跨机器使用管道符,这也是比较hack的一种方式。顺便说一句，scp也是使用的ssh协议，所以在使用scp的时候，如果你配置了秘钥，那么scp是可以使用tab键来进行补全提示的。
+fc fc命令能够将上一次执行的命令在编辑器中打开,这个默认的编辑器可以使EDITOR环境变量来设置。
+lsof lsof能够列出当前操作系统打开的所有文件描述符，包括socket,文件等等,与之类似还有一个fuser命令。
+CTRL &#43; L 这是一个快捷键，和clear的功能一样能够快速清空当前的terminal,bash还有很多快捷键，请参考： https://blog.hellojukay.cn/2018/05/23/20180523/。
+man ascii 在mac上下能够按照是十六进制的方式处处ascii码表，很多从事嵌入式开发的程序使用这个小技巧，同样的ascii -x也能实现这个功能.
+xargs 能够将上一个程序的标准输出传给下一个程序的命令行，我最喜欢的功能是:echo xx | xargs -I {} command {}。
+convert convert命令能够进行图片格式转换。">  
+
+  <title>
+    
+      有那些相见恨晚的Linux命令
+    
+  </title>
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/" />
+  
+  
+  
+  <link rel="stylesheet" href="/css/main.01273a70fa873b012d056499c16bb47955e0e7526c34edb73f05ca8f99f488ebc323423c6557f93f9b42a41de0448a25ce9a1ab577d0bf61e36eaf52a4979a1d.css" integrity="sha512-ASc6cPqHOwEtBWSZwWu0eVXg51JsNO23PwXKj5n0iOvDI0I8ZVf5P5tCpB3gRIolzpoatXfQv2Hjbq9SpJeaHQ==" />
+  
+</head>
+<body a="auto">
+        <main class="page-content" aria-label="Content">
+            <div class="w">
+<a href="/">..</a>
+
+
+<article>
+    <p class="post-meta">
+        <time datetime="2018-11-12 00:00:00 &#43;0000 UTC">
+            2018-11-12
+        </time>
+    </p>
+
+    <h1>有那些相见恨晚的Linux命令</h1>
+
+    
+
+    <p>在reddit上看到一个热门帖子，内容是：一人给一个你相见恨晚的Linux命令。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>disown
+</span></span></code></pre></div><blockquote>
+<p>这是一个bash内置命令，如果你需要将当前程序在后台运行的时候，有两个方式，1.让当前程序在新的session中运行。2.程序内部处理SIGUP信号，nohup就只这种工作方式。disown这个命令也能达到相同的功能。更多内容参考: <a href="https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/">https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>touch log
+</span></span><span style="display:flex;"><span>gdb -p <span style="color:#ae81ff">22499</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>gdb<span style="color:#f92672">)</span> p close<span style="color:#f92672">(</span>1<span style="color:#f92672">)</span> <span style="color:#75715e"># This closes the stdout of the running process</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>gdb<span style="color:#f92672">)</span> p open<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/home/.../log&#34;</span>, 1<span style="color:#f92672">)</span> <span style="color:#75715e"># This will open the log-file with O_WRITE</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>gdb<span style="color:#f92672">)</span> c
+</span></span></code></pre></div><blockquote>
+<p>这是一种非常hack的方式来将一个已经正在运行的程序的标准输出重定向到文件。更多内容参考: <a href="https://github.com/nelhage/reptyr">https://github.com/nelhage/reptyr</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat ~/.ssh/id_dsa.pub | ssh me@remotebox <span style="color:#e6db74">&#34;cat &gt;&gt; ~/.ssh/authorized_keys&#34;</span>
+</span></span></code></pre></div><blockquote>
+<p>通过ssh连接跨机器使用管道符,这也是比较hack的一种方式。顺便说一句，scp也是使用的ssh协议，所以在使用scp的时候，如果你配置了秘钥，那么scp是可以使用tab键来进行补全提示的。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>fc
+</span></span></code></pre></div><blockquote>
+<p>fc命令能够将上一次执行的命令在编辑器中打开,这个默认的编辑器可以使EDITOR环境变量来设置。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>lsof
+</span></span></code></pre></div><blockquote>
+<p>lsof能够列出当前操作系统打开的所有文件描述符，包括socket,文件等等,与之类似还有一个<code>fuser</code>命令。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>CTRL + L 
+</span></span></code></pre></div><blockquote>
+<p>这是一个快捷键，和clear的功能一样能够快速清空当前的terminal,bash还有很多快捷键，请参考： <a href="https://blog.hellojukay.cn/2018/05/23/20180523/">https://blog.hellojukay.cn/2018/05/23/20180523/</a>。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>man ascii
+</span></span></code></pre></div><blockquote>
+<p>在mac上下能够按照是十六进制的方式处处ascii码表，很多从事嵌入式开发的程序使用这个小技巧，同样的<code>ascii -x</code>也能实现这个功能.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>xargs
+</span></span></code></pre></div><blockquote>
+<p>能够将上一个程序的标准输出传给下一个程序的命令行，我最喜欢的功能是:<code>echo xx | xargs -I {} command {}</code>。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>convert
+</span></span></code></pre></div><blockquote>
+<p>convert命令能够进行图片格式转换。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>^find^replace
+</span></span></code></pre></div><blockquote>
+<p>这是一个比较冷门的用法，通常在你出入命令行错误，或者你在用另一个参数再次运行某个命令，用这种凡是来修改命令行，类似的哈有<code>!:s/find/replace</code>以及全局替换<code>!:gs/find/replace</code>。</p>
+</blockquote>
+<p><img src="20181112/replace.gif" alt="image"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>rsync
+</span></span></code></pre></div><blockquote>
+<p>这是一个同步，备份文件的命令。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>iftop
+</span></span></code></pre></div><blockquote>
+<p>这是一个监控网卡流量的命令，类似的监控io情况的命令有：iotop 。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo !!
+</span></span></code></pre></div><blockquote>
+<p>使用sudo权限来执行上一条命令,换句话说，如果只是单纯的再次执行上一条命令就用<code>!!</code>即可。我习惯使用<code>CTRL + P</code>然后<code>CTRL + a</code>,然后输入sudo。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd -
+</span></span></code></pre></div><blockquote>
+<p>这条命令能够将你待会上一次所在目录。关于目录跳转的还有另外一个很有意思的工具: <a href="https://github.com/wting/autojump">https://github.com/wting/autojump</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>tail -f file
+</span></span></code></pre></div><blockquote>
+<p>能够监控文件的变化，实时输出到标准输出。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>:w! sudo tee %
+</span></span></code></pre></div><blockquote>
+<p>这是一条vim的内置命令，当你用普通用户编辑文件，但是没有权限保存的时候，这个条命令能够让你用sudo权限保存当前文件。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>python -m SimleHTTPServe <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div><blockquote>
+<p>启动一个简单的http目录，暴露8080端口，将当前目录下的文件暴露出去。这是正对于python2版本，如果是python3环境，则使用<code>python -m http.server 8080</code>。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>fmt
+</span></span></code></pre></div><blockquote>
+<p>文件格式化编排后输出到标准输出。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pkill/pgrep
+</span></span></code></pre></div><blockquote>
+<p>按照名字查找进程号，类似<code>ps aux | grep name| awk '{print $2}'</code>。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pv
+</span></span></code></pre></div><blockquote>
+<p>以进度条的方式显示命令行的执行进度。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pushd/popd
+</span></span></code></pre></div><blockquote>
+<p>这是是用堆栈的方式来进行目录跳转<code>pushd</code>跳转到目录目录，并将当前目录放在栈定，<code>pop</code>移除栈顶元素，回到上一次目录。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ncdu
+</span></span></code></pre></div><blockquote>
+<p>查看磁盘空间占用情况。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>dmidecode
+</span></span></code></pre></div><blockquote>
+<p>或者当前系统的硬件信息。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>htop
+</span></span></code></pre></div><blockquote>
+<p>与top命令的功能类似，但是显示界面更加友好。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>strace
+</span></span></code></pre></div><blockquote>
+<p>这是非常hack的一个命令，能够调试一个脚本.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>vnstat
+</span></span></code></pre></div><blockquote>
+<p>一款linux下的性能监控工具。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>find . -exec
+</span></span></code></pre></div><blockquote>
+<p>查找可执行文件。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>tree
+</span></span></code></pre></div><blockquote>
+<p>展示当前目录的树状结构。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>pstree
+</span></span></code></pre></div><blockquote>
+<p>显示一个正在运行中的程序的进程树状结构。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ss
+</span></span></code></pre></div><blockquote>
+<p>ss 也就是 socket status ,用来展示socket讯通状态的命令，类似于 netstat 命令 。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sl
+</span></span></code></pre></div><blockquote>
+<p>sl这是一个非常滑稽的命令，如果你想深入ls,但是不小心写错了，终端中会有一个小火车驶过。</p>
+</blockquote>
+<p>原文链接: <a href="https://www.reddit.com/r/linux/comments/mi80x/give_me_that_one_command_you_wish_you_knew_years/">https://www.reddit.com/r/linux/comments/mi80x/give_me_that_one_command_you_wish_you_knew_years/</a></p>
+
+</article>
+
+            </div>
+        </main>
+    </body></html>
