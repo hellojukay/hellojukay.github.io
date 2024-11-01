@@ -1,2 +1,6 @@
-public/
 .hugo_build.lock
+public/posts/
+public/tags/
+public/css/
+public/categories/
+public/resources/
