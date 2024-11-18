@@ -6,8 +6,15 @@
     <description>Recent content in Posts on 润物细无声</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 11 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 Nov 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>为什么我无法服务的 buff/cache</title>
+      <link>http://localhost:1313/posts/2024/2024-11-18/</link>
+      <pubDate>Mon, 18 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2024/2024-11-18/</guid>
+      <description>有一位网友的服务器，偶尔出现服务器无法 ssh 登录的情况，排查发现是 buff/cache 占用过多导致。于是希望通过清空 buff/cache 来解决问题。他使用如下的命令清空 buff/cache：&#xA;sync; echo 3&amp;gt; /proc/sys/vm/drop_caches 执行 </description>
+    </item>
     <item>
       <title>在 docker build 的时候使用 pip 安装依赖报错，但是换个机器就没问题</title>
       <link>http://localhost:1313/posts/2024/2024-11-11/</link>
@@ -48,7 +55,7 @@
       <link>http://localhost:1313/posts/2024/2024-08-15/</link>
       <pubDate>Thu, 15 Aug 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/2024/2024-08-15/</guid>
-      <description>最近总是有人象我反馈，他申请权限的工单已经走完了流程，但是还是没有权限。我看了一下，他的工单确实通过了，但是看到走后的自动化任务执行情况，只执行了部分任务，没有执行全部的。我怀疑是我们的内部工单系统，没有调用我们的 Jenkins 任务，导致没有部分添加权限的任务没有被执行，但是实际看工单系统的日志，发现是请求了 Jenkins 的，所以不存在没有调用的情况。&#xA;我们的工单流程是：工单系统-&amp;gt;审批流程-&amp;gt;webhook-&amp;gt;Jenkins任务。 在 Jenkins 上通过 Ansbile 实现自动化任务。&#xA;今天我无意中发现，如果同时间多次触发 Jenkins 任务，只会执行一次任务，并不会每次触发都执行。从下面的截图可以看出来，我触发了 3 次，但是只执行了一次。 这种场景一般是多个工单同时间通过，在短时间内都执行 Webhok，导致 Jenkins 的任务被合并到只执行一次，就会导致部分权限没有添加。&#xA;解决方案可以参考: https://www.cnblogs.com/bolingcavalry/p/13800722.html&#xA;大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不好合并执行，强制设置 Jenkins 任务为带参数的任务。&#xA;#!/usr/bin/env groovy pipeline { agent { label &amp;#34;devops&amp;#34; } triggers { GenericTrigger( genericVariables: [ [key: &amp;#39;group&amp;#39;, value: &amp;#39;$.group&amp;#39;], [key: &amp;#39;user&amp;#39;, value: &amp;#39;$.apply_user&amp;#39;] ], causeString: &amp;#39;add $user to group $group&amp;#39;, token: &amp;#39;docker&amp;#39;, printContributedVariables: true, printPostContent: true, silentResponse: false, shouldNotFlattern: false ) } stages { stage(&amp;#39;申请 jfrog 权限&amp;#39;) { steps { script { currentBuild.</description>
+      <description>最近总是有人象我反馈，他申请权限的工单已经走完了流程，但是还是没有权限。我看了一下，他的工单确实通过了，但是看到走后的自动化任务执行情况，只执行了部分任务，没有执行全部的。我怀疑是我们的内部工单系统，没有调用我们的 Jenkins 任务，导致没有部分添加权限的任务没有被执行，但是实际看工单系统的日志，发现是请求了 Jenkins 的，所以不存在没有调用的情况。&#xA;我们的工单流程是：工单系统-&amp;gt;审批流程-&amp;gt;webhook-&amp;gt;Jenkins任务。 在 Jenkins 上通过 Ansbile 实现自动化任务。&#xA;今天我无意中发现，如果同时间多次触发 Jenkins 任务，只会执行一次任务，并不会每次触发都执行。从下面的截图可以看出来，我触发了 3 次，但是只执行了一次。 这种场景一般是多个工单同时间通过，在短时间内都执行 Webhok，导致 Jenkins 的任务被合并到只执行一次，就会导致部分权限没有添加。&#xA;解决方案可以参考: https://www.cnblogs.com/bolingcavalry/p/13800722.html&#xA;大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不要合并执行，强制设置 Jenkins 任务为带参数的任务。&#xA;#!/usr/bin/env groovy pipeline { agent { label &amp;#34;devops&amp;#34; } triggers { GenericTrigger( genericVariables: [ [key: &amp;#39;group&amp;#39;, value: &amp;#39;$.group&amp;#39;], [key: &amp;#39;user&amp;#39;, value: &amp;#39;$.apply_user&amp;#39;] ], causeString: &amp;#39;add $user to group $group&amp;#39;, token: &amp;#39;docker&amp;#39;, printContributedVariables: true, printPostContent: true, silentResponse: false, shouldNotFlattern: false ) } stages { stage(&amp;#39;申请 jfrog 权限&amp;#39;) { steps { script { currentBuild.</description>
     </item>
     <item>
       <title>未锁定依赖引发的故障</title>

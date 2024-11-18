@@ -7,7 +7,7 @@
 我们的工单流程是：工单系统-&gt;审批流程-&gt;webhook-&gt;Jenkins任务。 在 Jenkins 上通过 Ansbile 实现自动化任务。
 今天我无意中发现，如果同时间多次触发 Jenkins 任务，只会执行一次任务，并不会每次触发都执行。从下面的截图可以看出来，我触发了 3 次，但是只执行了一次。 这种场景一般是多个工单同时间通过，在短时间内都执行 Webhok，导致 Jenkins 的任务被合并到只执行一次，就会导致部分权限没有添加。
 解决方案可以参考: https://www.cnblogs.com/bolingcavalry/p/13800722.html
-大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不好合并执行，强制设置 Jenkins 任务为带参数的任务。
+大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不要合并执行，强制设置 Jenkins 任务为带参数的任务。
 #!/usr/bin/env groovy pipeline { agent { label &#34;devops&#34; } triggers { GenericTrigger( genericVariables: [ [key: &#39;group&#39;, value: &#39;$.group&#39;], [key: &#39;user&#39;, value: &#39;$.apply_user&#39;] ], causeString: &#39;add $user to group $group&#39;, token: &#39;docker&#39;, printContributedVariables: true, printPostContent: true, silentResponse: false, shouldNotFlattern: false ) } stages { stage(&#39;申请 jfrog 权限&#39;) { steps { script { currentBuild.">  
 
   <title>
@@ -47,7 +47,7 @@
 <img src="/2024-08-15/jenkins.png" alt="jenkins"></p>
 <p>这种场景一般是多个工单同时间通过，在短时间内都执行 Webhok，导致 Jenkins 的任务被合并到只执行一次，就会导致部分权限没有添加。</p>
 <p>解决方案可以参考: <a href="https://www.cnblogs.com/bolingcavalry/p/13800722.html">https://www.cnblogs.com/bolingcavalry/p/13800722.html</a></p>
-<p>大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不好合并执行，强制设置 Jenkins 任务为带参数的任务。</p>
+<p>大概原理就是显示的告诉 Jenkins , 我的任务是有参数的任务，不要合并执行，强制设置 Jenkins 任务为带参数的任务。</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-groovy" data-lang="groovy"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env groovy</span>
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>pipeline <span style="color:#f92672">{</span>
