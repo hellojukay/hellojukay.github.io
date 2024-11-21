@@ -6,14 +6,21 @@
     <description>Recent content in Posts on 润物细无声</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 18 Nov 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 21 Nov 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>为什么我无法服务的 buff/cache</title>
+      <title>Docker 仓库由公开转私有：保障 K8s Pod 无影响</title>
+      <link>http://localhost:1313/posts/2024/2024-11-21/</link>
+      <pubDate>Thu, 21 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/2024/2024-11-21/</guid>
+      <description>背景 我们的背景情况是，当初为了方便，将 Docker 仓库全部设置为公开，不需要认证就能拉代码，但是随着公司规模的增长，很多供应商也能访问我们的内网，这可能导致我们的镜像泄漏，我们的 Docker 镜像里面的内容可能包含一些敏感信息，所以我们需要将 Docker 仓库设置为私有。&#xA;难点 所有的 pod 都没有添加ImagePullSecrets，如果我们直接修改镜像仓库为私有，那么Pod重新调度到新的节点上，就会拉取失败。或者添加了新的 node 节点，daemonset 就会应为无法拉镜像导致部署失败。&#xA;如果直接编辑线上环境的 deployment 和 daemonset，会导致 pod 重启, 并且会导致业务中断，这样的变更对业务来说是不可接受的。&#xA;解决方案 每一个 pod 都会关联一个 serviceaccount，而 serviceaccount 关联的 ImagePullSerect 就是用来拉取镜像的,</description>
+    </item>
+    <item>
+      <title>为什么我无法清理服务器的 buff/cache</title>
       <link>http://localhost:1313/posts/2024/2024-11-18/</link>
       <pubDate>Mon, 18 Nov 2024 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/2024/2024-11-18/</guid>
-      <description>有一位网友的服务器，偶尔出现服务器无法 ssh 登录的情况，排查发现是 buff/cache 占用过多导致。于是希望通过清空 buff/cache 来解决问题。他使用如下的命令清空 buff/cache：&#xA;sync; echo 3&amp;gt; /proc/sys/vm/drop_caches 执行 </description>
+      <description>有一位网友的服务器，偶尔出现服务器无法 ssh 登录的情况，排查发现是 buff/cache 占用过多导致。于是希望通过清空 buff/cache 来解决问题。他使用如下的命令清空 buff/cache：&#xA;sync; echo 3&amp;gt; /proc/sys/vm/drop_caches 执行以后发现用处不大，buff/cache 还是占用大量的内存，并没有释放多少内存。 我看他的这条命令，好像也没什么问题啊，为什么 buff/cache 还是占用大量内存呢？仔细一年发现 echo 3 后面少了一个空格，导致命令执行以后没有生效。&#xA;在 bash 中， command 1&amp;gt; file 表示将 command 的标准输出重定向到 file 中，而 command 1&amp;gt;file 和 command &amp;gt; file 是等价的。 commanb 2&amp;gt; file 表示将 command 的标准错误输出重定向到 file 中。command 3&amp;gt; file 表示将文件描述符 3 的输出重定向到 file 中。但是这里没有文件描述符为 3 的输出，所以 command 3&amp;gt;file 后，file 文件的内容为空。也就是说明 echo 3&amp;gt; /proc/sys/vm/drop_caches 命令并没有任何内容写入到 /proc/sys/vm/drop_caches 。&#xA;因此真正要执行的命令是:&#xA;sync; echo 3 &amp;gt; /proc/sys/vm/drop_caches 而不是</description>
     </item>
     <item>
       <title>在 docker build 的时候使用 pip 安装依赖报错，但是换个机器就没问题</title>
